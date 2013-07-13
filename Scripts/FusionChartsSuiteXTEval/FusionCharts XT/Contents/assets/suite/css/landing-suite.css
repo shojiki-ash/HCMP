@@ -1,0 +1,82 @@
+
+.info-block-holder {
+	width: 100%;
+	overflow: hidden;
+	margin: 40px 0;
+}
+
+.info-block {
+	display: block;
+	float:left;
+	width: auto;
+}
+
+.info-block a{
+	display: block;
+	width: 414px;
+	height: 71px;	
+	margin: 0 10px 17px 0;
+	font-size: 11px;	
+}
+
+.info-block a span {
+	display: block;
+	padding: 0 20px;
+}
+
+.info-block.last {
+	margin-right: 0;
+}
+
+.info-block a {
+	display: block;
+	text-decoration: none;
+	color: #666666;	
+}
+
+
+.fusioncharts-xt a {
+	background: url(../Images/fusioncharts-xt.jpg) no-repeat top left;
+	padding: 64px 0 0 5px;
+}
+
+.fusioncharts-xt a:hover {
+	background: url(../Images/fusioncharts-xt.jpg) no-repeat 0px -135px;
+	padding: 64px 0 0 5px;
+}
+
+
+.fusionwidget a {
+	background: url(../Images/fusionwidgets.jpg) no-repeat top left;
+	padding: 64px 0 0 5px;
+}
+
+.fusionwidget a:hover {
+	background: url(../Images/fusionwidgets.jpg) no-repeat 0px -135px;
+	padding: 64px 0 0 5px;
+}
+
+
+
+.powercharts a {
+	background: url(../Images/powercharts.jpg) no-repeat top left;
+	padding: 64px 0 0 5px;
+}
+
+.powercharts a:hover {
+	background: url(../Images/powercharts.jpg) no-repeat 0px -135px;
+	padding: 64px 0 0 5px;
+}
+
+
+
+.fusionmaps a {
+	background: url(../Images/fusionmaps.jpg) no-repeat top left;
+	padding: 64px 0 0 5px;
+}
+
+.fusionmaps a:hover {
+	background: url(../Images/fusionmaps.jpg) no-repeat 0px -135px;
+	padding: 64px 0 0 5px;
+}
+
