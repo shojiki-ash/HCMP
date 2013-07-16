@@ -172,7 +172,7 @@ ORDER BY d.drug_name ASC  ");
         return $inserttransaction ;}
         
         ////////////// getting facility stock level
-     public function get_facility_stock_level($distict){
+     public static function get_facility_stock_level($distict){
      
 $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
 		->fetchAll("SELECT d.drug_name, ceil(SUM( fs.balance / d.total_units )) AS total
@@ -185,7 +185,7 @@ ORDER BY d.drug_name ASC  ");
 
         return $inserttransaction ;} 
       ////////////// getting district stock level
-     public function get_district_drug_stock_level($distict,$drug_id){
+     public static function get_district_drug_stock_level($distict,$drug_id){
      
 $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
 		->fetchAll("SELECT f.facility_name AS drug_name, CEIL( SUM( fs.balance / d.total_units ) ) AS total
@@ -200,7 +200,7 @@ ORDER BY d.drug_name ASC ");
         return $inserttransaction ;}  
 	 
 	       ////////////// getting county stock level
-     public function get_county_drug_stock_level($county_id,$category_id=NULL){
+     public static function get_county_drug_stock_level($county_id,$category_id=NULL){
      		if(isset($category_id)){
     $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
 		->fetchAll("SELECT d.drug_name, CEIL( SUM( fs.balance / d.total_units ) ) AS total

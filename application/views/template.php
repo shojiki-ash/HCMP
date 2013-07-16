@@ -64,10 +64,14 @@ if($access_level=="allocation_committee"){
 <link rel="icon" href="<?php echo base_url().'Images/coat_of_arms.png'?>" type="image/x-icon" />
 <link href="<?php echo base_url().'CSS/style.css'?>" type="text/css" rel="stylesheet"/> 
 <link href="<?php echo base_url().'CSS/jquery-ui.css'?>" type="text/css" rel="stylesheet"/> 
+<link href="<?php echo base_url().'CSS/bootstrap.css'?>" type="text/css" rel="stylesheet"/>
+<link href="<?php echo base_url().'CSS/bootstrap-responsive.css'?>" type="text/css" rel="stylesheet"/>
 <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/waypoints.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/waypoints-sticky.min.js'?>" type="text/javascript"></script>
+<script src="<?php echo base_url().'Scripts/bootstrap.js'?>" type="text/javascript"></script>
+
 <script src="<?php echo base_url().'Scripts/validator.js'?>" type="text/javascript"></script>
 <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
   <?php
@@ -102,6 +106,11 @@ if (isset($styles)) {
         div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
         .ui-dialog .ui-state-error { padding: .3em; }
         .validateTips { border: 1px solid transparent; padding: 0.3em; }
+        
+       #top-panel a{
+        	color:white;
+        	text-decoration:none;
+        }
     </style>
 <script type="text/javascript">
 function showTime()
@@ -128,92 +137,20 @@ return i;
 </script>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$('#myModal').modal('hide')
 		
 		$("#my_profile_link").click(function(){
 			$("#logout_section").css("display","block");
 		});
-					///////////////////////////////////////
-			$(function() {
-        var oldp = $( "#oldpassword" ),
-            newp = $( "#newpassword" ),
-            password = $( "#password" ),
-            allFields = $( [] ).add( oldp ).add( newp ).add( password ),
-            tips = $( ".validateTips" );
- 
-         
-        function checkLength( o, n, min, max ) {
-            if ( o.val().length > max || o.val().length < min ) {
-                o.addClass( "ui-state-error" );
-                updateTips( "Length of " + n + " must be between " +
-                    min + " and " + max + "." );
-                return false;
-            } else {
-                return true;
-            }
-        }
- 
-        
- 
-
- 
-        $( "#modalbox" ).click(function() {
-       var url = "<?php echo base_url().'user_management/change_password' ?>"
-          $.ajax({
-          type: "POST",
-          data: "ajax=1",
-          url: url,
-          beforeSend: function() {
-            $("#id").html("");
-          },
-          success: function(msg) {
-          
-            $("#id").html(msg);
-                    $( "#dialog-form" ).dialog({
-            autoOpen: true,
-            height: 310,
-            width: 350,
-            modal: true,
-            buttons: {
-                "Change Password": function() {
-                    var bValid = true;
-                    allFields.removeClass( "ui-state-error" );
- 
-                    bValid = bValid && checkLength( password, "password", 6, 16 );
-                    //bValid = bValid && checkLength( oldp, "password", 5, 16 );
-                    bValid = bValid && checkLength( newp, "password", 6, 16 );
- 
-                    // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
-                    bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
-                    bValid = bValid && checkRegexp( oldp, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
-                     bValid = bValid && checkRegexp( newp, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
- 
-                    if ( bValid ) {
-                       
-                            //run script to change password here
-                        $( this ).dialog( "close" );
-                    }
-                },
-                Cancel: function() {
-                    $( this ).dialog( "close" );
-                     $("#id").html("");
-                }
-            },
-            close: function() {
-                allFields.val( "" ).removeClass( "ui-state-error" );
-            }
-        });
-           
-          }
-        });
-        return false;
-        
-       
-                $( "#dialog-form" ).dialog( "open" );
-            });
+		$('#top-panel').waypoint('sticky');
+		
+		$('#changepswd').click('hide'){
+		$('#myModal').modal('show');
+		
+		});
     });
-$('#top-panel').waypoint('sticky');
-	});
 
+	
 </script>
 </head>
  
@@ -260,11 +197,11 @@ $('#top-panel').waypoint('sticky');
 if($user_is_facility){
 ?>
 <li class="<?php
-	if ($current == "home_controller") {echo "active";}?>"><a data-clone="Home" href="<?php echo base_url();?>home_controller">Home </a></li>
- 	<li><a data-clone="Orders" href="<?php echo base_url();?>order_management" class="<?php
+	if ($current == "home_controller") {echo "active";}?>"><a  href="<?php echo base_url();?>home_controller">Home </a></li>
+ 	<li><a  href="<?php echo base_url();?>order_management" class="<?php
 	if ($quick_link == "order_listing") {echo "active";}?>"> Orders </a></li> 
 
-<li><a data-clone="Issues" href="<?php echo base_url();?>Issues_main" class="<?php
+<li><a  href="<?php echo base_url();?>Issues_main" class="<?php
 	if ($current == "Issues_main") {echo "active";
 	}
 ?>">Issues </a></li>	
@@ -272,25 +209,30 @@ if($user_is_facility){
 	if ($quick_link == "dispatched_listing_v") {echo " top_menu_active ";
 	}
 	?>">Deliveries</a>-->
-<li><a data-clone="Reports" href="<?php echo base_url();?>report_management/reports_Home"  class="<?php
+<li><a  href="<?php echo base_url();?>report_management/reports_Home"  class="<?php
 	if ($current == "report_management") {echo "active";
 	}
 ?>">Reports </a></li>
-<li><a data-clone="Commodity List" href="<?php echo base_url();?>report_management/commodity_list" class="<?php
+<li><a  href="<?php echo base_url();?>report_management/commodity_list" class="<?php
 	if ($quick_link == "commodity_list") {echo "active";
 	}
 ?>">Commodity List</a></li>
 <?php if($access_level == "fac_user"){} else{?>
-<li><a data-clone="Users" href="<?php echo base_url();?>user_management/users_manage"  class="<?php
+<li><a  href="<?php echo base_url();?>user_management/users_manage"  class="<?php
 	if ($quick_link == "user_facility_v") {echo "active";
 	}
 ?>">Users</a></li>
  <?php
 }?>
-<li><a data-clone="Settings" href="<?php echo base_url();?>report_management/facility_settings"  class="<?php
+<li>
+	<ul>
+		<li>Edit stock Details</li>
+		<li>Historical Data</li>
+		<li>User Profile</li>
+	</ul><a  href="<?php echo base_url();?>report_management/facility_settings"  class="<?php
 	if ($quick_link == "user_facility_v") {echo "active";
 	}
-?>">Settings</a></li>
+?>">Settings</a><i class=" icon-cog" style="margin-left: 0.3em; margin-top: 0.1em;"></i></li>
  
 <?php } if($user_is_district){
 	?>
@@ -458,11 +400,12 @@ if($user_is_facility){
 <div class="banner_content" style="font-size:20px; float:right; margin-top: 1.15em;"><?php echo $this -> session -> userdata('full_name').": ".$banner_text;?>
 
 	
-	<div style="float:right">
+	<div style="float:right"><i class=" icon-user" style="margin-right: 0.1em;margin-top: 0.3em;"></i>
 		
 
 		 <?php echo $this -> session -> userdata('names');?> <?php echo $this -> session -> userdata('inames');?>
-	<a  class="link" href="<?php echo base_url();?>user_management/logout">Logout?</a>|<a href="#dialog-form" rel="fancybox" id="modalbox" class="link">Change Password</a>
+	<a  class="link" href="<?php echo base_url();?>user_management/logout">Logout?</a>|<a href="#myModal" data-toggle="modal" data-target="#myModal" id="changepswd" class="link">Change password
+		</a>
 		</div>
 	
 	</div>
@@ -485,7 +428,37 @@ if($user_is_facility){
 	Government of Kenya &copy; <?php echo date('Y');?>. All Rights Reserved
 	
 	</div>
+	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Change Password</h3>
+  </div>
+  <form class="form-horizontal">
+  <div class="control-group" style="margin-top: 1em;">
+    <label class="control-label" for="inputPassword">Old Password</label>
+    <div class="controls">
+      <input type="password" id="inputPassword" placeholder="Old Password">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputPassword">New Password</label>
+    <div class="controls">
+      <input type="password" id="inputPassword" placeholder="New Password">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputPassword">Confirm Password</label>
+    <div class="controls">
+      <input type="password" id="inputPassword" placeholder="Confirm Password">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-primary">Change Password</button>
+  </div>
+</div>
     
 </body>
+
 
 </html>

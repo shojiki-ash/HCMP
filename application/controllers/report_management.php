@@ -2107,37 +2107,7 @@ public function cummulative_fill_rate_chart(){
 echo $strXML;
 }
 //county charts  7
-public function district_drawing_rights_chart(){
-$strXML ="<chart bgcolor='FFFFFF' showBorder='0'  formatNumberScale='0' palette='3' caption='Districts Drawing Rights'    lineColor='000000' lineAlpha='40' xaxisName='Districts'yaxisName='Amount' useRoundEdges='1' showValues='0' legendBorderAlpha='0'>  
 
-<categories showValues='1'>
-      <category label='Dagoretti' />
-      <category label='Embakasi' />
-      <category label='Kamukunji' />
-      <category label='Kasarani' />
-      <category label='Langata' />
-      <category label='Makadara' />
-      <category label='Njiru' />
-      <category label='Starehe' />
-      <category label='Westlands' />
-           
-</categories>
-
-<dataset>
-      <set value='570' />
-      <set value='589' />
-      <set value='611' />
-      <set value='635' />
-      <set value='570' />
-      <set value='589' />
-      <set value='611' />
-      <set value='635' />
-      <set value='656' />
-         
-</dataset>
-</chart>";
-echo $strXML;
-}
 
 //county charts  8
 public function orders_placed_chart(){
@@ -2326,5 +2296,40 @@ echo $strXML;
 public function get_county_stock_status_view(){
 	$this->load->view("county/ajax_view/county_stock_status_v");
 }
+public function district_drawing_rights_chart(){
+		$drawing_rights=Facilities::get_drawingR_county_by_district();
+		$strXML= "";
+		$strXML ="<chart palette='3' caption='Districts Drawing Rights'  bgColor='FFFFFF' numberprefix='$' xaxisName='Districts'yaxisName='Amount' useRoundEdges='1' showValues='0' legendBorderAlpha='0'>  
+
+<categories showValues='1'>";
+		
+		$rowcountname=count($drawing_rights);
+		for ($i=0; $i < $rowcountname ; $i++) { 
+			foreach ($drawing_rights as $value) {
+			
+		}
+			$name= $drawing_rights[$i]["districtName"];
+			
+      $strXML .="<category label='".$name."' />";
+      
+	}
+	$strXML .="</categories>";
+	$strXML .="<dataset>";
+	$rowcountname=count($drawing_rights);
+		for ($i=0; $i < $rowcountname ; $i++) { 
+	foreach ($drawing_rights as $value) {
+			
+		}
+			$rights= $drawing_rights[$i]["drawingR"];
+			
+      
+      
+	$strXML .="<set value='".$rights."' />";
+      		}
+		$strXML .="</dataset></chart>"; 
+		echo $strXML;
+			
+		
+		}
 
 }
