@@ -30,6 +30,7 @@ $earliest_year = $current_year - 10;
 				/* Build the DataTable with third column using our custom sort functions */
 				$('#example').dataTable( {
 					"bJQueryUI": true,
+					"iDisplayLength" : 50,
 					"sDom": 'T<"clear">lfrtip',
 					"oTableTools": {
 			"sSwfPath": "<?php echo base_url(); ?>DataTables-1.9.3/extras/TableTools-2.0.0/media/swf/copy_cvs_xls_pdf.swf"

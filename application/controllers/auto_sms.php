@@ -191,7 +191,7 @@ public function send_sms($phones,$message) {
 	}
 
 
-public function send_email($email_address,$message,$subject){
+public function send_email($email_address,$message,$subject,$attach_file=NULL,$bcc_email=NULL){
 	
 			$fromm='hcmpkenya@gmail.com';
 		    $messages=$message;

@@ -99,8 +99,8 @@
     chart.setDataURL(url);
     chart.render("chart8");
 
-     var chart = new FusionCharts("<?php echo base_url()."scripts/FusionWidgets/HLinearGauge.swf"?>", "ChartId8", "100%", "25%", "0", "0");
-    var url = '<?php echo base_url()."report_management/lead_time_chart"?>'; 
+     var chart = new FusionCharts("<?php echo base_url()."scripts/FusionWidgets/HLinearGauge.swf"?>", "ChartId8", "100%", "20%", "0", "0");
+    var url = '<?php echo base_url()."report_management/lead_time_chart_county"?>'; 
     chart.setDataURL(url);
     chart.render("chart9");
     
@@ -114,14 +114,6 @@
     chart.setDataURL(url);
     chart.render("chart11");
 
-    
-  
-  
-      $( "#filter-b" )
-      .button()
-      .click(function() {
-        
-}); 
 
   });
   </script>
@@ -198,14 +190,24 @@
 </div>
 	
 	<div class="multiple_chart_content"  >
-		<h2 >Order Fill rate</h2>
+		<h2 >Cummulative Order Fill rate</h2>
 		<div id="chart6"></div>
 
 </div>
 	
-	<div class="multiple_chart_content"   >
-	<h2 >Lead Time</h2>
-	<div id="chart9"></div>
+	<div class="multiple_chart_content" style="height:60em">
+	<h2>Order Lead Time</h2>
+	<table width="100%" height="60" style="font-size:small">
+		<tr>
+		<td> Key</td>
+		<td><div class="success">Order - Approval</div></td>
+		<td><div style="background-color: #FFF6BF;"><font>Approval-Delivery</font></div></td>
+		<td><div style="background-color:#FF4545"><font>Delivery-Update</font></div></td>
+		<td><div style="background-color:#000000" ><font color="white">Turn Around Time	</font></div></td></tr>
+	
+		</table>
+
+	<div id="chart9" ></div>
 	</div>
   
  
