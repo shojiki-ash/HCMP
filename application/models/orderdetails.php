@@ -15,6 +15,7 @@ class Orderdetails extends Doctrine_Record {
 		$this -> hasColumn('c_stock', 'int',11);
 		$this -> hasColumn('o_balance', 'int',11);
 		$this -> hasColumn('s_quantity', 'int',11);
+		$this -> hasColumn('historical_consumption', 'int',11);
 		$this -> hasColumn('comment', 'varchar',50);
 		
 		

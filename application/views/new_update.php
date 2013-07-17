@@ -106,7 +106,9 @@ $today= date("d M, Y",strtotime("+1 month -1 second",strtotime(date("Y-m-1"))));
 <?php 
 $att=array("name"=>'myform','id'=>'myform');
 	 echo form_open('stock/submit',$att); ?>
-	 <?php foreach($ord as $d):?>
+	 <?php foreach($ord as $d):
+	 	
+	 	?>
 	 	<div>
 	 		<p id="notification" style="text-align:center;">Please enter Order Delivery details and Received commodities in Packs and NOT units </p>
 		
@@ -121,7 +123,11 @@ $att=array("name"=>'myform','id'=>'myform');
 	 	<input type="text" class="user1" name="orderd" readonly="readonly" value="<?php $s= $d->orderDate; echo date('d M, Y', strtotime($s)); ?>"  />
 	 	
 	 	<label>Order By:</label>
-	 	<input type="text" class="user1" name="orderby" value="<?php $d->orderby?>" />
+	 	<input type="text" readonly="readonly" class="user1" name="orderby" value="<?php 
+	 	
+	 	$user_details=user::getAllUser($d->orderby)->toArray();
+	 	
+	 	echo $user_details[0]['fname']." ".$user_details[0]['lname'];?>" />
 	 	
 	 	<label>Order No:</label>
 	 	<input type="text" name="order"  class="user1" readonly="readonly" value="<?php echo $this->uri->segment(3); ?>" />	 	
@@ -138,7 +144,9 @@ $att=array("name"=>'myform','id'=>'myform');
 	 	<input type="text" name="appd" readonly="readonly" class="user1" value="<?php  $p=$d->approvalDate; echo date('d M, Y', strtotime($p));?>" />
 	 	
 	 	<label>Approved By</label>
-		<input type="text"  name="appby" class="user1" readonly="readonly" value="<?php $d->approveby?>" />
+		<input type="text"  name="appby" class="user1" readonly="readonly" value="<?php $user_details=user::getAllUser($d->approveby)->toArray();
+	 	
+	 	echo $user_details[0]['fname']." ".$user_details[0]['lname']; ?>" />
 		
 		<label>Order Sheet No :</label>
 		<input type="text" name="lsn" value="" class="user1" readonly="readonly" />
@@ -171,8 +179,8 @@ $att=array("name"=>'myform','id'=>'myform');
 	 	<label>Received By</label>
 		<input type="text" readonly="readonly" class="user1" name="rname" value="<?php echo $this -> session -> userdata('names');?> <?php echo $this -> session -> userdata('inames');?>" />
 		
-		<label>Receiver's Phone:</label>
-		<input type="text" name="rphone" class="user1" readonly="readonly" value="<?php echo $this -> session -> userdata('phone');?>"  />
+		<label>Receiver's Phone`s Number:</label>
+		<input type="text" name="rphone" class="user1" readonly="readonly" value="<?php echo $this -> session -> userdata('phone_no');?>"  />
 				
 		</div>
 	 </fieldset>
@@ -249,9 +257,8 @@ $att=array("name"=>'myform','id'=>'myform');
 				</table>
 			
 			<br />
-			
-<input class="button"   id="NewIssue"  value="Add Commodity" >
-<input class="button" id="finishIssue"   value="Save " >
+<button class="btn"   id="NewIssue">Add Commodity</button>
+<button class="btn btn-primary" id="finishIssue">Save </button>
 		</div>
 			 <script> 
    /************************************calculating the  order values *******/

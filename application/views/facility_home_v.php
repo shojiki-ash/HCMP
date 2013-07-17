@@ -93,7 +93,7 @@ unset($popup);
 			<h2>Pending Dispatch</h2>
 			<p>
 				<a class="link" href="<?php 
-				 echo site_url("Order_Management/index/");?>"><?php echo $pending_orders_d;?> Order(s) pending dispatch from KEMSA</a>
+				 echo site_url("Order_Management/index/#tabs-2");?>"><?php echo $pending_orders_d;?> Order(s) pending dispatch from KEMSA</a>
 			</p>
 		</div>
 		<?php endif;?>

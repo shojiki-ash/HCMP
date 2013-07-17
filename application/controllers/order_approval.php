@@ -41,6 +41,7 @@ include_once('auto_sms.php');
 		$data['link'] = "home";
 		$data['drug_name']=Drug::get_drug_name();
 		$data['quick_link'] = "moh_order_v";
+		$data['order_details']=ordertbl::get_details($delivery)->toArray();
 		$data['detail_list']=Orderdetails::get_order($delivery);		
 		$this -> load -> view("template", $data);
 	}
@@ -50,7 +51,7 @@ include_once('auto_sms.php');
 		$this->load->helper('url');
 		
 		
-		$new_value=$_POST['adj'];
+		$new_value=$_POST['quantity'];
 		$order_id=$_POST['order_id'];
 		$value=count($new_value);
 		$code=$_POST['f_order_id'];
@@ -104,6 +105,7 @@ ORDER BY a.id ASC , b.drug_name ASC ");
 		$bal=$d_rights-$o_total;
 		$creator=$order->orderby;
 		$approver=$order->approveby;
+		
 			foreach($order->Code as $f_name){ $fac_name=$f_name->facility_name; }
 			$mfl=$order->facilityCode;
 			$myobj = Doctrine::getTable('Facilities')->findOneByfacility_code($mfl);
@@ -249,17 +251,33 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
            		  
 			if( !write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S')))
 			{
-    	$msg="An error occured";
-  $this->district_orders($msg);
+				
+		$this->session->set_flashdata('system_error_message', 'An error occured');			
+    
+        $this->district_orders();
              }
                   else{
-  $email_address='kariukijackson@gmail.com';
+                  	
+					
+  $all_facility_users=user::get_user_info(get_user_info);
+  
+  $all_facility_users=$facility=$this -> session -> userdata('user_email').",";
+
+
+ foreach($all_facility_users as $user_detail){
+ 	$email_address .=$user_detail->email.",";
+ }			  				
+                  	
+					  
   $subject='Order Report For '.$fac_name;
+  
   $attach_file='./pdf/'.$report_name.'.pdf';
+  
   $bcc_email='kariukijackson@gmail.com';
+  
   $message=$html_title.$html_body;
   
- $response= $this->send_email($email_address,$message,$subject,$attach_file,$bcc_email);
+ $response= $this->send_email(substr($email_address,0,-1),$message,$subject,$attach_file,$bcc_email);
  
  if($response){
  	delete_files('./pdf/'.$report_name.'.pdf');
@@ -267,9 +285,9 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
 					
   }
 
-   $msg="Order No $code has been approved";
-   
-   $this->district_orders($msg);
+ 
+   $this->session->set_flashdata('system_success_message', "Order No $code has been approved");	
+   $this->district_orders();
 	}
 	 function getWorkingDays($startDate,$endDate,$holidays){
     //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24

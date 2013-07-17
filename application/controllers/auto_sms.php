@@ -3,6 +3,8 @@ ob_start();
 class auto_sms extends MY_Controller {
 	
 public function send_stock_update_sms(){
+	
+
      		$facility_name = $this -> session -> userdata('full_name');
 		    $facility_c=$this -> session -> userdata('news');
 			

@@ -129,6 +129,7 @@ $( "#dialog1" ).dialog({
     
 });
 </script>
+<div>
 <?php if($msg=="Stock details have been updated"): ?>
 <div id="dialog1">    
 <?php echo $msg;?>
@@ -149,7 +150,7 @@ echo "The Last Stock Update was as at : $datea";?></div>
 <?php endif;  unset($msg);?>
     <?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
      echo form_open('Order_Management/update_facility_transaction',$attributes); ?>        
-        <div id="demo">
+
             <input type="hidden" name="option" value='<?php if(isset($update))
 {echo $update;} else  {?>place_order <?php }  ?>' />
             <div style="display: table; padding: 1em">
@@ -217,8 +218,10 @@ echo "The Last Stock Update was as at : $datea";?></div>
                 </table>
                 <?php
      echo form_close(); ?>   
-           <br />
-<input class="button" id="Make-Order" style="margin-left: 0%" <?php if(isset($update))
-{echo 'value=',$update;} else  {?>value="Proceed To Order" <?php }  ?> >
-        </div>
+     	<button  class="btn btn-primary" id="Make-Order"><?php 
+if(isset($update))
+{echo $update;} 
+else { echo "Proceed To Order"; }  ?></button>     
+
+       
 </div><!-- End demo -->

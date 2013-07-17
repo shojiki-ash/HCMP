@@ -479,7 +479,7 @@ $('.del').live('click',function(){
 						</tbody>
 						</table>
 						<?php echo form_close();?>	
-						<button class="btn "   id="NewIssue">Add Commodity </button>
+						<button class="btn"  id="NewIssue">Add Commodity </button>
                         <button class="btn btn-primary"   id="save1" >Save</button>
                         
 </div>

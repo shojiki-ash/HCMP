@@ -1,5 +1,5 @@
 <?php if(count($dispatched)>0) :?>
-		<table class="data-table">
+		<table class="table-update">
 			<tr>
 				<th><strong>Facility Order No </strong></th>
 				<th><strong>KEMSA Order No </strong></th>

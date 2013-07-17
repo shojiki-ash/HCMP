@@ -252,7 +252,7 @@ function update_transaction(baseUrl,data_array){
          '<input type="hidden" id="drugName['+new_count+']" name="drugName['+new_count+']" value="'+$("#desc option:selected").text()+'" />'+ 
          '<input type="hidden" id="price['+new_count+']" name="price['+new_count+']" value="'+$('input:text[name=o_unit_cost]').val()+'" />'+
          '<input type="hidden" id="unit_size['+new_count+']" name="unit_size['+new_count+']" value="'+$('input:text[name=o_unit_size]').val()+'" />'+
-							"" + $('input:text[name=cat_1]').val() + "" ,  
+							"" + $('input:hidden[name=cat_1]').val() + "" ,  
 							"" + $("#desc option:selected").text() + "" , 
 							"" + $('input:text[name=k_code]').val() + "" ,
 							"" + $('input:text[name=o_unit_size]').val() + "" ,
@@ -291,7 +291,7 @@ function update_transaction(baseUrl,data_array){
 				$('input:text[name=k_code]').val(code_array[0]);
 				$('input:text[name=o_unit_size]').val(code_array[2]);
 				$('input:text[name=o_unit_cost]').val(code_array[1]);
-				$('input:text[name=cat_1]').val(code_array[3]);
+				$('input:hidden[name=cat_1]').val(code_array[3]);
 				$('input:hidden[name=drug_id]').val(code_array[4]);
 				
 				//alert(code_array[4]);
@@ -358,21 +358,21 @@ function update_transaction(baseUrl,data_array){
         else{
         	$('#test-hapa tbody').append(
      		'<tr>'+
-			'<td><label for="name">Drawing Rights</label></td>'+
+			'<td>Drawing Rights</td>'+
 			'<td>'+
-			'<input class="user_" type="text" readonly="readonly"  value="'+number_format(drawingRights, 2, '.', ',')+' Ksh'+'" />'+
+			'<input style="border: none" class="user_" type="text" readonly="readonly"  value="'+number_format(drawingRights, 2, '.', ',')+' Ksh'+'" />'+
 			'</td>'+
 		'</tr>'+
 		'<tr>'+
-			'<td><label for="phone">Total Order Value</label></td>'+
+			'<td>Total Order Value</td>'+
 			'<td>'+
-			'<input class="user_" type="text" readonly="readonly" value="'+t+' Ksh'+'"/>'+
+			'<input style="border: none" class="user_" type="text" readonly="readonly" value="'+t+' Ksh'+'"/>'+
 			'</td>'+
 		'</tr>'+
 		'<tr>'+
-			'<td><label for="pin">Balance</label></td>'+
+			'<td>Balance</td>'+
 			'<td>'+
-			'<input class="user_" type="text" readonly="readonly" id="drawing_rights_bal"  value="'+number_format(bal, 2, '.', ',')+' Ksh'+'"/>'+
+			'<input style="border: none" class="user_" type="text" readonly="readonly" id="drawing_rights_bal"  value="'+number_format(bal, 2, '.', ',')+' Ksh'+'"/>'+
 			'</td>'+
 		'</tr>'
      		
@@ -431,9 +431,9 @@ function update_transaction(baseUrl,data_array){
 <!-- pop out modal box -->
 
 <div id="dialog-form" title="Please Confirm your Order">
-	<table class="data-table"  id='test-hapa'><tbody></tbody></table>
+	<table class="table-update"  id='test-hapa'><tbody></tbody></table>
 	<form>
-	<table id="user-order" width="500px" class="data-table">
+	<table id="user-order" width="500px" class="table-update">
 					<thead>
 					<tr>
 					    <th><b>KEMSA Code</b></th>
@@ -453,7 +453,7 @@ function update_transaction(baseUrl,data_array){
 
 <!-- pop out box -->
 <div id="add-form" title="Fill in the details below">
-	<table class="data-table" width="100%">
+	<table class="table-update" width="100%">
 					<thead>
 					<tr>
 						<th><b>KEMSA Code</b></th>
@@ -464,7 +464,7 @@ function update_transaction(baseUrl,data_array){
 					</thead>
 					<tbody>
 						<tr>
-						<td><input type="text" name="k_code"  value="0" /></td>
+						<td><input style="border: none" readonly="readonly" type="text" name="k_code"   /></td>
 						<td>
         <select id="desc" name="desc">
     <option>--Select Commodity Name--</option>
@@ -485,10 +485,9 @@ function update_transaction(baseUrl,data_array){
 		<?php endforeach;
 		endforeach;?>
 	</select></td>
-						<td><input  type="text" name="o_unit_size"  value="0" /></td>
-						<td><input type="text" name="o_unit_cost"  value="0" /></td>
-						<td><input type="text" name="cat_1"  value="0" /></td>
-						<td><input type="hidden"" name="drug_id"  value="0" /></td>
+						<td><input readonly="readonly" style="border: none"  type="text" name="o_unit_size"  /></td>
+						<td><input readonly="readonly" style="border: none" type="text" name="o_unit_cost"   /><input type="hidden" name="cat_1"  /></td>
+						<td><input type="hidden" name="drug_id"   /></td>
 						</tr>
 					</tbody>
 					</table>
@@ -523,7 +522,7 @@ function update_transaction(baseUrl,data_array){
 	</table>
 		<div id="demo">
 			<p>
-				<table id="main">
+				<table id="main" width="100%">
 					<thead>
 					<tr>
 						
@@ -531,7 +530,7 @@ function update_transaction(baseUrl,data_array){
 						<th><b>Description</b></th>
 						<th><b>KEMSA&nbsp;Code</b></th>
 						<th><b>Order Unit Size</b></th>
-						<th><b>Order Unit Cost</b></th>
+						<th><b>Order Unit Cost (Ksh) 2012/2013</b></th>
 						<th ><b>Opening Balance</b></th>
 						<th ><b>Total Receipts</b></th>
 					    <th><b>Total issues</b></th>
@@ -539,11 +538,12 @@ function update_transaction(baseUrl,data_array){
 					    <th><b>Losses</b></th>
 					    <th><b>Closing Stock</b></th>
 					    <th><b>No days out of stock</b></th>
+					     <th><b>Historical Consumption</b></th>
 					    <th><b>Suggested Order Quantity</b></th>
 					    <th><b>Order Quantity</b></th>
 					    <th><b>Actual Units</b></th>
-					    <th><b>Order Cost (Ksh)&nbsp;Year 2012/2013</b></th>	
-					   <th><b>Comment(if any)</b></th>				    
+					    <th><b>Order Cost</b></th>	
+					   <th><b>Comment (if any)</b></th>				    
 					</tr>
 					</thead>
 					
@@ -560,26 +560,27 @@ function update_transaction(baseUrl,data_array){
 							      echo form_hidden('price['.$count.']'  ,$facility_order[$i]['unit_cost']);
 							      echo form_hidden('unit_size['.$count.']'  ,$facility_order[$i]['unit_size']);
 								  echo form_hidden('historical['.$count.']'  ,$facility_order[$i]['historical']);
-								  echo form_hidden('closing_stock_['.$count.']'  ,$facility_order[$i]['closing_stock_']);
+								  echo form_hidden('closing_stock_['.$count.']'  ,$facility_order[$i]['closing_stock']);
 							      
 							      ?>
 							<td><?php echo $facility_order[$i]['drug_name']?></td>
 							<td><?php echo $facility_order[$i]['drug_code'];?></td>
 							<td><?php echo $facility_order[$i]['unit_size']?> </td>
 							<td><?php echo $facility_order[$i]['unit_cost']; ?> </td>
-							<td><input readonly="readonly" class="user" type="text"<?php echo 'name="open['.$count.']"'; ?>  value="<?php echo $facility_order[$i]['opening_balance'];?>" /></td>
-							<td><input class="user" readonly="readonly" type="text"<?php echo 'name="receipts['.$count.']"'; ?>  value="<?php echo $facility_order[$i]['total_receipts'];?>" /></td>
-							<td><input  class="user" readonly="readonly" type="text"<?php echo 'name="issues['.$count.']"'; ?>  value="<?php echo $facility_order[$i]['total_issues'];?>" /></td>
-							<td><input  class="user" readonly="readonly" type="text"<?php echo 'name="adjustments['.$count.']"'; ?> value="<?php echo $facility_order[$i]['adj']?>"  /></td>
-							<td><input  class="user" readonly="readonly" type="text"<?php echo 'name="losses['.$count.']"'; ?> value="<?php echo $facility_order[$i]['losses'] ?>" /></td>
-							<td><input  class="user" readonly="readonly" type="text"<?php echo 'name="closing['.$count.']"'; ?> value="<?php echo $facility_order[$i]['closing_stock'];?>" /></td>
-							<td><input  class="user" readonly="readonly" type="text"<?php echo 'name="days['.$count.']"'; ?> value="<?php echo $facility_order[$i]['days_out_of_stock'];?>" /></td>
-							<td ><input  class="user" readonly="readonly"type="text" <?php echo 'name="suggested['.$count.']"';?> value=""/></td>
+							<td><input style="border: none" readonly="readonly" class="user" type="text"<?php echo 'name="open['.$count.']"'; ?>  value="<?php echo $facility_order[$i]['opening_balance'];?>" /></td>
+							<td><input style="border: none" class="user" readonly="readonly" type="text"<?php echo 'name="receipts['.$count.']"'; ?>  value="<?php echo $facility_order[$i]['total_receipts'];?>" /></td>
+							<td><input style="border: none" class="user" readonly="readonly" type="text"<?php echo 'name="issues['.$count.']"'; ?>  value="<?php echo $facility_order[$i]['total_issues'];?>" /></td>
+							<td><input style="border: none" class="user" readonly="readonly" type="text"<?php echo 'name="adjustments['.$count.']"'; ?> value="<?php echo $facility_order[$i]['adj']?>"  /></td>
+							<td><input style="border: none" class="user" readonly="readonly" type="text"<?php echo 'name="losses['.$count.']"'; ?> value="<?php echo $facility_order[$i]['losses'] ?>" /></td>
+							<td><input style="border: none" class="user" readonly="readonly" type="text"<?php echo 'name="closing['.$count.']"'; ?> value="<?php echo $facility_order[$i]['closing_stock'];?>" /></td>
+							<td><input style="border: none" class="user" readonly="readonly" type="text"<?php echo 'name="days['.$count.']"'; ?> value="<?php echo $facility_order[$i]['days_out_of_stock'];?>" /></td>
+							<td ><input style="border: none" class="user" readonly="readonly" type="text" value="<?php echo $facility_order[$i]['historical'];?>"/></td>
+							<td ><input style="border: none" class="user" readonly="readonly"type="text" <?php echo 'name="suggested['.$count.']"';?> value=""/></td>
 							<td ><input id="quantity[]" class="user2" type="text" <?php echo 'name="quantity['.$count.']"';?> value="<?php $qty=$facility_order[$i]['qty'];
 							if($qty>0){echo $qty;} else echo 0;?>" onkeyup="<?php echo 'checker('.$count.','.$thr.')';?>"/></td>
 							<td><input class="user" readonly="readonly" style="border: none" type="text" <?php echo 'name="actual_quantity['.$count.']"';?> value="0"/></td>
 							<td><?php echo '<input style="border: none"  type="text" class="user" name="cost['.$count.']" value="0" readonly="yes"   />';?></td>
-							<td ><input type="text" class="input_text"  <?php echo 'name="comment['.$count.']"' ?> onkeyup="<?php echo 'update_comment('.$count.')';?>" value="N/A" /></td>
+							<td ><input type="text" class="user2" <?php echo 'name="comment['.$count.']"' ?> onkeyup="<?php echo 'update_comment('.$count.')';?>" value="N/A" /></td>
 			       
 						</tr>
 						
@@ -595,7 +596,9 @@ function update_transaction(baseUrl,data_array){
 		</div>
 		<?php  echo form_close()."<script>var count123=".($count)."</script>";
 		?>
+
+		<button class="btn" id="Add" >Add A Product</button>
+        <button class="btn btn-primary" id="Make-Order">Place Order</button>
 </div><!-- End demo -->
-<input  class="button" id="Add"  value="Add A Product" >
-<input class="button" id="Make-Order"  value="Place Order" >
+
 </body>

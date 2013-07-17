@@ -13,8 +13,9 @@
 	});
 
 </script>
+
 <div id="tabs">
-	<?php if(isset($popout)){ ?><div id="dialog" title="System Message"><p><?php echo $popout;?></p></div><?php }?>
+
 	<!--tabs!-->
 	<ul>
 		<li>
@@ -33,7 +34,7 @@
 	<div id="tabs-1">
 		<!--tab1 content!-->
 		<?php if(count($pending)>0) :?>
-		<table class="data-table">
+		<table class="table-update">
 			<tr>
 				<th><strong>Facility Order No </strong></th>
 				<th><strong>Order Total Ksh</strong></th> 
@@ -71,7 +72,7 @@ endif; ?>
 		<div id="tabs-2">
 		<!--tab1 content!-->
 		<?php if(count($pending_d)>0) :?>
-		<table class="data-table">
+		<table  class="table-update">
 			<tr>
 				<th><strong>Facility Order No </strong></th>
 				<th><strong>Order Value (Ksh)</strong></th> 
@@ -169,7 +170,7 @@ endif; ?>
 	<div id="tabs-5">
 		<!--tab 4 content!-->
 		<?php if(count($received)>0) :?>
-		<table class="data-table">
+		<table  class="table-update">
 			<tr>
 				<th><strong>Facility Order No </strong></th>
 				<th><strong>KEMSA Order No </strong></th>
