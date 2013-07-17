@@ -1,5 +1,6 @@
 <?php if(!defined('BASEPATH')) exit('No direct script access allowed');
- class Order_Approval extends MY_Controller {
+include_once('auto_sms.php');
+ class Order_Approval  extends auto_sms {
  	
  	function _construct(){
  		parent::_construct();
@@ -212,10 +213,7 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
 			$approve_name1=$myobj_approve->fname;
 			$approve_name2=$myobj_approve->lname;
 			$approve_telephone=$myobj_approve->telephone;
-          
-		  
-		  
-		  
+
           $bal=$d_rights-$order_total;
 		  $html_body .='</tbody></table></ol>'; 
 		  $html_body1 ='<table class="data-table" width="100%" style="background-color: 	#FFF380;">
@@ -249,52 +247,29 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
 			$this->mpdf->WriteHTML( $html_body1);
 			$report_name='facility_order_no'.$code;
            		  
-			//if( !
-			write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S'));
-			//)
-			/*{
+			if( !write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S')))
+			{
     	$msg="An error occured";
   $this->district_orders($msg);
              }
                   else{
-                  	$config = Array(
-  'protocol' => 'smtp',
-  'smtp_host' => 'ssl://smtp.googlemail.com',
-  'smtp_port' => 465,
-  'smtp_user' => 'hcmpkenya@gmail.com', // change it to yours
-  'smtp_pass' => 'healthkenya', // change it to yours
-  'mailtype' => 'html',
-  'charset' => 'iso-8859-1',
-  'wordwrap' => TRUE
-);
+  $email_address='kariukijackson@gmail.com';
+  $subject='Order Report For '.$fac_name;
+  $attach_file='./pdf/'.$report_name.'.pdf';
+  $bcc_email='kariukijackson@gmail.com';
+  $message=$html_title.$html_body;
+  
+ $response= $this->send_email($email_address,$message,$subject,$attach_file,$bcc_email);
  
-  $this->load->library('email', $config);
-  $this->email->set_newline("\r\n");
-  $this->email->from('hcmpkenya@gmail.com'); // change it to yours
-  $this->email->to('kariukijackson@ymail.com,kariukijackson@gmail.com'); // change it to yours
-  $this->email->bcc('hcmpkenya@gmail.com,nicomaingi@gmail.com,jsphmk14@gmail.com');
-  $this->email->subject('Order Report For '.$fac_name);
- 
-  $this->email->attach('./pdf/'.$report_name.'.pdf'); 
-  $this->email->message($html_title.$html_body);
- 
-  if($this->email->send())
- {
- delete_files('./pdf/');
+ if($response){
+ 	delete_files('./pdf/'.$report_name.'.pdf');
  }
- else
-{
- show_error($this->email->print_debugger());
-}
-  
 					
-  }*/
-  
-  
-	$this->send_email($email_address,$message,$subject,$attach_file=NULL,$bcc_email=NULL);
-  
+  }
+
    $msg="Order No $code has been approved";
-  $this->district_orders($msg);
+   
+   $this->district_orders($msg);
 	}
 	 function getWorkingDays($startDate,$endDate,$holidays){
     //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24

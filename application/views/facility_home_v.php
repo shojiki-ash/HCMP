@@ -39,7 +39,16 @@ $(document).ready(function(){
 });
 
 </script>
+<?php 
+$flash_data=NULL;
+$flash_data=$this->session->flashdata('reset_message');
 
+if ($flash_data !=NULL) {
+	
+	echo	'<p class="successreset">'.$flash_data.'</p>';
+}
+unset($popup);
+ ?>
 <div id="main_content">
 	<div id="left_content">
 		<fieldset>

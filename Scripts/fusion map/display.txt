@@ -1,9 +1,0 @@
-
-<div id='mapDiv' style="float: left; vertical-align: top; margin-top: -5px;">
-The map will replace this text. If any users do not have Flash Player 8 (or above), they'll see this message.	 </div>
-<script type="text/javascript">
-var map = new FusionMaps("FusionMaps/FCMap_KenyaCounty.swf", "KenyaMap", 800, 700, "0", "0");
-map.setDataURL("xml/map2.php");
-map.render("mapDiv");
-</script></p>
-    

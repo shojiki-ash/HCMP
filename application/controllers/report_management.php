@@ -2312,11 +2312,11 @@ echo $strXML;
 public function get_county_stock_status_view(){
 	$this->load->view("county/ajax_view/county_stock_status_v");
 }
-<<<<<<< HEAD
+
 public function get_lead_time(){
 	
 }
-=======
+
 public function district_drawing_rights_chart(){
 		$drawing_rights=Facilities::get_drawingR_county_by_district();
 		$strXML= "";
@@ -2352,6 +2352,6 @@ public function district_drawing_rights_chart(){
 			
 		
 		}
->>>>>>> 7ba521d78e614a16d26c210b414726c48756310d
+
 
 }

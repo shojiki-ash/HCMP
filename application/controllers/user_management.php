@@ -308,9 +308,9 @@ $user_name=$this->input->post('user_name');
 		$u->district = $district;
 		$u->facility = $facility_code;
 		
-		//$u->save();
+		$u->save();
 		
-		$message='Hello '.$f_name.',You have been registered. Check your email for login details HCMP';
+		$message='Hello '.$f_name.',You have been registered. Check your email for login details. HCMP';
 		$message_1='Hello '.$f_name.', You have been registered.Your username is '.$email.' and your password is '.$password.' Please reset your password after you login ';
 	    $subject="User Registration :".$f_name." ".$other_name;
 	
@@ -323,15 +323,13 @@ $user_name=$this->input->post('user_name');
   if($redirect){
   	$this->users_manage("$f_name,$other_name has been registerd");
   }
-  else{
-  	echo "$f_name $other_name has been registerd, your pass word is $password";
-  }
+
   
-   if($district_redirect){
+  elseif($district_redirect){
   	$this->dist_manage("$f_name,$other_name has been registerd");
   }
   else{
-  	echo "$f_name $other_name has been registerd, your pass word is $password";
+  	echo "$f_name $other_name has been registerd, your password is $password";
   }
  
 	}
@@ -479,7 +477,7 @@ $user_name=$this->input->post('user_name');
 			$response=$this->send_email($email,$message,$subject);
 			
 			
-				 $data['popup'] = "Successpopup";
+			 $data['popup'] = "Successpopup";
 	         $this -> load -> view("login_v",$data);
 			
 			

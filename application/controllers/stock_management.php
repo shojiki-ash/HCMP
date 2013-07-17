@@ -6,8 +6,40 @@ class Stock_Management extends auto_sms {
 		parent::__construct();
 		$this->load->helper(array('form','url'));
 	}
+	
+	public function reset_facility_details(){
+		$facility_code=$this -> session -> userdata('news');
+		
+		$reset_facility_transaction_table = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $reset_facility_transaction_table->execute("DELETE FROM `facility_transaction_table` WHERE  facility_code=$facility_code; ");
+	    
+		$reset_facility_stock_table = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $reset_facility_stock_table->execute("DELETE FROM `facility_stock` WHERE  facility_code=$facility_code");
+	    
+		$reset_facility_issues_table = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $reset_facility_issues_table->execute("DELETE FROM `facility_issues` WHERE  facility_code=$facility_code;");
+		
+		$facility_order_details_table = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $facility_order_details_table->fetchAll("select id from `ordertbl` WHERE  facilityCode=$facility_code;");
+		
+		foreach ( $facility_order_details_table as $key => $value) {
+		$reset_facility_order_table = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $reset_facility_order_table->execute("DELETE FROM `orderdetails` WHERE  orderNumber=$value; ");	
+		}
+	
+	    $reset_facility_order_table = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $reset_facility_order_table->execute("DELETE FROM `ordertbl` WHERE  facilityCode=$facility_code; ");
+		
+		
+		$this->session->set_flashdata('reset_message', 'Facility Stock Details Have Been Reset');
+		redirect('Home_Controller');
+	}
+	
+	
+	
+	
 	//the facility is meant to update their stock level when they first run the system
-	function facility_first_run(){
+	public function facility_first_run(){
 		$facility_code=$this -> session -> userdata('news');
 		
 		$data['title'] = "Update Stock Level on First Run";
@@ -35,8 +67,8 @@ class Stock_Management extends auto_sms {
 		$orderDate=date('y-m-d H:i:s');
 		
 		
-		//Facility_Transaction_Table::disable_facility_transaction_table($facility_c);
-		//Facility_Stock::disable_facility_stock($facility_c);
+		Facility_Transaction_Table::disable_facility_transaction_table($facility_c);
+		Facility_Stock::disable_facility_stock($facility_c);
 		
 		for($i=0;$i<=$count;$i++){
 			
@@ -90,36 +122,11 @@ class Stock_Management extends auto_sms {
 		
 //////////////////////////////////////////////////////////////////////////////////////////
 		
-  $this->send_stock_update_sms();
+          $this->send_stock_update_sms();
+		  $this->stock_level();
 ////////////////////////////////////////////////////////////////////////////////////////
 }
-     function send_stock_update_sms(){
-     		$facility_name = $this -> session -> userdata('full_name');
-		    $facility_c=$this -> session -> userdata('news');
-			
-	
-		$data=User::get_user_info($facility_c);
-		  $phone="";    
-		foreach ($data as $info) {
-			$usertype_id = $info->usertype_id;
-			$telephone ="254726534272"; //$info->telephone;
-			$district = $info->district;
-			$facility = $info->facility;
-			
-		
-		$phone .=$telephone.'+';	
-
-		
-		}
-	    $message= "Stock level for facility ".$facility_name." has been updated.";
-		$this->stock_level();
-
-	}
-	
-	
-		
-     	
-	
+ 		
 public function autosave_update(){
 	$facility_c=$this -> session -> userdata('news');
 	
@@ -154,10 +161,7 @@ public function autosave_update(){
 public static function delete_temp_autosave(){
 		if (isset($_POST['drugid'])) {
 			$facilitycode=$_POST['facilitycode'];
-			$drugid=$_POST['drugid'];
-			
-			//$this->send_sms();
-			
+			$drugid=$_POST['drugid'];			
 			
 			$detail = Update_stock_first_temp::delete_facility_temp($drugid, $facilitycode);
 			
@@ -205,10 +209,7 @@ public function donation()
 
 //updating the facility transaction table
 		$data=Facility_Stock::count_facility_stock($facility_c,$orderDate);
-      
-	
-	  
-	  
+
 		foreach ($data as $infor) {
 			$qty=$infor->quantity1;
 			$kemsa_code_=$infor->kemsa_code;
@@ -248,8 +249,8 @@ public function donation()
 		
 			}
 
- $this->send_stock_update_sms();
-      	
+      $this->send_stock_donate_sms($other_facility_code);
+      $this->stock_level(); 	
 	}
 
 

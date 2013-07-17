@@ -217,9 +217,8 @@ echo "The Last Stock Update was as at : $datea";?></div>
                 </table>
                 <?php
      echo form_close(); ?>   
-           
-        </div>
-</div><!-- End demo -->
-<br />
+           <br />
 <input class="button" id="Make-Order" style="margin-left: 0%" <?php if(isset($update))
 {echo 'value=',$update;} else  {?>value="Proceed To Order" <?php }  ?> >
+        </div>
+</div><!-- End demo -->

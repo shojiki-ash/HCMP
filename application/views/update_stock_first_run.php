@@ -495,7 +495,7 @@ $('.del').live('click',function(){
 						<td><input class='my_date' type='text' name='expiry_date[".$count."]' required='required' value='$data->expiry_date'></td>
 						<td><input class='user' name='a_stock[".$count."]' onkeyup='calculate_a_stock(".$count.")' required='required' value='$data->stock_level'></td>
 						<td><input class='user1' readonly='readonly' type ='text' name='qreceived[".$count."]'  value='$data->unit_count'></td>
-						<td>  <img class='del' src='".base_url()."Images/close.png' /> </td>
+						<td><img class='del' src='".base_url()."Images/close.png' /> </td>
 						
 						
 						</tr>";
@@ -505,9 +505,10 @@ $('.del').live('click',function(){
 						?>
 						</tbody>
 						</table>
+						<input class="button"   id="NewIssue"  value="Add Commodity" >
+                        <input  class="button"   id="save1"  value="Save" >
+                        <?php echo form_close();?>	
 </div>
-<input class="button"   id="NewIssue"  value="Add Commodity" >
-<input  class="button"   id="save1"  value="Save" >
-<?php echo form_close();?>	
+
          
 

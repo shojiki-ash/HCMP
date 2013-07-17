@@ -119,5 +119,8 @@ $(document).ready(function(){
 		<div class="activity users">
 		<a id="user_profile" href="#"><h2>User Profile</h2></a>
 		</div>
+			<div class="activity update">
+	    <a href="<?php echo site_url('stock_management/reset_facility_details');?>"><h2>Reset Facility Stock Data</h2></a>
+		</div>
 		</fieldset>
 	</div>

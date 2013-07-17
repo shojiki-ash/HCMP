@@ -137,6 +137,12 @@ return i;
 </script>
 <script type="text/javascript">
 	$(document).ready(function() {
+					$('.successreset').fadeOut(5000, function() {
+    // Animation complete.
+  });
+$('.errorlogin').fadeOut(5000, function() {
+    // Animation complete.
+  });
 		$('#myModal').modal('hide')
 		
 		$("#my_profile_link").click(function(){
@@ -144,7 +150,7 @@ return i;
 		});
 		$('#top-panel').waypoint('sticky');
 		
-		$('#changepswd').click('hide'){
+		$('#changepswd').click(function(){
 		$('#myModal').modal('show');
 		
 		});
