@@ -38,7 +38,7 @@ body {
 #inner_wrapper {
 	width: 100%;
 	height:auto;
-	margin: 0 auto;
+	margin-top: 15em;
 	
 	overflow: visible;
 	min-height: 500px;
@@ -48,7 +48,7 @@ body {
 
 
 #top-panel {
-	overflow: hidden;
+	
 	width: 100%;
 	height: auto;
 	background: white;
@@ -761,17 +761,15 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2f52b7', endC
   text-align: left;
   display: inline;
   margin: 0;
-  padding: 15px 4px 17px 0;
+  padding: 13px 4px 17px 0;
   list-style: none;
-  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  
 }
 #navigate ul li {
   display: inline-block;
   margin-right: -4px;
   position: relative;
-  padding: 15px 20px;
+  padding: 13px 18px;
   background: #29527b; /* Old browsers */
   cursor: pointer;
   -webkit-transition: all 0.2s;
@@ -788,8 +786,8 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2f52b7', endC
 #navigate ul li ul {
   padding: 0;
   position: absolute;
-  top: 48px;
-  left: 0;
+  top: 45px;
+  right: 0.5px;
   width: 150px;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -811,7 +809,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2f52b7', endC
 #navigate ul li ul li:hover { background: #289909; }
 #navigate ul li:hover ul {
   display: block;
-  opacity: 0.8;
+  opacity: 1;
   visibility: visible;
   
 }

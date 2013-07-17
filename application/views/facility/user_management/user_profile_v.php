@@ -40,6 +40,7 @@ color: #B70000;
 			}
 			
 		</style>  
+		<div id="dialog">
 
 <?php $attributes = array( 'name' => 'myform', 'id'=>'formEditData','class'=>'form_settings', 'title'=>'User Details');
 	 echo form_open('user_management/edit_user_profile',$attributes); ?>
@@ -55,3 +56,4 @@ color: #B70000;
 
         <p><span>Phone No</span><input type="text" name="phone_no"  id="phone_no" required="required" value="<?php echo $user_data[0]['telephone'] ?>" placeholder="254...."/> <b class="super">*</b></p>
 </form>
+</div>

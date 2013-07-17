@@ -713,7 +713,19 @@ $user_name=$this->input->post('user_name');
 		$data['result'] = User::getAll2($facility,$id);
 		$data['quick_link'] = "users_facility_v";
 		$data['counties'] = Counties::getAll();
-		$this -> load -> view("template", $data);
-	}
+		$this -> load -> view("template" , $data);
+			}
 
-}
+			public function password_change(){
+				
+		$initialpassword=$_POST['inputPasswordinitial'];
+		$id=$this -> session -> userdata('user_db_id');
+		$newpassword=$_POST['inputPasswordnew2'];
+		
+		
+		
+			
+
+			}
+			}
+
