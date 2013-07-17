@@ -114,6 +114,7 @@ if (isset($styles)) {
         }
     </style>
 <script type="text/javascript">
+
 function showTime()
 {
 var today=new Date();
@@ -135,15 +136,8 @@ if (i<10)
   }
 return i;
 }
-</script>
-<script type="text/javascript">
-	$(document).ready(function() {
-					$('.successreset').fadeOut(5000, function() {
-    // Animation complete.
-  });
-$('.errorlogin').fadeOut(5000, function() {
-    // Animation complete.
-  });
+$(document).ready(function() {
+	
 		$('#myModal').modal('hide')
 		
 		$("#my_profile_link").click(function(){
@@ -151,16 +145,16 @@ $('.errorlogin').fadeOut(5000, function() {
 		});
 		$('#top-panel').waypoint('sticky');
 		
-
-		$('#changepswd').click(function() {
-   
-
+		$('.dropdown-toggle').dropdown()
+    });
+    (function() {
+    $('#changepswd').click(function(){
 		$('#myModal').modal('show');
-		$('.dropdown-toggle').dropdown();
+		
 		});
 
-
-	
+	});
+	(function() {
 	$("changeps").click(function(){
 	alert('$("#inputPasswordinitial").val()');
 	
