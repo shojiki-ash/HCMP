@@ -103,9 +103,9 @@ if (isset($popup)) {
 }
 unset($popup);
  ?>
- <form action="<?php echo base_url().'user_management/submit'?>" method="post" id="login">
+ <form action="<?php echo base_url().'user_management/submit'?>" method="post" id="slick-login">
   	
-<div id="slick-login">
+<div >
 	 <section class="short_title" >
 	 	<legend class="login_text">Sign in</legend>
 

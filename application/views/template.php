@@ -63,14 +63,15 @@ if($access_level=="allocation_committee"){
 <title><?php echo $title;?></title>
 <link rel="icon" href="<?php echo base_url().'Images/coat_of_arms.png'?>" type="image/x-icon" />
 <link href="<?php echo base_url().'CSS/style.css'?>" type="text/css" rel="stylesheet"/> 
-<link href="<?php echo base_url().'CSS/jquery-ui.css'?>" type="text/css" rel="stylesheet"/> 
 <link href="<?php echo base_url().'CSS/bootstrap.css'?>" type="text/css" rel="stylesheet"/>
 <link href="<?php echo base_url().'CSS/bootstrap-responsive.css'?>" type="text/css" rel="stylesheet"/>
 <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
+<link href="<?php echo base_url().'CSS/jquery-ui.css'?>" type="text/css" rel="stylesheet"/> 
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/waypoints.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/waypoints-sticky.min.js'?>" type="text/javascript"></script>
 <script src="<?php echo base_url().'Scripts/bootstrap.js'?>" type="text/javascript"></script>
+
 
 <script src="<?php echo base_url().'Scripts/validator.js'?>" type="text/javascript"></script>
 <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
@@ -107,7 +108,7 @@ if (isset($styles)) {
         .ui-dialog .ui-state-error { padding: .3em; }
         .validateTips { border: 1px solid transparent; padding: 0.3em; }
         
-       #top-panel a{
+       #top_menu a{
         	color:white;
         	text-decoration:none;
         }
@@ -150,13 +151,41 @@ $('.errorlogin').fadeOut(5000, function() {
 		});
 		$('#top-panel').waypoint('sticky');
 		
-		$('#changepswd').click(function(){
+
+		$('#changepswd').click(function() {
+   
+
 		$('#myModal').modal('show');
-		
+		$('.dropdown-toggle').dropdown();
 		});
-    });
+
 
 	
+	$("changeps").click(function(){
+	alert('$("#inputPasswordinitial").val()');
+	
+      var url = "<?php echo base_url().'user_management/password_change'?>";
+    ajax_request (url);
+   
+	function ajax_request (url){
+	var url =url;
+	 $.ajax({
+          type: "POST",
+          data:{ inputPasswordinitial: $("#inputPasswordinitial").val(),inputPasswordnew2: $("#inputPasswordnew2").val() },
+          url: url,
+          success: function(e){
+       //ERROR WILL BE SHOWN IN THE "#error" ELEMENT
+       if(e){
+         $(".error").html(e);
+       } else {
+         //GOES THE "CHANGE PASSWORD" FORM UPON LOGGING IN
+         window.location = "<?php echo base_url()?>";
+       }
+     }
+        }); 
+}
+ });
+ });
 </script>
 </head>
  
@@ -232,13 +261,13 @@ if($user_is_facility){
 }?>
 <li>
 	<ul>
-		<li>Edit stock Details</li>
+		<li><a></a> stock Details</li>
 		<li>Historical Data</li>
-		<li>User Profile</li>
-	</ul><a  href="<?php echo base_url();?>report_management/facility_settings"  class="<?php
+		
+	</ul><i class=" icon-wrench icon-white" style="margin-right: 0.3em; margin-top: 0.1em;"></i><a  href="<?php echo base_url();?>report_management/facility_settings"  class="<?php
 	if ($quick_link == "user_facility_v") {echo "active";
 	}
-?>">Settings</a><i class=" icon-cog" style="margin-left: 0.3em; margin-top: 0.1em;"></i></li>
+?>">Settings</a></li>
  
 <?php } if($user_is_district){
 	?>
@@ -402,16 +431,28 @@ if($user_is_facility){
 </nav>
 </div>
   	
-	<div style="font-size:15px; float:right; padding: 1em "><?php echo date('l, dS F Y');?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div> </div>
+	<div style="font-size:15px; float:right; padding: 1em "><?php echo date('l, dS F Y');?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div>
+	 </div>
+	 
 <div class="banner_content" style="font-size:20px; float:right; margin-top: 1.15em;"><?php echo $this -> session -> userdata('full_name').": ".$banner_text;?>
 
 	
-	<div style="float:right"><i class=" icon-user" style="margin-right: 0.1em;margin-top: 0.3em;"></i>
+	<div style="float:right">
 		
-
-		 <?php echo $this -> session -> userdata('names');?> <?php echo $this -> session -> userdata('inames');?>
-	<a  class="link" href="<?php echo base_url();?>user_management/logout">Logout?</a>|<a href="#myModal" data-toggle="modal" data-target="#myModal" id="changepswd" class="link">Change password
-		</a>
+<div class="btn-group">
+  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user icon-white"></i> <?php echo $this -> session -> userdata('names');?> <?php echo $this -> session -> userdata('inames');?><span style="margin-left: 0.3em;" class="caret"></span></a>
+  
+  <ul class="dropdown-menu" style="font:#FFF">
+    <li><a href="#"><i class="icon-pencil"></i> Edit Settings</a></li>
+    <li><a href="#myModal" data-toggle="modal" data-target="#myModal" id="changepswd" ><i class="icon-edit"></i> Change password</a></li>
+    
+    
+    <li class="divider"></li>
+    <li><a href="<?php echo base_url();?>user_management/logout"><i class=" icon-off"></i> Log Out</a></li>
+  </ul>
+</div>
+		 
+	
 		</div>
 	
 	</div>
@@ -434,35 +475,41 @@ if($user_is_facility){
 	Government of Kenya &copy; <?php echo date('Y');?>. All Rights Reserved
 	
 	</div>
+	
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 id="myModalLabel">Change Password</h3>
   </div>
-  <form class="form-horizontal">
+  <form class="form-horizontal" action="<?php echo base_url().'User_Management/password_change'?>" method="post" id="change">
   <div class="control-group" style="margin-top: 1em;">
     <label class="control-label" for="inputPassword">Old Password</label>
     <div class="controls">
-      <input type="password" id="inputPassword" placeholder="Old Password">
+      <input type="password" id="inputPasswordinitial" name="inputPasswordinitial" placeholder="Old Password" required="required">
     </div>
   </div>
   <div class="control-group">
     <label class="control-label" for="inputPassword">New Password</label>
     <div class="controls">
-      <input type="password" id="inputPassword" placeholder="New Password">
+      <input type="password" id="inputPasswordnew" placeholder="New Password" required="required">
     </div>
   </div>
   <div class="control-group">
     <label class="control-label" for="inputPassword">Confirm Password</label>
     <div class="controls">
-      <input type="password" id="inputPassword" placeholder="Confirm Password">
+      <input type="password" id="inputPasswordnew2" name="inputPasswordnew2" placeholder="Confirm Password" required="required">
     </div>
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button class="btn btn-primary">Change Password</button>
+    <button class="btn btn-primary" id="changeps">Change Password</button>
+    <div class="error"></div>
   </div>
 </div>
+</form>
+<?php 
+		echo form_close();
+		?>
     
 </body>
 
