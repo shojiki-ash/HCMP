@@ -61,30 +61,8 @@ input[type=radio]:checked + label:before {
 	}
 	
 	</style>
-	<script>
-		$.fn.dataTableExt.oApi.fnStandingRedraw = function(oSettings) {
-    //redraw to account for filtering and sorting
-    // concept here is that (for client side) there is a row got inserted at the end (for an add)
-    // or when a record was modified it could be in the middle of the table
-    // that is probably not supposed to be there - due to filtering / sorting
-    // so we need to re process filtering and sorting
-    // BUT - if it is server side - then this should be handled by the server - so skip this step
-    if(oSettings.oFeatures.bServerSide === false){
-        var before = oSettings._iDisplayStart;
-        oSettings.oApi._fnReDraw(oSettings);
-        //iDisplayStart has been reset to zero - so lets change it back
-        oSettings._iDisplayStart = before;
-        oSettings.oApi._fnCalculateEnd(oSettings);
-    }
-      
-    //draw the 'current' page
-    oSettings.oApi._fnDraw(oSettings);
-};
-	</script>
-   <script> 
-   
-   
-     
+
+   <script>    
   function calculate_a_stock (argument) {
   	
   	
@@ -164,7 +142,7 @@ json_obj = {
 		var count=count123;
 				$( "#IssueNow" ).dialog({
 		    autoOpen: true,
-			height: 150,
+			height: 200,
 			width:1500,
 			modal: true,
 			buttons: {
@@ -181,12 +159,7 @@ else
   {
   return;
   }
-					//window.confirm("sometext");
-					//$("#qreceived").val
-					
-					
-									
-						    
+ 
           $( "#main" ).dataTable().fnAddData( [
           	"" + details_array[2] + "",
          '<input type="hidden" name="kemsa_code['+count+']" value="'+details_array[0]+'" />'+
@@ -495,7 +468,7 @@ $('.del').live('click',function(){
 						<td><input class='my_date' type='text' name='expiry_date[".$count."]' required='required' value='$data->expiry_date'></td>
 						<td><input class='user' name='a_stock[".$count."]' onkeyup='calculate_a_stock(".$count.")' required='required' value='$data->stock_level'></td>
 						<td><input class='user1' readonly='readonly' type ='text' name='qreceived[".$count."]'  value='$data->unit_count'></td>
-						<td>  <img class='del' src='".base_url()."Images/close.png' /> </td>
+						<td><img class='del' src='".base_url()."Images/close.png' /> </td>
 						
 						
 						</tr>";
@@ -505,9 +478,11 @@ $('.del').live('click',function(){
 						?>
 						</tbody>
 						</table>
+						<?php echo form_close();?>	
+						<button class="btn"  id="NewIssue">Add Commodity </button>
+                        <button class="btn btn-primary"   id="save1" >Save</button>
+                        
 </div>
-<input class="button"   id="NewIssue"  value="Add Commodity" >
-<input  class="button"   id="save1"  value="Save" >
-<?php echo form_close();?>	
+
          
 

@@ -114,6 +114,7 @@ if (isset($styles)) {
         }
     </style>
 <script type="text/javascript">
+
 function showTime()
 {
 var today=new Date();
@@ -135,9 +136,15 @@ if (i<10)
   }
 return i;
 }
-</script>
-<script type="text/javascript">
-	$(document).ready(function() {
+$(document).ready(function() {
+			$('.successreset').fadeOut(5000, function() {
+    // Animation complete.
+  });
+$('.errorlogin').fadeOut(5000, function() {
+    // Animation complete.
+  });	
+			
+	
 		$('#myModal').modal('hide')
 		
 		$("#my_profile_link").click(function(){
@@ -147,14 +154,15 @@ return i;
 		
 		$('.dropdown-toggle').dropdown()
     });
-    (function() {
-    $('#changepswd').click(function(){
+
+	(function() {
+		
+      $('#changepswd').click(function(){
 		$('#myModal').modal('show');
 		
-		});
+		});		
+	
 
-	});
-	(function() {
 	$("changeps").click(function(){
 	alert('$("#inputPasswordinitial").val()');
 	
@@ -453,7 +461,19 @@ if($user_is_facility){
 <!-- MOH USR-->
 
 <div id="inner_wrapper"> 
- 
+ 		<?php 
+$flash_success_data=NULL;
+$flash_error_data=NULL;
+$flash_success_data=$this->session->flashdata('system_success_message');
+$flash_error_data=$this->session->flashdata('system_error_message');
+if ($flash_success_data !=NULL) {
+	echo	'<p class="successreset">'.$flash_success_data.'</p>';
+}
+
+elseif($flash_error_data !=NULL){
+	echo	'<p class="errorlogin">'.$flash_error_data.'</p>';
+}
+ ?>
 <?php $this -> load -> view($content_view);?>
 <!-- end inner wrapper -->
 
@@ -465,7 +485,7 @@ if($user_is_facility){
 	Government of Kenya &copy; <?php echo date('Y');?>. All Rights Reserved
 	
 	</div>
-	
+
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>

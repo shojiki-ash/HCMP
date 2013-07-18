@@ -11,38 +11,40 @@ class Issues_main extends MY_Controller {
 	}
 	
 	
-	public function index(){
-	    $checker=$this->uri->segment(3);
+	public function index($checker=NULL,$pop_up_msg=NULL){
 		$facility=$this -> session -> userdata('news');
-		$facility=$this->uri->segment(4);
-		
-		
-		
+		//$facility=$this->uri->segment(4);
+
 			switch ($checker)
 			{
 				case 'Internal':
+					
 					$data['content_view'] = "IssueInternal_v";
 					$data['title'] = "Stock";
 					$data['banner_text'] = "Issue";
 					$data['link'] = "IssuesnReceipts";
 					$data['quick_link'] = "IssueInternal_v";
+					
 					break;
 					case 'External':
+						
 						$data['content_view'] = "IssueExternal_v";
-						$data['content_view'] = "IssueExternal_v";						
+						//$data['content_view'] = "IssueExternal_v";						
 						$county=districts::get_county_id($this -> session -> userdata('district1'));
 						$data['district']=districts::getDistrict($county[0]['county']);
 						$data['banner_text'] = "Donate";
 						$data['title'] = "Stock";
 						$data['quick_link'] = "IssueExternal_v";
+						
 					break;
 					
-					case 'Donation':				   
-		$data['title'] = "Update Stock Level: Donation";
-     	$data['content_view'] = "facility/update_stock_donation_v";
-		$data['banner_text'] = "Update Stock Level: Donation";
-		$data['drug_categories'] = Drug_Category::getAll();
-		$data['quick_link'] = "update_stock_level";
+					case 'Donation':
+										   
+		        $data['title'] = "Update Stock Level: Donation";
+     	        $data['content_view'] = "facility/update_stock_donation_v";
+		        $data['banner_text'] = "Update Stock Level: Donation";
+		        $data['drug_categories'] = Drug_Category::getAll();
+		        $data['quick_link'] = "update_stock_level";
 		
 	   
 						break;
@@ -53,6 +55,7 @@ class Issues_main extends MY_Controller {
 						$data['banner_text'] = "Issues Home";
 						$data['title'] = "Stock";
 						$data['quick_link'] = "issuenRecpt";
+						$data['popout']=$pop_up_msg;
 									
 			}
 
@@ -125,18 +128,12 @@ class Issues_main extends MY_Controller {
 			}
 			
 			
-			$data['title'] = "Stock";
-			$data['drugs'] = Drug::getAll();
-			$data['popout'] = "You have issued $count item(s)";
-			$data['content_view'] = "issuesnRecpt";
-			$data['banner_text'] = "Stock Control Card";
-			$data['link'] = "order_management";
-     		$data['quick_link'] = "stockcontrol_c";
-			$this -> load -> view("template", $data);
+			
+
 			
 		}
         
-        
+        $this->index('',"You have issued $count item(s)");
 		
 		
 	}
@@ -269,17 +266,9 @@ public function InsertExt()
 			
         	
 		}
-             $data['title'] = "Stock";
-			$data['drugs'] = Drug::getAll();
-			$data['popout'] = "You have Donated $count item(s)";
-			$data['content_view'] = "issuesnRecpt";
-			$data['banner_text'] = "Stock Control Card";
-			$data['link'] = "order_management";
-     		$data['quick_link'] = "stockcontrol_c";
-			$this -> load -> view("template", $data);
-        
-		
-		
+         $this->send_stock_donate_sms();
+		 $this->index('',"You have Donated $count item(s)");
+
 	}
 	
 	}

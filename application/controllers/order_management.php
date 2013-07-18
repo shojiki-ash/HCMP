@@ -481,7 +481,7 @@ $this -> load -> view("template", $data);
 	}
 	
 	public function makeOrder(){
-		
+		$drawing_rights=0;
 		$ids=$_POST['kemsaCode'];
 		$price=$_POST['price'];
 		$open=$_POST['open'];
@@ -497,8 +497,9 @@ $this -> load -> view("template", $data);
 		$workload=$_POST['workload'];
 		$order_no=$_POST['order_no'];
 		$bed_capacity=$_POST['bed_capacity'];
-		
+		$historical_consumption=$_POST['historical'];
 		$orderDate=date('y-m-d'); 
+		
 		$facilityCode=$facility_c=$this -> session -> userdata('news');
 		$user_id=$facility_c=$this -> session -> userdata('user_id');
 		$drawing_rights = $this -> session -> userdata('drawing_rights');
@@ -538,7 +539,8 @@ $this -> load -> view("template", $data);
 		'workload'=>$workload,
 		'bed_capacity'=>$bed_capacity,
 		'order_no'=>$order_no,
-		'o_balance'=>$open[$i]);
+		'o_balance'=>$open[$i],
+		'historical_consumption'=>$historical_consumption[$i]);
 		$total=$quantity[$i]*$price[$i]+$total;
 		$u = new Orderdetails();
 		$u->fromArray($data);
@@ -550,22 +552,17 @@ $this -> load -> view("template", $data);
 		
 	    
 		$myobj = Doctrine::getTable('Ordertbl')->find($newOrderid);
-        $myobj->orderTotal = $total;
+        $myobj->orderTotal =$total;
+		$myobj->orderby =$user_id;
+		$myobj->workload =$workload;
+		$myobj->bedcapacity =$bed_capacity;
+		$myobj->order_no = $order_no;
         $myobj->save();
 		
-		$data['popout'] = "Your order has been saved";
-		 $facility_c=$this -> session -> userdata('news');
-				//$this->o_list("Your order has been saved");
-		$data['myClass'] = $this;
-		$data['pending'] = Ordertbl::getPending($facility_c);
-		$data['pending_d'] = Ordertbl::getPending_d($facility_c);
-		$data['dispatched'] = Ordertbl::getDispatched($facility_c);
-		$data['received']=Ordertbl::get_received($facility_c);
-		$data['title'] = "All Orders";
-		$data['content_view'] = "orders_listing_v";
-		$data['banner_text'] = "All Orders";
-		$data['link'] = "order_management"; 
-		$this -> load -> view("template", $data);
+	
+	$this->session->set_flashdata('system_success_message', 'Your order has been saved');	
+	redirect('Order_Management/#tabs-1');
+	
 	}
 	public function moh_order_v(){
 		
@@ -868,9 +865,9 @@ return NULL;
 		$this -> load -> view("template", $data);
 		
 	}
-	public function o_list(){
+	public function o_list($pop_out_msg=NULL){
 		$facility_c=$this -> session -> userdata('news');
-		//echo $facility_c;
+		$data['popout'] =$pop_out_msg;
 		$data['myClass'] = $this;
 		$data['pending'] = Ordertbl::getPending($facility_c);
 		$data['dispatched'] = Ordertbl::getDispatched($facility_c);

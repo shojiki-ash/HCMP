@@ -334,72 +334,22 @@ $('.del').live('click',function(){
 }); 
 
    </script>  
-   
-   
 
-   <style>
-   	form {
-    font-family: helvetica, arial, sans-serif;
-    font-size: 11px;
-}
- 
-form div{
-    margin-bottom:10px;
-}
- 
-form a {
-    display: inline-block;
-	min-width: 54px;
-	text-align: center;
-	color: #555;
-	font-size: 11px;
-	font-weight: bold;
-	height: 27px;
-	padding: 0 8px;
-	line-height: 27px;
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	
-	border: 1px solid gainsboro;
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	background-color: whiteSmoke;
-	
-	cursor: default;
-}
- 
-form a:hover{
-    border: 1px solid black;
-}
-td {
-		padding: 5px;
-	}	
-	a {
-    text-decoration:underline;
-    color:#00F;
-    cursor:pointer;
-}
-
-   </style>
-   
-   
-  
-	
-	
 	
 	<div id="IssueNow" title="Fill in the details below">
-	<table class="data-table" width="100%">
+	<table class="table-update"   width="100%">
 					<thead>
 					<tr>
-						<th><b>S11 No</b></th>
-						<th><b>Description ( Click to Select commodity )</b></th>
-						<th><b>Unit Size</b></th>
-						<th><b>Batch No</b></th>
-						<th><b>Expiry Date</b></th>
-						<th><b>Available Stock</b></th>
-						<th><b>Issued Quantity</b></th>	
-						<th><b>Issue Date</b></th>	
-						<th><b>Service Point</b></th>
+						<th><b>S11&nbsp;No</b></th>
+						<th><b>Service&nbsp;Point</b></th>
+						<th><b>Description&nbsp;(&nbsp;Click&nbsp;to Select&nbsp;commodity&nbsp;)</b></th>
+						<th><b>Unit&nbsp;Size</b></th>
+						<th><b>Batch&nbsp;No</b></th>
+						<th><b>Expiry&nbsp;Date</b></th>
+						<th><b>Available&nbsp;Stock</b></th>
+						<th><b>Issued&nbsp;Quantity</b></th>	
+						<th><b>Issue&nbsp;Date</b></th>	
+						
 						   
 					</tr>
 					</thead>
@@ -409,6 +359,20 @@ td {
 								<input  class="user" "text" name="s11N" id="s11N" value=""/>
 								
 							</td>
+									<td width="60">   
+					<select id="Servicepoint" name="Servicepoint" class="user1">
+						<option>-Select-</option>
+						<option value="CCC">CCC</option>
+						<option value="Pharmacy">Pharmacy</option>
+						<option value="Lab">Lab</option>
+						<option value="Maternity">Maternity</option>
+						<option value="Injection Room">Injection Room</option>
+						<option value="Dressing room">Dressing room</option>
+						<option value="TB Clinic">TB Clinic</option>
+						<option value="MCH">MCH</option>
+						<option value="Diabetic Clinic">Diabetic Clinic</option>
+					</select>
+					 </td>
 						<td width="400">
 							
         <select class="dropdownsize" id="desc" name="desc">
@@ -455,20 +419,7 @@ td {
 					$today= ( date('d M, Y')); 
 					
 				?><input type="text" name="datepicker" class="date" readonly="readonly" value="<?php echo $today;?>" id="datepicker"/></td>
-				<td width="60">   
-					<select id="Servicepoint" name="Servicepoint" class="user1">
-						<option>-Select-</option>
-						<option value="CCC">CCC</option>
-						<option value="Pharmacy">Pharmacy</option>
-						<option value="Lab">Lab</option>
-						<option value="Maternity">Maternity</option>
-						<option value="Injection Room">Injection Room</option>
-						<option value="Dressing room">Dressing room</option>
-						<option value="TB Clinic">TB Clinic</option>
-						<option value="MCH">MCH</option>
-						<option value="Diabetic Clinic">Diabetic Clinic</option>
-					</select>
-					 </td>
+		
 				
 						</tr>
 					</tbody>
@@ -516,5 +467,5 @@ td {
 				</table>
 				</form>
 
-<input   id="NewIssue"  value="Issue" >
-<input id="finishIssue"  type="submit" value="Finish" >
+<button class="btn"  id="NewIssue">Issue</button>
+<button class="btn btn-primary" id="finishIssue" type="submit"  >Finish</button>

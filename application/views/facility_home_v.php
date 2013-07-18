@@ -39,7 +39,16 @@ $(document).ready(function(){
 });
 
 </script>
+<?php 
+$flash_data=NULL;
+$flash_data=$this->session->flashdata('reset_message');
 
+if ($flash_data !=NULL) {
+	
+	echo	'<p class="successreset">'.$flash_data.'</p>';
+}
+unset($popup);
+ ?>
 <div id="main_content">
 	<div id="left_content">
 		<fieldset>
@@ -84,7 +93,7 @@ $(document).ready(function(){
 			<h2>Pending Dispatch</h2>
 			<p>
 				<a class="link" href="<?php 
-				 echo site_url("Order_Management/index/");?>"><?php echo $pending_orders_d;?> Order(s) pending dispatch from KEMSA</a>
+				 echo site_url("Order_Management/index/#tabs-2");?>"><?php echo $pending_orders_d;?> Order(s) pending dispatch from KEMSA</a>
 			</p>
 		</div>
 		<?php endif;?>

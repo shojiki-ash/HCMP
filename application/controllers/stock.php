@@ -156,7 +156,7 @@ public function submit(){
 		
 		}
 	    $message= "Stock level for facility ".$facility_name." has been updated. HCMP";
-		 $message=urlencode($message);
+		$message=urlencode($message);
 	
 
 	

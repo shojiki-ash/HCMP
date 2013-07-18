@@ -1,8 +1,8 @@
 <?php
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
-
-class Report_Management extends MY_Controller {
+include_once('auto_sms.php');
+class Report_Management extends auto_sms {
 	function __construct() {
 		parent::__construct();
 		$this->load->helper('url');
@@ -358,7 +358,7 @@ $unitCost = 0.00;
 		$unitCost = 0.01;
 		break;
 	}
-$dataElement = $query[$got]['drug_name'];
+    $dataElement = $query[$got]['drug_name'];
 	$bBalance = $query[$got]['opening_balance']*$unitCost;
 	$qReceived = $query[$got]['total_receipts']*$unitCost;
 	$qDispensed = $query[$got]['total_issues']*$unitCost;
@@ -2083,25 +2083,9 @@ public function cummulative_fill_rate_chart(){
 <color minValue='80' maxValue='100' code='8BBA00'/>
 </colorRange>
 <dials>
-<dial value='92' rearExtension='10'/>
+<dial value='60' rearExtension='10' baseWidth='2'/>
 </dials>
-<trendpoints>
-<point value='50' displayValue='Cummulative Fill Rate' fontcolor='FF4400' useMarker='1' dashed='1' dashLen='2' dashGap='2' valueInside='1'/>
-</trendpoints>
-<!-- Rectangles behind the gauge  -->
-<annotations>
-<annotationGroup id='Grp1' showBelow='1'>
-<annotation/>
-</annotationGroup>
-</annotations>
-<styles>
-<definition>
-<style name='RectShadow' type='shadow' strength='3'/>
-</definition>
-<application>
-<apply toObject='Grp1' styles='RectShadow'/>
-</application>
-</styles>
+
 </chart>";
 
 echo $strXML;
@@ -2135,8 +2119,7 @@ $strXML = "<Chart bgColor='FFFFFF' bgAlpha='0' numberSuffix='%' caption='$title'
 showGaugeLabels='0' valueAbovePointer='0' pointerOnTop='1' pointerRadius='5'>
     <colorRange> 
        
-        <color minValue='0' maxValue='33' name='Orders Placed' code='FF0000' />
-        
+        <color minValue='0' maxValue='33' name='Orders Placed' code='FF0000' />       
         <color minValue='34' maxValue='67' name='Orders Approved' code='FFFF00' /> 
          <color minValue='68' maxValue='100' name='Orders Delivered' code='00FF00' />
     </colorRange>";   
@@ -2153,10 +2136,43 @@ $strXML .="$str_xml_body
 
 echo $strXML;
 }
+
+//county charts  9
+public function lead_time_chart_county(){
+	$title='Lead Time';
+$str_xml_body="<value>1</value>";
+
+$strXML = '<Chart bgColor="FFFFFF" bgAlpha="0" showBorder="0" upperLimit="15" lowerLimit="0" gaugeRoundRadius="5" chartBottomMargin="10" ticksBelowGauge="1" showGaugeLabels="1" valueAbovePointer="1" pointerOnTop="1" pointerRadius="9" >
+
+<colorRange>
+<color minValue="0" maxValue="5" label="5 days"  />
+<color minValue="5" maxValue="10" label="5 days"/>
+<color minValue="10" maxValue="15" label="5 days"/>
+
+</colorRange>
+<pointers>
+   <pointer value="8.3" toolText="Total Turn Around Time" link="P-detailsWin,width=450,height=150,toolbar=no,scrollbars=no, resizable=no-provincialtatbreakdown.php?province=5%26mwaka=2012%26mwezi=07%26dcode=%26fcode=0" />
+ 
+</pointers>
+
+
+<styles>
+
+<definition>
+<style name="ValueFont" type="Font" bgColor="333333" size="10" color="FFFFFF"/>
+</definition>
+<application>
+<apply toObject="VALUE" styles="valueFont"/>
+</application>
+</styles>
+</Chart>';
+
+echo $strXML;
+}
 ////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public function County_orders_placed_chart(){
-$strXML ="<chart palette='3' formatNumberScale='0' showBorder='0' caption='' yAxisName='Units' showValues='0' numVDivLines='10' divLineAlpha='30' useRoundEdges='1' legendBorderAlpha='0'>
+$strXML ="<chart palette='3' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' caption='' yAxisName='Units' showValues='0' numVDivLines='10' divLineAlpha='30' useRoundEdges='1' legendBorderAlpha='0'>
 
     <categories>
 
@@ -2227,7 +2243,7 @@ echo $strXML;
 
 }
 	public function county_ordering_rate_chart(){
-$strXML ="<chart palette='2' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' caption='Ordering Rate/District' showLabels='1' showvalues='0'  numberPrefix=''  showSum='1' decimals='0' useRoundEdges='1' legendBorderAlpha='0'>
+$strXML ="<chart stack100Percent='1' showPercentValues='1' palette='2' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' showLabels='1' showvalues='0'  numberPrefix=''  showSum='1' decimals='0' useRoundEdges='1' legendBorderAlpha='0'>
 
     <categories>
 
@@ -2247,7 +2263,7 @@ $strXML ="<chart palette='2' bgColor='FFFFFF' formatNumberScale='0' showBorder='
 
     </categories>
 
-     <dataset seriesName='Orders Made' color='F6BD0F' showValues='0'>
+     <dataset seriesName='Orders Made' color='659EC7' showValues='0'>
 
         <set value='15' />
 
@@ -2268,7 +2284,7 @@ $strXML ="<chart palette='2' bgColor='FFFFFF' formatNumberScale='0' showBorder='
 
     </dataset>
 
-    <dataset seriesName='No of Facilities' color='8BBA00' showValues='0'>
+    <dataset seriesName='No of Facilities' color='E8E8E8' showValues='0'>
 
         <set value='65' />
 
@@ -2296,6 +2312,11 @@ echo $strXML;
 public function get_county_stock_status_view(){
 	$this->load->view("county/ajax_view/county_stock_status_v");
 }
+
+public function get_lead_time(){
+	
+}
+
 public function district_drawing_rights_chart(){
 		$drawing_rights=Facilities::get_drawingR_county_by_district();
 		$strXML= "";
@@ -2331,5 +2352,6 @@ public function district_drawing_rights_chart(){
 			
 		
 		}
+
 
 }

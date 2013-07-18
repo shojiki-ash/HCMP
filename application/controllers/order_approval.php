@@ -1,5 +1,6 @@
 <?php if(!defined('BASEPATH')) exit('No direct script access allowed');
- class Order_Approval extends MY_Controller {
+include_once('auto_sms.php');
+ class Order_Approval  extends auto_sms {
  	
  	function _construct(){
  		parent::_construct();
@@ -40,6 +41,7 @@
 		$data['link'] = "home";
 		$data['drug_name']=Drug::get_drug_name();
 		$data['quick_link'] = "moh_order_v";
+		$data['order_details']=ordertbl::get_details($delivery)->toArray();
 		$data['detail_list']=Orderdetails::get_order($delivery);		
 		$this -> load -> view("template", $data);
 	}
@@ -49,7 +51,7 @@
 		$this->load->helper('url');
 		
 		
-		$new_value=$_POST['adj'];
+		$new_value=$_POST['quantity'];
 		$order_id=$_POST['order_id'];
 		$value=count($new_value);
 		$code=$_POST['f_order_id'];
@@ -103,6 +105,7 @@ ORDER BY a.id ASC , b.drug_name ASC ");
 		$bal=$d_rights-$o_total;
 		$creator=$order->orderby;
 		$approver=$order->approveby;
+		
 			foreach($order->Code as $f_name){ $fac_name=$f_name->facility_name; }
 			$mfl=$order->facilityCode;
 			$myobj = Doctrine::getTable('Facilities')->findOneByfacility_code($mfl);
@@ -212,10 +215,7 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
 			$approve_name1=$myobj_approve->fname;
 			$approve_name2=$myobj_approve->lname;
 			$approve_telephone=$myobj_approve->telephone;
-          
-		  
-		  
-		  
+
           $bal=$d_rights-$order_total;
 		  $html_body .='</tbody></table></ol>'; 
 		  $html_body1 ='<table class="data-table" width="100%" style="background-color: 	#FFF380;">
@@ -244,57 +244,50 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
             $this->mpdf->WriteHTML($html_title);
             $this->mpdf->defaultheaderline = 1;  
             $this->mpdf->simpleTables = true;
-            $this->mpdf->WriteHTML( $html_body);
+            $this->mpdf->WriteHTML($html_body);
             $this->mpdf->AddPage();
 			$this->mpdf->WriteHTML( $html_body1);
 			$report_name='facility_order_no'.$code;
            		  
-			//if( !
-			write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S'));
-			//)
-			/*{
-    	$msg="An error occured";
-  $this->district_orders($msg);
+			if( !write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S')))
+			{
+				
+		$this->session->set_flashdata('system_error_message', 'An error occured');			
+    
+        $this->district_orders();
              }
                   else{
-                  	$config = Array(
-  'protocol' => 'smtp',
-  'smtp_host' => 'ssl://smtp.googlemail.com',
-  'smtp_port' => 465,
-  'smtp_user' => 'hcmpkenya@gmail.com', // change it to yours
-  'smtp_pass' => 'healthkenya', // change it to yours
-  'mailtype' => 'html',
-  'charset' => 'iso-8859-1',
-  'wordwrap' => TRUE
-);
- 
-  $this->load->library('email', $config);
-  $this->email->set_newline("\r\n");
-  $this->email->from('hcmpkenya@gmail.com'); // change it to yours
-  $this->email->to('kariukijackson@ymail.com,kariukijackson@gmail.com'); // change it to yours
-  $this->email->bcc('hcmpkenya@gmail.com,nicomaingi@gmail.com,jsphmk14@gmail.com');
-  $this->email->subject('Order Report For '.$fac_name);
- 
-  $this->email->attach('./pdf/'.$report_name.'.pdf'); 
-  $this->email->message($html_title.$html_body);
- 
-  if($this->email->send())
- {
- delete_files('./pdf/');
- }
- else
-{
- show_error($this->email->print_debugger());
-}
-  
+                  	
 					
-  }*/
+  $all_facility_users=user::get_user_info(get_user_info);
   
+  $all_facility_users=$facility=$this -> session -> userdata('user_email').",";
+
+
+ foreach($all_facility_users as $user_detail){
+ 	$email_address .=$user_detail->email.",";
+ }			  				
+                  	
+					  
+  $subject='Order Report For '.$fac_name;
   
-	
+  $attach_file='./pdf/'.$report_name.'.pdf';
   
-   $msg="Order No $code has been approved";
-  $this->district_orders($msg);
+  $bcc_email='kariukijackson@gmail.com';
+  
+  $message=$html_title.$html_body;
+  
+ $response= $this->send_email(substr($email_address,0,-1),$message,$subject,$attach_file,$bcc_email);
+ 
+ if($response){
+ 	delete_files('./pdf/'.$report_name.'.pdf');
+ }
+					
+  }
+
+ 
+   $this->session->set_flashdata('system_success_message', "Order No $code has been approved");	
+   $this->district_orders();
 	}
 	 function getWorkingDays($startDate,$endDate,$holidays){
     //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24

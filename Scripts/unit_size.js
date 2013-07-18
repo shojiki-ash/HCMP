@@ -276,9 +276,11 @@ default:
     function suggest_order_value(value){
     var i=value;
     
+  
+    
     var unit_size=parseInt(get_unit_quantity($(document.getElementsByName("unit_size["+i+"]")).val()));
     
-    var opening_balance=	parseInt($(document.getElementsByName("open["+i+"]")).val());
+    var opening_balance= parseInt($(document.getElementsByName("open["+i+"]")).val());
   
     var total_receipts=	parseInt($(document.getElementsByName("receipts["+i+"]")).val());
 
@@ -295,7 +297,9 @@ default:
     var new_order_value=0;
     
  
-    new_order_value=(total_issues*4)-closing;
+    new_order_value=((total_issues*4)-closing)/unit_size;
+    
+   
     
     new_order_value=parseInt(new_order_value);
     if(new_order_value<0){
@@ -304,6 +308,7 @@ default:
 
     
     $(document.getElementsByName("suggested["+i+"]")).val(new_order_value);
+    //$(document.getElementsByName("quantity["+i+"]")).val(new_order_value);
     	
     }
     
