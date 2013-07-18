@@ -719,12 +719,24 @@ $user_name=$this->input->post('user_name');
 			public function password_change(){
 				
 		$initialpassword=$_POST['inputPasswordinitial'];
-		$id=$this -> session -> userdata('user_db_id');
+		$use_id=$this -> session -> userdata('user_id');
 		$newpassword=$_POST['inputPasswordnew2'];
 		
+		//retrieve password and compare
 		
-		
+		$getdata=User::getAllUser($use_id);
+		$initpassword=$getdata[0]['password'];
+		$salt = '#*seCrEt!@-*%';
+		$value=( md5($salt . $newpassword));
+		 
+		//echo $value.'</br>';
+		//echo $initpassword;
+		if ($initpassword != $value) {
+			echo $initpassword;
+		} else {
 			
+		}
+		
 
 			}
 			}

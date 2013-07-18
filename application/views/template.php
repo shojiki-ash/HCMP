@@ -254,11 +254,7 @@ if($user_is_facility){
  <?php
 }?>
 <li>
-	<ul>
-		<li><a></a> stock Details</li>
-		<li>Historical Data</li>
-		
-	</ul><i class=" icon-wrench icon-white" style="margin-right: 0.3em; margin-top: 0.1em;"></i><a  href="<?php echo base_url();?>report_management/facility_settings"  class="<?php
+	<i class=" icon-wrench icon-white" style="margin-right: 0.3em; margin-top: 0.1em;"></i><a  href="<?php echo base_url();?>report_management/facility_settings"  class="<?php
 	if ($quick_link == "user_facility_v") {echo "active";
 	}
 ?>">Settings</a></li>
@@ -445,7 +441,7 @@ if($user_is_facility){
     <li><a href="<?php echo base_url();?>user_management/logout"><i class=" icon-off"></i> Log Out</a></li>
   </ul>
 </div>
-		 
+		<a class="link" href="<?php echo base_url();?>user_management/logout"><i class="icon-off"></i> Log Out</a> 
 	
 		</div>
 	
@@ -472,7 +468,7 @@ if($user_is_facility){
 	
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
   <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
     <h3 id="myModalLabel">Change Password</h3>
   </div>
   <form class="form-horizontal" action="<?php echo base_url().'User_Management/password_change'?>" method="post" id="change">
