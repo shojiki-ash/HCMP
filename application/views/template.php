@@ -142,6 +142,9 @@ if (isset($styles)) {
 		color: white;
 		text-decoration: none;
 	}
+	.successtext{
+		color:#003300;
+	}
     </style>
 <script type="text/javascript">
 
@@ -409,6 +412,7 @@ if ($current == "home_controller") {echo "active";
 	 </div><div style="width :53em;height: 4.2em; margin: auto; ;" ></div>
 	 
 <div class="banner_content" style="font-size:20px; float:right; margin-top: 0.3em;padding-bottom: 0.35em;"><div style="float: left;"><?php echo $this -> session -> userdata('full_name') . ": " . $banner_text; ?></div>
+<div>
 <?php $flash_success_data = NULL;
 	$flash_error_data = NULL;
 	$flash_success_data = $this -> session -> flashdata('system_success_message');
@@ -419,7 +423,7 @@ if ($current == "home_controller") {echo "active";
 		echo '<p class="errorlogin">' . $flash_error_data . '</p>';
 	}
  ?>
-
+</div>
 		<div style="float:right">
 		
 		
@@ -462,30 +466,30 @@ if ($current == "home_controller") {echo "active";
 
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
 		
-		<div id="err"></div>
-	
+			
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
     <h3 id="myModalLabel">Change Password</h3>
+    <div id="errsummary" style=""></div>
   </div>
   
   <form class="form-horizontal" action="<?php echo base_url().'User_Management/save_new_password'?>" method="post" id="change">
   <div class="control-group" style="margin-top: 1em;">
     <label class="control-label" for="inputPassword">Old Password</label>
     <div class="controls">
-      <input type="password" id="old_password"  name="old_password" placeholder="Old Password" required="required">
+      <input type="password" id="old_password"  name="old_password" placeholder="Old Password" required="required"><span class="error" id="err" style="margin-left: 0.2em;font-size: 10px"></span>
     </div>
   </div>
   <div class="control-group">
     <label class="control-label" for="inputPassword">New Password</label>
     <div class="controls">
-      <input type="password" id="new_password" name="new_password" placeholder="New Password" required="required"><span id="result"></span>
+      <input type="password" id="new_password" name="new_password" placeholder="New Password" required="required"><span class="error" id="result" style="margin-left: 0.2em;font-size: 10px"></span>
     </div>
   </div>
   <div class="control-group">
     <label class="control-label" for="inputPassword">Confirm Password</label>
     <div class="controls">
-      <input type="password" id="new_password_confirm" name="new_password_confirm" placeholder="Confirm Password" required="required"><span  id="result_confirm"></span>
+      <input type="password" id="new_password_confirm" name="new_password_confirm" placeholder="Confirm Password" required="required"><span class="error" id="confirmerror" style="margin-left: 0.2em;font-size: 10px"></span>
     </div>
   </div>
   <div class="modal-footer">
@@ -531,11 +535,16 @@ $('.errorlogin').fadeOut(5000, function() {
 			
 			if(newps!= newpsconfirm){
 						
-						 $('#err').html('Your passwords dont match');
+						 $('#confirmerror').html('Your passwords dont match');
 						
 							}else{
-								return false;
-								$("#err").removeAttr("id");
+								
+								$("#confirmerror").empty();
+								$('#confirmerror').html('Your passwords match');
+								$('#confirmerror').removeClass('error');
+								$('#confirmerror').addClass('successtext')
+								
+								
 							}
 		})
 		function checkStrength(password) {
@@ -578,14 +587,18 @@ $('.errorlogin').fadeOut(5000, function() {
 			if (strength < 2) {
 				$('#result').removeClass()
 				$('#result').addClass('weak')
+				$("#result").css("color","#BE2E21")
 				return 'Weak'
 			} else if (strength == 2) {
 				$('#result').removeClass()
 				$('#result').addClass('good')
+				$("#result").css("color","#006633")
+				
 				return 'Good'
 			} else {
 				$('#result').removeClass()
 				$('#result').addClass('strong')
+				$("#result").css("color","#003300")
 				return 'Strong'
 			}
 		}
@@ -604,7 +617,7 @@ $('.errorlogin').fadeOut(5000, function() {
 						 $("#err").html("Processing...");
 					},
 					complete:function(){
-						// $("#feedback").html("Waiting..");
+						
 					},
 					success: function(data){
 						//alert(data.response);
@@ -612,6 +625,11 @@ $('.errorlogin').fadeOut(5000, function() {
 						
 						 $('#err').html(data.msg);
 						
+							}else if(data.response=='true'){
+								$("#err").empty();
+								
+								window.location="<?php echo base_url();?>";
+								
 							}
 
 						}

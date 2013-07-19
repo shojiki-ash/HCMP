@@ -758,9 +758,11 @@ $user_name=$this->input->post('user_name');
 			
 
 			$updatep->execute("UPDATE user SET password='$value'  WHERE id='$user_id'; ");
-			
+			$response = array('msg' => 'Success!!! Your password has been changed.','response'=> 'true');
 			$this->session->set_flashdata('system_success_message', 'Success!!! Your password has been changed.');
-			redirect('Home_Controller');
+			echo json_encode($response);
+			//$this->session->set_flashdata('system_success_message', 'Success!!! Your password has been changed.');
+			//redirect('Home_Controller');
 		}
 
 		
