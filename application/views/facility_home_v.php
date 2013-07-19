@@ -84,7 +84,7 @@ unset($popup);
 			<h2>Orders Pending Approval by District Pharmacist</h2>
 			<p>
 				<a class="link" href="<?php 
-				 echo site_url("Order_Management/index/");?>"><?php echo $pending_orders;?> Order(s) pending</a> 
+				 echo site_url("Order_Management/index/#tabs-2");?>"><?php echo $pending_orders;?> Order(s) pending</a> 
 			</p>
 		</div>
 		<?php endif;?>
