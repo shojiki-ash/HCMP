@@ -716,7 +716,8 @@ $user_name=$this->input->post('user_name');
 			}
 
 			public function password_change(){
-				
+			echo json_encode('test');	
+			exit;
 		$initialpassword=$_POST['inputPasswordinitial'];
 		$use_id=$this -> session -> userdata('user_id');
 		$newpassword=$_POST['inputPasswordnew2'];
@@ -738,5 +739,67 @@ $user_name=$this->input->post('user_name');
 		
 
 			}
+			
+			public function save_new_password() {
+			$old_password=$_POST['old_password'];
+			$new_password=$_POST['new_password'];		
+			$user_id = $this -> session -> userdata('user_id');
+			$valid_old_password = $this -> correct_current_password($old_password);
+
+		//Check if old password is correct
+		if ($valid_old_password == FALSE) {
+			$response = array('msg' => 'You have entered a wrong password.','response'=> 'false');
+			echo json_encode($response);
+		}  else {
+			$salt = '#*seCrEt!@-*%';
+			$value=( md5($salt . $new_password));
+			
+			$updatep = Doctrine_Manager::getInstance()->getCurrentConnection();
+			
+
+			$updatep->execute("UPDATE user SET password='$value'  WHERE id='$user_id'; ");
+			
+			$this->session->set_flashdata('system_success_message', 'Success!!! Your password has been changed.');
+			redirect('Home_Controller');
+		}
+
+		
+
+	}
+
+	private function _submit_validate_password() {
+		// validation rules
+		$this -> form_validation -> set_rules('old_password', 'Current Password', 'trim|required|min_length[6]|max_length[30]');
+		$this -> form_validation -> set_rules('new_password', 'New Password', 'trim|required|min_length[6]|max_length[30]|matches[new_password_confirm]');
+		$this -> form_validation -> set_rules('new_password_confirm', 'New Password Confirmation', 'trim|required|min_length[6]|max_length[30]');
+		$temp_validation = $this -> form_validation -> run();
+		if ($temp_validation) {
+			$this -> form_validation -> set_rules('old_password', 'Current Password', 'trim|required|callback_correct_current_password');
+			return $this -> form_validation -> run();
+		} else {
+			return $temp_validation;
+		}
+
+	}
+
+	public function correct_current_password($pass) {
+		$salt = '#*seCrEt!@-*%';
+		$pass=( md5($salt . $pass));
+		$user_id = $this -> session -> userdata('user_id');
+		$getdata=User::getAllUser($user_id);
+		$currentpassword=$getdata[0]['password'];
+		
+		if ($currentpassword != $pass) {
+			$this -> form_validation -> set_message('correct_current_password', 'The current password you provided is not correct.');
+			return FALSE;
+			//echo "Dont match";
+		} else {
+			return TRUE;
+			//echo "Yes match";
+			
+		}
+		
+
+	}
 			}
 
