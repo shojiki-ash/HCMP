@@ -113,7 +113,7 @@ else if($access_level == "rtk_manager"){
 }
 
 else if($access_level == "allocation_committee"){
-	$counties=Counties::getAll();
+$counties=Counties::getAll();
 	$table_data="";
 	$allocation_rate=0;
 	$total_facilities_in_county=1;
@@ -134,12 +134,12 @@ else if($access_level == "allocation_committee"){
 	  $total_facilities=$total_facilities+$total_facilities_in_county;
 	  $total_allocated= $total_allocated+ $total_facilities_allocated_in_county;
 	   
-	   $table_data .="<tr><td><a href=".site_url()."rtk_management/allocation_county_detail_zoom/$countyid> $countyname</a> $total_facilities_in_county | $total_facilities_allocated_in_county</td></tr>";
+	   $table_data .="<tr><td><a href=".site_url()."rtk_management/allocation_county_detail_zoom/$countyid> $countyname</a></td>  <td> $total_facilities_in_county | $total_facilities_allocated_in_county</td></tr>";
 	   
 	   }
-    $table_data .="<tr><td>TOTAL  $total_facilities | $total_allocated</td><tr>";
+    $table_data_="<tr><td>TOTAL </td>  <td> $total_facilities | $total_allocated</td><tr>";
    
-	$data['table_data']=$table_data;
+	$data['table_data']=$table_data_.$table_data;
 	$data['pop_up']=$pop_up;
 	$data['counties']= $counties=Counties::getAll();
 	$data['content_view'] = "allocation_committee/home_v";

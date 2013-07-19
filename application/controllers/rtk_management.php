@@ -956,6 +956,38 @@ public function get_rtk_allocation_kenyan_map(){
 }
 
 public function allocation_county_detail_zoom($county_id){
+	$counties=Counties::getAll();
+	$table_data="";
+	$allocation_rate=0;
+	$total_facilities_in_county=1;
+	$total_facilities_allocated_in_county=1;
+	$total_facilities=0;
+	$total_allocated=0;
+	
+   foreach( $counties as $county_detail){
+   	
+   	   $countyid=$county_detail->id;
+	  // $county_map_id=$county_detail->kenya_map_id;
+   	   $countyname=trim($county_detail->county);
+   	
+	   $county_detail=rtk_stock_status::get_allocation_rate_county($countyid);
+	   $total_facilities_in_county=$county_detail['total_facilities_in_county'];
+	   $total_facilities_allocated_in_county=$county_detail['total_facilities_allocated_in_county'];
+
+	  $total_facilities=$total_facilities+$total_facilities_in_county;
+	  $total_allocated= $total_allocated+ $total_facilities_allocated_in_county;
+	   
+	   $table_data .="<tr><td><a href=".site_url()."rtk_management/allocation_county_detail_zoom/$countyid> $countyname</a></td>  <td> $total_facilities_in_county | $total_facilities_allocated_in_county</td></tr>";
+	   
+	   if($countyid==$county_id){
+	   	$county_allocation_rate=array("total_reporting_facilities"=>$total_facilities_in_county,"total_facilities_allocated_in_county"=>$total_facilities_allocated_in_county);
+	   }
+	   
+	   }
+    $table_data_="<tr><td>TOTAL </td>  <td> $total_facilities | $total_allocated</td><tr>";
+   
+	$data['table_data']=$table_data_.$table_data;
+	$data['county_allocation_rate']=$county_allocation_rate;
 	$county_data=rtk_stock_status::get_county_reporting_details($county_id);
 	
 	

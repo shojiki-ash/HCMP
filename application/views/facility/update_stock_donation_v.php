@@ -3,64 +3,7 @@
 		<style type="text/css" title="currentStyle">
 			
 			@import "<?php echo base_url(); ?>DataTables-1.9.3 /media2/css/jquery.dataTables.css";
-		
-label {
-	display: inline-block;
-	cursor: pointer;
-	position: relative;
-	padding-left: 25px;
-	margin-right: 15px;
-	font-size: 13px;
-}label:before {
-	content: "";
-	display: inline-block;
-
-	width: 16px;
-	height: 16px;
-
-	margin-right: 10px;
-	position: absolute;
-	left: 0;
-	bottom: 1px;
-	background-color: rgba(86, 125, 138, 0.97);
-	box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
-}
-.radio label:before {
-	border-radius: 8px;
-}
-input[type=radio] {
-	display: none;
-}
-input[type=radio]:checked + label:before {
-    content: "\2022";
-    color: #f3f3f3;
-    font-size: 30px;
-    text-align: center;
-    line-height: 18px;
-}
-.user{
-		width:100px;
-	}
-	
-	.user1{
-	width:100px;
-	background : none;
-	border : none;
-	text-align: center;
-	}
-	.date{
-		width:110px;
-	}
-	
-	.label-container
-{
-    margin: 10px 10px;
-}
-	.my_date,.stock_l,.batchN{
-		width:6.95em;
-	}
-	
-	</style>
+</style>
 
    <script> 
   function calculate_a_stock (argument) {
@@ -142,7 +85,7 @@ json_obj = {
 		var count=1;
 				$( "#IssueNow" ).dialog({
 		    autoOpen: true,
-			height: 150,
+			height: 200,
 			width:1500,
 			modal: true,
 			buttons: {
@@ -350,11 +293,65 @@ $('.del').live('click',function(){
   }
 
    </script>
+<style>
+	label {
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	padding-left: 25px;
+	margin-right: 15px;
+	font-size: 13px;
+}label:before {
+	content: "";
+	display: inline-block;
 
-	<fieldset>
-	<legend>
-   			
-   		</legend>
+	width: 16px;
+	height: 16px;
+
+	margin-right: 10px;
+	position: absolute;
+	left: 0;
+	bottom: 1px;
+	background-color: rgba(86, 125, 138, 0.97);
+	box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+}
+.radio label:before {
+	border-radius: 8px;
+}
+input[type=radio] {
+	display: none;
+}
+input[type=radio]:checked + label:before {
+    content: "\2022";
+    color: #f3f3f3;
+    font-size: 30px;
+    text-align: center;
+    line-height: 18px;
+}
+.user{
+		width:100px;
+	}
+	
+	.user1{
+	width:100px;
+	background : none;
+	border : none;
+	text-align: center;
+	}
+	.date{
+		width:110px;
+	}
+	
+	.label-container
+{
+    margin: 10px 10px;
+}
+	.my_date,.stock_l,.batchN{
+		width:6.95em;
+	}
+	
+</style>
+
    		   		<div id="IssueNow" title="Fill in the details below">
    			<table class="table-update">
 					<thead>
@@ -405,11 +402,11 @@ $('.del').live('click',function(){
 	<label for="Pack_Size">Unit Size</label>
 </div>
 </td>
-	<td><input id='batchNo' name='batchNo' type='text' class="batchN" /></td>
-	<td><input id='manuf' name='manuf[0]' type='text' size='20' maxlength='10'value="" /></td>
+	<td><input id='batchNo' class="user1" name='batchNo' type='text' class="batchN" /></td>
+	<td><input id='manuf' class="user1" name='manuf[0]' type='text' value="" /></td>
 	<td><input  class='my_date'  name='expiry_date' type='text' /></td>
-	<td><input id='source' name='source[0]' type='text' /></td>
-	<td><input id='a_stock' name='a_stock[0]' type='text' class="stock_l" onkeyup="calculate_a_stock(0)"  /></td>
+	<td><input id='source' class="user1" name='source[0]' type='text' /></td>
+	<td><input id='a_stock' class="user1" name='a_stock[0]' type='text' class="stock_l" onkeyup="calculate_a_stock(0)"  /></td>
 	<td><input class='user1' id='qreceived' readonly='readonly'  type='text' name='qreceived[0]' value=''  /></td>
 	  
 						</tbody>
@@ -439,9 +436,11 @@ $('.del').live('click',function(){
 						
 						</tbody>
 						</table>
+						<?php echo form_close();?>	
+<button class="btn"  id="NewIssue">Add Commodity</button>
+<button class="btn btn-primary"   id="save1">Save</button>
 </div>
-<input class="button"   id="NewIssue"  value="Add Commodity" >
-<input  class="button"   id="save1"  value="Save" >
-<?php echo form_close();?>	
+
+
          
 

@@ -33,12 +33,7 @@
 			$(document).ready(function() {
 				/* Build the DataTable with third column using our custom sort functions */
 				$('#example').dataTable( {
-					"bJQueryUI": true,
-					
-					"aaSorting": [ [0,'asc'], [1,'asc'] ],
-					"aoColumnDefs": [
-						{ "sType": 'string-case', "aTargets": [ 2 ] }
-					]
+					"bJQueryUI": true
 				} );
 			} );
 

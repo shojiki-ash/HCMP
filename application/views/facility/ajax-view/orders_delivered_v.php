@@ -60,7 +60,7 @@
          $date_diff= $dDiff->days;
         echo "<td>".$date_diff." day(s)</td>";
         
-        echo '<td><a href="'.site_url('order_management/moh_order_details/'.$d1->id.'/'.$d1->kemsaOrderid).'>"class="link">View</a></td></tr>';
+        echo '<td><a href="'.site_url('order_management/moh_order_details/'.$d1->id.'/'.$d1->kemsaOrderid).'"class="link">View</a></td></tr>';
 
 endforeach;
 	?>

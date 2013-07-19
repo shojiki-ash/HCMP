@@ -75,7 +75,7 @@ $( "#dialog1" ).dialog({
 			modal: true
 		});
 		
-		var chart = new FusionCharts("<?php echo base_url()."scripts/FusionWidgets/Charts/HLinearGauge.swf"?>", "ChartId", "100%", "20%", "0", "0");
+		var chart = new FusionCharts("<?php echo base_url()."scripts/FusionWidgets/Charts/HLinearGauge.swf"?>", "ChartId", "100%", "10%", "0", "0");
 		var url = '<?php echo base_url()."rtk_management/get_allocation_rate_national_hlineargauge//"?>'; 
 		chart.setDataURL(url);
 		chart.render("chart4");
@@ -206,14 +206,14 @@ code {
 <!-- <h3 class="accordion" class="ajax-call" id="facility_list">Facility List<span></span><h3>
 <div class="container">
  </div>-->
-<h3 class="accordion" id="section1" >Allocation Rate<span></span><h3>
+<h3 class="accordion" id="section1" >Allocation Rate<span></span></h3>
+	<div  style="width:100%; height: 30%" id="chart4"></div>
 <div class="container">
-
-	<div class="multiple_chart_content" style="width:100%; height: 50%" id="chart4"></div>
+	
 	<table class="data-table" style="margin-left: 0px;">
 		<thead>
 		<tr>
-			<td>Counties<h6>No. Reporting Facilities | No. Allocated Facilities</h6></td>
+			<td>Counties</td><td><h4> Reporting Facilities | No. Allocated Facilities</h4></td>
 		</tr>
 		</thead>
 		<tbody>
@@ -223,10 +223,7 @@ code {
 		
 		
 		?>
-			
-			<tr>
-				<td></td>
-			</tr>
+
 		</tbody>
 	</table>
 	

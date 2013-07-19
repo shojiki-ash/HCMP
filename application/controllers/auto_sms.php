@@ -5,31 +5,42 @@ class auto_sms extends MY_Controller {
 public function send_stock_update_sms(){
 	
 
-     		$facility_name = $this -> session -> userdata('full_name');
-		    $facility_c=$this -> session -> userdata('news');
-			
-	
-		$data=User::get_user_info($facility_c);
-		  $phone="";    
-		foreach ($data as $info) {
-			$usertype_id = $info->usertype_id;
-			$telephone =$info->telephone;
-			$district = $info->district;
-			$facility = $info->facility;
-			
-		
-		$phone .=$telephone.'+';	
+       $facility_name = $this -> session -> userdata('full_name');
+	   $facility_code=$this -> session -> userdata('news');
+	   $data=User::getUsers($facility_code)->toArray();
 
-		
-		}
-	    $message= "Stock level for facility ".$facility_name." has been updated. HCMP";
+	   $message= "Stock level for ".$facility_name." has been updated. HCMP";
+       
+	   $phone=$this->get_facility_phone_numbers($facility_code);
+	   $phone .=$this->get_ddp_phone_numbers($data[0]['district']);
 
-		
-		$this->send_sms(substr($phone,0,-1),$message);
-		
-		
+	   
+	   $this->send_sms(substr($phone,0,-1),$message);
 
 	}
+
+public function get_facility_phone_numbers($facility_code){
+	$data=User::get_user_info($facility_code);
+	$phone=""; 
+	foreach ($data as $info) {
+
+			$telephone =preg_replace('(^0+)', "254",$info->telephone);
+
+		    $phone .=$telephone.'+';	
+		}
+	return $phone;
+}
+
+public function get_ddp_phone_numbers($district_id){
+	$data=User::get_dpp_details($district_id);
+	$phone=""; 
+	
+	foreach ($data as $info) {
+			$telephone =preg_replace('(^0+)', "254",$info->telephone);
+		    $phone .=$telephone.'+';	
+		}
+	return $phone;
+}
 
 public function send_stock_donate_sms($other_facility_code=NULL){
      		$facility_name = $this -> session -> userdata('full_name');

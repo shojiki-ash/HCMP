@@ -34,7 +34,7 @@
  * TableTools container element and styles applying to all components
  */
 div.DTTT_container {
-	float: right;
+	float: left;
 	margin-bottom: 1em;
 }
 

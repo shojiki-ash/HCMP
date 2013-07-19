@@ -389,12 +389,12 @@ return;
 					var details_array=details.split("|");				
 						    
           $( "#main" ).dataTable().fnAddData( [
-          	"" + details_array[2] + "",
+          	"" + details_array[1] + "",
          '<input type="hidden" name="kemsaCode['+count+']" value="'+details_array[0]+'" />'+
          '<input type="hidden" name="drugName['+count+']" value="'+details_array[3]+'" />'+ 
-							"" + details_array[1] + "",
 							"" + details_array[3] + "",
 							'' +'<input class="user1" readonly="readonly" type="text" name="u_size['+count+']" value="'+$('#unit_size').val()+'"/>',
+							'' +'<input class="user1" readonly="readonly" type="text"  value="0"/>',
 							'' +'<input class="user" type="text" name="batchNo['+count+']" value="'+$('input:text[name=batchNo]').val()+'"/>',
 							'' +'<input class="my_date" type="text" name="Exp['+count+']"  value="'+ $('input:text[name=Exp]').val() +'"/>',
 							'' +'<input class="user" type="text" name="units1['+count+']"  value="'+ $('#p_units1').val() +'" onkeyup="calculate_units1('+count+')" "/>',

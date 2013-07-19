@@ -1,32 +1,28 @@
 <script type="text/javascript" language="javascript" src="<?php echo base_url();  ?>Scripts/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf-8" src="<?php echo base_url(); ?>DataTables-1.9.3/extras/TableTools-2.0.0/media/js/ZeroClipboard.js"></script>
+<script type="text/javascript" charset="utf-8" src="<?php echo base_url(); ?>DataTables-1.9.3/extras/TableTools-2.0.0/media/js/TableTools.js"></script>
 		<style type="text/css" title="currentStyle">
 			
 			@import "<?php echo base_url(); ?>DataTables-1.9.3 /media2/css/jquery.dataTables.css";
+			@import "<?php echo base_url(); ?>DataTables-1.9.3/extras/TableTools-2.0.0/media/css/TableTools.css";
 		</style>	
-		<style>
-
-			.warning2 {
-	background: #FEFFC8 url('<?php echo base_url()?>Images/pdf-icon.jpg') 20px 50% no-repeat;
-	border: 1px solid #F1AA2D;
-	}
-		</style>
-<script>
+<script type="text/javascript" charset="utf-8">
 /******************************************data-table set up*********************/
 /* Define two custom functions (asc and desc) for string sorting */
-			jQuery.fn.dataTableExt.oSort['string-case-asc']  = function(x,y) {
-				return ((x < y) ? -1 : ((x > y) ?  1 : 0));
-			};
-			
-			jQuery.fn.dataTableExt.oSort['string-case-desc'] = function(x,y) {
-				return ((x < y) ?  1 : ((x > y) ? -1 : 0));
-			};
+/* Define two custom functions (asc and desc) for string sorting */
+
 
 	   $(document).ready(function() {
-//[ [0,'asc'], [1,'asc'] ]
+
     	$('#main1').dataTable( {
-    		"bSort": false,
-					"bJQueryUI": true,
-                   "bPaginate": false
+    		        "bJQueryUI": true,
+    		        "bSort": false,
+					
+                   "bPaginate": false,
+                  "sDom": '<"H"Tfr>t<"F"ip>',
+					"oTableTools": {
+			"sSwfPath": "<?php echo base_url(); ?>DataTables-1.9.3/extras/TableTools-2.0.0/media/swf/copy_cvs_xls_pdf.swf"
+		}
 				} );
     
 });
@@ -149,26 +145,35 @@ $order_value =0;
 		} 
 
 ?>
-<div>
+<!--<div>
 <div id="notification" style="float: left; height: 5%"> Fill Rate = ( Quantity Received / Quantity Ordered ) * 100</div>
 <div style="margin-left: 80%" style="float: right" >
 <div class="activity pdf"><h2><a href="<?php echo site_url('report_management/get_order_details_report/'.$this->uri->segment(3).'/'.$this->uri->segment(4));?>">
  Download</h2></div>
 </a>
 </div>
-</div>
+</div>-->
 
-<caption ><p style="letter-spacing: 1px;font-weight: bold;text-shadow: 0 1px rgba(0, 0, 0, 0.1);font-size: 14px; " >Facility Order No <?php echo $this->uri->segment(3);?>| KEMSA Order No <?php echo $this->uri->segment(4);?> | Total Order FIll Rate <?php echo $order_value ."%";?>| Order lead Time <?php echo $date_diff;?> day(s)</p></caption>
-<table class="data-table" style="margin-left: 0px">
-	<tr>
-		<td width="50px" style="background-color: #C3FDB8; "></td><td>Full Delivery 100%</td><td width="50px" style="background-color:#FFFFFF"></td><td>Ok Delivery 60%-less than 100%</td><td width="50px" style="background-color:#FAF8CC;"></td><td>Partial Delivery less than 60% </td><td width="50px" style="background-color:#FBBBB9;"></td><td>Problematic Delivery 0% or over 100%</td>
-	</tr>
 
-</table>
 <table id="main1" width="100%">
-	
 	<thead>
-	<tr>
+		<tr>
+		<th colspan='9'>
+         <p style="letter-spacing: 1px;font-weight: bold;text-shadow: 0 1px rgba(0, 0, 0, 0.1);font-size: 14px; " >Facility Order No <?php echo $this->uri->segment(3);?>| KEMSA Order No <?php echo $this->uri->segment(4);?> | Total Order FIll Rate <?php echo $order_value ."%";?>| Order lead Time <?php echo $date_diff;?> day(s)</p>
+		</th>
+		</tr>
+		<tr>
+		<th width="50px" style="background-color: #C3FDB8; "></th>
+		<th>Full Delivery 100%</th>
+		<th width="50px" style="background-color:#FFFFFF"></th>
+		<th>Ok Delivery 60%-less than 100%</th>
+		<th width="50px" style="background-color:#FAF8CC;"></th> 
+		<th>Partial Delivery less than 60% </th>
+		<th width="50px" style="background-color:#FBBBB9;"></th>
+		<th>Problematic Delivery 0% or over 100%</th>
+		<th></th>
+		</tr>
+		<tr>
 		<th><strong>Category</strong></th>
 		<th><strong>Description</strong></th>
 		<th><strong>KEMSA&nbsp;Code</strong></th>
@@ -177,8 +182,8 @@ $order_value =0;
 		<th><strong>Quantity Ordered</strong></th>
 		<th><strong>Total Cost</strong></th>
 		<th><strong>Quantity Received</strong></th>
-		<th><strong>Fill rate</strong></th>
-	</tr>
+		<th><strong>Fill rate</strong></th>	
+		</tr>
 	</thead>
 	<tbody>
 	<?php

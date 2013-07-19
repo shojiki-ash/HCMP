@@ -180,7 +180,7 @@ json_obj = {
 });
 			    
     $('#desc').change(function() {
-			//alert("test");
+			
 				
 			var code= $("#desc").val();
 				var text=$("#desc option:selected").text();
@@ -310,62 +310,9 @@ json_obj = {
 		}
 }); 
 
-   </script>  
-   
-   
-
-<style>
-   
-   <style>
-   	form {
-    font-family: helvetica, arial, sans-serif;
-    font-size: 11px;
-}
- 
-form div{
-    margin-bottom:10px;
-}
- 
-form a {
-    display: inline-block;
-	min-width: 54px;
-	text-align: center;
-	color: #555;
-	font-size: 11px;
-	font-weight: bold;
-	height: 27px;
-	padding: 0 8px;
-	line-height: 27px;
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	
-	border: 1px solid gainsboro;
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	background-color: whiteSmoke;
-	
-	cursor: default;
-}
- 
-form a:hover{
-    border: 1px solid black;
-}
-td {
-		padding: 5px;
-	}	
-	a {
-    text-decoration:underline;
-    color:#00F;
-    cursor:pointer;
-
-   </style>
-   
-   
-  
-	
-	
+   </script>  	
 	<div id="IssueNow" title="Fill in the details below">
-	<table class="data-table" width="100%">
+	<table  class="table-update"  width="100%">
 					<thead>
 					<tr>
 						<th><b>S11 No</b></th>
@@ -459,7 +406,7 @@ td {
 
 
    		
- <div id="demo" align="center">
+ <div>
 			<p>
 				<?php  $att=array("name"=>'myform','id'=>'myform');
 	 echo form_open('Issues_main/InsertExt',$att); ?>
@@ -490,10 +437,10 @@ td {
 				</table>
 			</p>
 			<?php echo form_close(); ?>
-			<div align="center">
-<input   id="NewIssue"  value="Issue" >
-<input  id="finishIssue"  type="submit" value="Finish" >
-</div>
+			
+<button class="btn" id="NewIssue">Issue</button>
+<button class="btn btn-primary" id="finishIssue"  type="submit">Finish</button>
+
 		</div>
 		
 

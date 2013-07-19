@@ -121,7 +121,7 @@ public static function activate_deactivate_user($id,$option){
 public static function get_dpp_details($distirct){
 	$query = Doctrine_Query::create() -> select("*") -> from("user")->where("district=$distirct and usertype_id='3' ");
 		$level = $query -> execute();
-		return $level->toArray();
+		return $level;
 }
 
 public static function check_user_exist($email){

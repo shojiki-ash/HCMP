@@ -138,30 +138,8 @@ public function submit(){
 	$dispby .=" ";
 	$dispby .=$this -> session -> userdata('inames');
   
-  
-  	 $facility_name = $this -> session -> userdata('full_name');
-		    $facility_c=$this -> session -> userdata('news');
-			
-				
-		$data=User::get_user_info($facility_c);
-		  $phone="";    
-		foreach ($data as $info) {
-			$usertype_id = $info->usertype_id;
-			$telephone =$info->telephone;
 
-			
-		
-		$phone .=$telephone.'+';	
 
-		
-		}
-	    $message= "Stock level for facility ".$facility_name." has been updated. HCMP";
-		$message=urlencode($message);
-	
-
-	
-		
-	
 	$j=count($kemsaCode);
 		
 	for($i=1;$i<=$j;$i++){
@@ -356,29 +334,17 @@ SET price=".$pushed_items_from_kemsa[$i]['unit_cost']." , quantityRecieved =".$p
 		$state->save();
 		
 		   
+		$this->session->set_flashdata('system_success_message', 'Stock details have been updated');
+		$test=	$this->send_stock_update_sms();
 		
-		 $data=array();
-		$data['title'] = "Stock";
-		$data['msg']='Stock details have been updated';
-		$data['content_view'] = "facility/stock_level_v";
-		$data['banner_text'] = "Update Physical Stock";
-		$data['facility_order'] = Facility_Transaction_Table::get_all($facility);
-		$data['quick_link'] = "stock_level";
-		$data['max_date'] = Facility_Stock::get_max_date($facility)->toArray();
-		 $spam_sms='+254725282664+254726534272+254726534272+254726534272+254726534272+254726534272+254726534272+254726534272+254726534272+254726534272+254726534272+254726534272';
+		redirect('order_management/new_order');
+
+		
 		
 	
- 	# code...
- 	 file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$spam_sms&text=$message");
- 	 file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=".substr($phone,0,-1)."&text=$message");
 
-			$this -> load -> view("template", $data);
-		
-	//$test=	$this->send_sms(substr($phone,0,-1),urlencode($message));
-		
-		//ob_flush();
-		
-		
+
+		$this -> load -> view("template", $data);
 	
 }
  function getWorkingDays($startDate,$endDate,$holidays){
