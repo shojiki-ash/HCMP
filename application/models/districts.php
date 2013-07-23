@@ -36,14 +36,26 @@ class Districts extends Doctrine_Record {
 		return $drugs;	
 	}
 
+
 	public static function get_district_expiries($date,$district){
-		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT stock.facility_code,stock.kemsa_code,stock.batch_no,stock.manufacture,stock.expiry_date,stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name, d.district
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT(DISTINCT stock.facility_code) as facility_count, COUNT(DISTINCT stock.batch_no) as batches, stock.facility_code,stock.kemsa_code,stock.batch_no,stock.manufacture,stock.expiry_date,stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name, d.district, d.id as district_id,
 			FROM Facility_Stock stock, facilities f, districts d, counties c
 			WHERE stock.expiry_date<='$date'
 			AND stock.facility_code=f.facility_code
 			AND f.district=d.id
 			AND d.id='$district'
 			GROUP BY d.district");	
+		return $query;
+	}
+	public static function get_district_expiry_summary($date,$county){
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT(DISTINCT stock.facility_code) as facility_count, COUNT(DISTINCT stock.batch_no) as batches, stock.facility_code, stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name, d.id as district_id, d.district
+			FROM Facility_Stock stock, facilities f, districts d, counties c
+			WHERE stock.expiry_date<='$date'
+			AND stock.status=1
+			AND stock.facility_code=f.facility_code
+			AND f.district=d.id
+			AND d.county=c.id
+			AND c.id='$county'");	
 		return $query;
 	}
 }
