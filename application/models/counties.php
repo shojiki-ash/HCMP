@@ -97,5 +97,18 @@ public static function get_county_received($county){
 		$stockouts = $query -> execute();
 		return $stockouts;
 	}
-
+	
+	public static function get_county_expiries($date,$county){
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT(DISTINCT stock.facility_code) as facility_count, COUNT(DISTINCT stock.batch_no) as batches, d.id as district_id, d.district, stock.facility_code, stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name
+			FROM districts d, counties c, facilities f
+            INNER JOIN facility_stock stock
+            ON stock.facility_code=f.facility_code
+			AND stock.expiry_date<=CURDATE()
+			AND stock.status=1
+            WHERE f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county
+			GROUP BY d.district");	
+		return $query;
+	}
 }
