@@ -250,16 +250,15 @@ public function county_expiries() {
 		$data['title'] = "Expired Products";
 		$data['content_view'] = "county/county_expiries_v";
 		$data['banner_text'] = "Expired Products";
-		$data['expired']=Counties::get_district_expiry_summary($date,$county);
 		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
-		// echo "<pre>";
-		// echo var_dump($data['expired']);
-		// die();
+		$data['expired2']=Counties::get_county_expiries($date,$county);
+		
 		$data['link'] = "county_expiries_v";
 		$data['quick_link'] = "county_expiries_v";
 
 		$this -> load -> view("template", $data);
 	}
+
 
 	public function district_expiries($district=NULL) {
 		
@@ -270,24 +269,13 @@ public function county_expiries() {
 		$data['banner_text'] = "Expired Products";
 		$data['expired']=Districts::get_district_expiries($date,$district);
 		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
-		
-		$data['table_body2']="";
-		foreach ($data['expired'] as $item) {
-			$data['table_body2'].="<tr>
-			<td>".$item['facility_code']."</td>
-			<td>".$item['facility_name']."</td>
-			<td>".$item['balance']."</td>
-			<td><a href=".site_url('stock_expiry_management/expired/'.$item['facility_code'])." class='link'>View</a></td>
-			</tr>";
-			}
-
 		$data['link'] = "district_expiries_v";
 		$data['quick_link'] = "district_expiries_v";
 
 		$this -> load -> view("county/district_expiries_v", $data);
 	}
 
-		public function county_potential_expiries($facility_code=NULL){
+	public function county_potential_expiries($facility_code=NULL){
 		if (!isset($facility_code)) {			
 			$facility_c=$this -> session -> userdata('news');
 		}else{
@@ -298,6 +286,24 @@ public function county_expiries() {
 		$data['banner_text'] = "Expired Products";
 		$data['report']=Facility_Stock::expiries($facility_c);
 	    $data['mycount']= count(Facility_Stock::expiries($facility_c));
+
+		$data['expired']=Districts::get_district_expiries($date,$district);
+		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
+		
+		$data['table_body2']="";
+		if (count($data['expired'])) {
+		foreach ($data['expired'] as $item) {
+			$data['table_body2'].="<tr>
+			<td>".$item['facility_code']."</td>
+			<td>".$item['facility_name']."</td>
+			<td>".$item['balance']."</td>
+			<td><a href=".site_url('stock_expiry_management/expired/'.$item['facility_code'])." class='link'>View</a></td>
+			</tr>";
+			}
+		}
+			else{
+			$data['table_body2']="<div id='notification'>No records found</div>";
+		}
 
 		$this -> load -> view("template", $data);
 	}
@@ -329,6 +335,7 @@ public function county_expiries() {
 				$this -> load -> view("county/county_potential_expiries_v", $data);
 	}
 
+
 	public function district_potential_expiries($district=NULL) {
 		$date= date('Y-m-d');
 		$county=1;
@@ -340,12 +347,16 @@ public function county_expiries() {
 		$data['link'] = "county/district_expiries_v";
 		$data['quick_link'] = "county/district_expiries_v";
 		$data['table_body']="";
+		if (count($data['potential_expiries'])>0) {		
 		foreach ($data['potential_expiries'] as $item) {
 		$data['table_body'].="<tr><td>".$item['facility_code']."</td>
 			<td>".$item['facility_name']."</td>
 			<td>".$item['balance']."</td>
 			<td><a href=".site_url('stock_expiry_management/county_potential_expiries/'.$item['facility_code'])." class='link'>View</a></td>
 			</tr>}";
+		}
+		}else{
+			$data['table_body']="<div id='notification'>No records found</div>";
 		}
 		$this -> load -> view("county/district_potential_expiries_v", $data);
 	}
@@ -357,12 +368,14 @@ public function county_expiries() {
 		$data['content_view'] = "county/county_deliveries_v";
 		$data['banner_text'] = "Deliveries";
 		$data['delivered']=Counties::get_county_received($county);
+		$data['order_counts']=Counties::get_county_order_details($county);
+		$data['order_details']=Ordertbl::get_county_orders($county);
 		$data['link'] = "county/county_deliveries_v";
 		$data['quick_link'] = "county/county_deliveries_v";
 
 		$this -> load -> view("template", $data);
 	}
-	public function district_deliveries($district=NULL) {
+public function district_deliveries($district=NULL) {
 		
 		$date= date('Y-m-d');
 		$data['title'] = "Deliveries";
@@ -382,7 +395,7 @@ public function county_expiries() {
 		</tr>";
 		}
 		}else{
-			$data['table_body3']="";
+			$data['table_body3']="<div id='notification'>No records found</div>";
 		}
 	
 		$this -> load -> view("county/district_deliveries_v", $data);
