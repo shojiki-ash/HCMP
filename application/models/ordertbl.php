@@ -211,5 +211,27 @@ public static function get_all_orders_moh(){
 		$order=$query->execute()->toArray();
 		return $order[0];
 	}
+		public static function get_county_orders($county){
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT
+			(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='Pending' AND o.facilityCode=f.facility_code
+            AND f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county) as pending_count,
+		(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='approved' AND o.facilityCode=f.facility_code
+            AND f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county) as approved_count,
+		(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='delivered' AND o.facilityCode=f.facility_code
+            AND f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county) as delivered_count, o.orderDate,o.facilityCode,o.orderStatus,o.orderTotal,o.order_no
+            FROM ordertbl o, facilities f, districts d, counties c
+            WHERE o.facilityCode=f.facility_code
+            AND f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county
+			ORDER BY o.orderStatus ASC");	
+		return $query;
+	}
 
 }
