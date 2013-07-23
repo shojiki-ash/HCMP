@@ -18,9 +18,9 @@ margin-top:0.5em;
 }
 
 .main{
-width: 74%;
+width: 76%;
 min-height:500px;
-float: left;
+float: right;
 border-left: 1px solid #ccc;
 margin-left:2em;
 margin-bottom:5em;
@@ -37,6 +37,25 @@ text-transform:uppercase;
 background: #29527b; /* Old browsers */
 border-radius: 0.5em;
 color: #fff; }
+table.data-table {
+  margin: 10px auto;
+  }
+  
+table.data-table th {
+  color:#036;
+  text-align:center;
+  font-size: 13.5px;
+  max-width: 600px;
+  }
+table.data-table td, table th {
+  padding: 4px;
+  }
+table.data-table td {
+  height: 30px;
+  width: 130px;
+  font-size: 12.5px;
+  margin: 0px;
+  }
 </style>
 
 <script type="text/javascript">
@@ -55,8 +74,7 @@ color: #fff; }
 			},
 			});
 		
-		$(".pop_up" )
-			.button()
+		$( "#pop_up" )
 			.click(function() {
          	  var id  = $(this).attr("name");
          	  var name=$(this).attr("type");
@@ -86,7 +104,7 @@ color: #fff; }
 
 
       
-    var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Bar2D.wf"?>","ChartId", "100%", "50%", "0", "1" );
+    var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Bar2D.swf"?>","ChartId", "100%", "50%", "0", "1" );
     var url = '<?php echo base_url()."report_management/expired_commodities_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart1");
@@ -153,7 +171,7 @@ color: #fff; }
 
 	
 </script>
-<div>
+
 <div id="dialog-form"></div>
 
 <div class="leftpanel"><h3 class="accordion" id="leftpanel">Expiries<span></span></h3>
@@ -180,6 +198,8 @@ color: #fff; }
 </fieldset>
 	
 <table class="data-table">	
+
+  <?php foreach ($potential_expiries as $item) {?>
 	<tr>
 		<th>District Name</th>
 		<th>No. of Facilities with Potential Expiries</th>
@@ -187,13 +207,23 @@ color: #fff; }
 		<th>Action</th>
 	</tr>			
 		<tbody>
-			<?php foreach ($potential_expiries as $item) {?>
 			<tr>
 			<td><?php echo $item['district']; ?></td>
 			<td><?php echo $item['facility_count']; ?></td>
 			<td><?php echo $item['balance']; ?></td>
-			<td><a href="" class="pop_up" type='view-potential' name="<?php echo $item['district_id']?>" >View</a></td>
+			<td><a href="" id="pop_up" type='view-potential' name="<?php echo $item['district_id']?>" class="link">View</a></td>
 			</tr>
+       <tr>
+    <th>MFL Code</th>
+    <th>Facility Name</th>
+    <th>Cost of Expiries</th>
+    <th>Action</th>
+  </tr>
+  <tr><td><?php echo $item['facility_code'];?></td>
+      <td><?php echo $item['facility_name'];?></td>
+      <td><?php echo $item['balance'];?></td>
+      <td><a href=".site_url('stock_expiry_management/county_potential_expiries/'.$item['facility_code'])." class='link'>View</a></td>
+      </tr>
 			<?php } ?>
 		</tbody>
 		 
@@ -203,9 +233,11 @@ color: #fff; }
   	echo "<div id='notification'>No Records Found</div>";
   endif;
   ?>
-  <?php if (count($expired>0)) :?>
+  <?php if (count($expired2>0)) :?>
 <div id="tab-2">
-	<table class="data-table">	
+	<table class="data-table">
+
+  <?php foreach ($expired2 as $item) {?>	
 	<tr>
 		<th>District Name</th>
 		<th>No. of Facilities with Expired Stock</th>
@@ -213,14 +245,26 @@ color: #fff; }
 		<th>Action</th>
 	</tr>			
 		<tbody>
-			<?php foreach ($expired as $item) {?>
 			<tr>
 			<td><?php echo $item['district']; ?></td>
 			<td><?php echo $item['facility_count']; ?></td>
 			<td><?php echo $item['balance']; ?></td>
-			<td><a href="" class="pop_up" type='view-expiries' name='<?php echo $item['district_id']?>'>View</a></td>
+			<td><a href="" id="pop_up" type='view-expiries' name='<?php echo $item['district_id']?>' class="link">View</a></td>
 			</tr>
-			<?php } ?>
+      <tr>
+    <th>MFL Code</th>
+    <th>Facility Name</th>
+    <th>Cost of Expiries</th>
+    <th>Action</th>
+  </tr> 
+			<tr>
+      <td><?php echo $item['facility_code'];?></td>
+      <td><?php echo $item['facility_name'];?></td>
+      <td><?php echo $item['balance'];?></td>
+      <td><a href=".site_url('stock_expiry_management/expired/'.$item['facility_code'])." class='link'>View</a></td>
+      </tr>
+      <tr><td></td><td></td><td></td><td></td></tr>
+       <?php } ?>
 		</tbody>		 
 </table>
 </div>
@@ -229,4 +273,3 @@ color: #fff; }
  else:
   	echo "<div id='notification'>No Records Found</div>";
   endif;?>
-</div>
