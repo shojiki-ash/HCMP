@@ -19,7 +19,6 @@ height:40%;
 padding:0.2em;
 margin-top:0.5em;
 }
-
 .main{
 width: 76%;
 min-height:500px;
@@ -40,6 +39,27 @@ text-transform:uppercase;
 background: #29527b; /* Old browsers */
 border-radius: 0.5em;
 color: #fff; }
+
+table.data-table {
+	margin: 10px auto;
+	}
+	
+table.data-table th {
+	color:#036;
+	text-align:center;
+	font-size: 13.5px;
+	border-top: none;
+	max-width: 600px;
+	}
+table.data-table td, table th {
+	padding: 4px;
+	}
+table.data-table td {
+	height: 30px;
+	width: 130px;
+	font-size: 12.5px;
+	margin: 0px;
+	}
 </style>
 
 <script type="text/javascript">
@@ -60,7 +80,6 @@ color: #fff; }
 			});
 
 		$( "#pop_up" )
-		.button()
 		.click(function() {
 		 	 var id  = $(this).attr("name");
 		     var url = "<?php echo base_url().'stock_expiry_management/district_deliveries/'?>"+id;
@@ -92,11 +111,33 @@ color: #fff; }
  });
 
 </script>
-<div id="dialog-form"></div>
 <div class="leftpanel"><h3 class="accordion" id="leftpanel">Deliveries<span></span></h3>
+<div id="details"><table id="orderdetails" class="data-table">
+	<tr><th>Order Status</th>
+		<th>No. of Orders</th>
+	</tr>
+	<tbody>
+		<?php foreach ($order_counts as $item) {
+			$pending_orders=$item['pending_orders'];
+			$approved_orders=$item['approved_orders'];
+			$delivered_orders=$item['delivered_orders'];
+
+		} ?>
+
+		<tr><td>Pending Approval</td><td><?php echo $pending_orders; ?></td></tr>
+			<tr><td>Pending Delivery</td><td><?php echo $approved_orders; ?></td></tr>
+			<tr><td>Delivered</td><td><?php echo $delivered_orders; ?></td></tr>
+			
+			
+	</tbody>
+</table>
+</div>
+
 <div class="multiple_chart_content" id="chart1"></div></div>
 <div id="main" class="main">
-<table class="data-table">	
+<table class="data-table">
+
+			<?php foreach ($delivered as $item) {?>	
 	<tr>
 		<th>District Name</th>
 		<th>No. of Facilities with Deliveries</th>
@@ -104,14 +145,26 @@ color: #fff; }
 		<th>Action</th>
 	</tr>			
 		<tbody>
-			<?php foreach ($delivered as $item) {?>
 			<tr>
 			<td><?php echo $item['district']; ?></td>
 			<td><?php echo $item['facility_count']; ?></td>
 			<td><?php echo $item['orderTotal']; ?></td>
 			<td><a href="" id="pop_up" type='view-deliveries' name="<?php echo $item['district_id']?>" class="link">View</a></td>
 			</tr>
+			<tr><th>MFL Code</th>
+				<th>Facility Name</th>
+				<th>Order Value</th>
+				<th>Action</th>
+			</tr>
+			<tr><td><?php echo $item['facility_code']; ?></td>
+			<td><?php echo $item['facility_name']; ?></td>
+			<td><?php echo $item['orderTotal']; ?></td>
+			<td><a href="<?php echo site_url('order_management/moh_order_details/'.$item['id']);?>"class="link">View</a></td></tr>
+			<tr><td></td><td></td><td></td><td></td></tr>
 			<?php } ?>
+			
 		</tbody>		 
 </table>
+
 </div>
+<div id="dialog-form"></div>
