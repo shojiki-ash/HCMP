@@ -246,7 +246,7 @@ public function expired($facility_code=NULL) {
 
 public function county_expiries() {
 		$date= date('Y-m-d');
-		$county=1;
+		$county=$this -> session -> userdata('county_id');
 		$data['title'] = "Expired Products";
 		$data['content_view'] = "county/county_expiries_v";
 		$data['banner_text'] = "Expired Products";
@@ -263,7 +263,7 @@ public function county_expiries() {
 	public function district_expiries($district=NULL) {
 		
 		$date= date('Y-m-d');
-		$county=1;
+		$county=$this -> session -> userdata('county_id');
 		$data['title'] = "Expired Products";
 		$data['content_view'] = "county/district_expiries_v";
 		$data['banner_text'] = "Expired Products";
@@ -309,7 +309,7 @@ public function county_expiries() {
 	}
 	public function county_get_potential_expiries(){
 		$checker=$_POST['id'];
-		$county=1;
+		$county=$this -> session -> userdata('county_id');
 				
 			switch ($checker)
 			{
@@ -338,7 +338,7 @@ public function county_expiries() {
 
 	public function district_potential_expiries($district=NULL) {
 		$date= date('Y-m-d');
-		$county=1;
+		$county=$this -> session -> userdata('county_id');
 		$data['title'] = "Expired Products";
 		$data['content_view'] = "county/district_potential_expiries_v";
 		$data['banner_text'] = "Expired Products";
@@ -363,7 +363,7 @@ public function county_expiries() {
 	
 	public function county_deliveries() {
 		$date= date('Y-m-d');
-		$county=1;
+		$county=$this -> session -> userdata('county_id');
 		$data['title'] = "Deliveries";
 		$data['content_view'] = "county/county_deliveries_v";
 		$data['banner_text'] = "Deliveries";
