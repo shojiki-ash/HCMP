@@ -54,7 +54,8 @@ public function submit() {
 		$myvalue=$n['usertype_id'];
 		$namer=$n['fname'];
 		$id_d=$n['id'];
-		$inames=$n['lname'];
+		$inames=$n['lname'];		
+		$county_id=$n['county'];
 		$disto=$n['district'];
 		$faci=$n['facility'];
 		$phone=$n['telephone'];
@@ -70,6 +71,10 @@ public function submit() {
 		$myobj = Doctrine::getTable('districts')->find($disto);
         $dist=$myobj->district;	
 		}
+		if($county_id>0){
+		$myobj = Doctrine::getTable('counties')->find($county_id);
+        $county_name=$myobj->county;	
+		}
 		$moh="MOH Official";
 		$moh_user="MOH User";
 		$kemsa="KEMSA Representative";
@@ -80,33 +85,33 @@ public function submit() {
 		$dpp="District Lab Technologist";
 		
        if ($myvalue ==1) {
-       		$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$moh ,'user_id'=>$user_id,'user_indicator'=>"moh",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto);	
+       		$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$moh ,'user_id'=>$user_id,'user_indicator'=>"moh",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'county_id'=>$county_id, 'county_name'=>$county_name);	
 		} else if($myvalue==4){
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$moh_user ,'user_id'=>$user_id,'user_indicator'=>"moh_user",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$moh_user ,'user_id'=>$user_id,'user_indicator'=>"moh_user",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}else if($myvalue==5){
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$facility_name ,'user_id'=>$user_id,'user_indicator'=>"fac_user",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'drawing_rights'=>$drawing_rights);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$facility_name ,'user_id'=>$user_id,'user_indicator'=>"fac_user",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'drawing_rights'=>$drawing_rights, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}else if($myvalue ==3){
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$dist ,'user_id'=>$user_id,'user_indicator'=>"district",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci, 'district'=>$n['district'],'district1'=>$disto);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$dist ,'user_id'=>$user_id,'user_indicator'=>"district",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci, 'district'=>$n['district'],'district1'=>$disto, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}else if($myvalue ==6){
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$kemsa,'user_id'=>$user_id,'user_indicator'=>"kemsa",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$kemsa,'user_id'=>$user_id,'user_indicator'=>"kemsa",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}	
 		else if($myvalue ==2)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$facility_name,'user_id'=>$user_id,'user_indicator'=>"facility",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>$drawing_rights);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$facility_name,'user_id'=>$user_id,'user_indicator'=>"facility",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>$drawing_rights, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}
 		else if($myvalue ==9)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$super_admin,'user_id'=>$user_id,'user_indicator'=>"super_admin",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>0);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$super_admin,'user_id'=>$user_id,'user_indicator'=>"super_admin",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}
 		else if($myvalue ==8)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$rtk,'user_id'=>$user_id,'user_indicator'=>"rtk_manager",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>0);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$rtk,'user_id'=>$user_id,'user_indicator'=>"rtk_manager",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}	
 		else if($myvalue ==10)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$county,'user_id'=>$user_id,'user_indicator'=>"county_facilitator",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>0,'district'=>'6','drawing_rights'=>0);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$county,'user_id'=>$user_id,'user_indicator'=>"county_facilitator",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>0,'district'=>'6','drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}
 		else if($myvalue ==11)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$allocation,'user_id'=>$user_id,'user_indicator'=>"allocation_committee",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>0,'district'=>'6','drawing_rights'=>0);
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$allocation,'user_id'=>$user_id,'user_indicator'=>"allocation_committee",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>0,'district'=>'6','drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);
 		}
 		else if($myvalue ==12)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$dpp,'user_id'=>$user_id,'user_indicator'=>"dpp",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$county,'district1'=>$disto,'drawing_rights'=>0);			
+			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$dpp,'user_id'=>$user_id,'user_indicator'=>"dpp",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$county,'district1'=>$disto,'drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);			
 		
 		}				
 		$this -> session -> set_userdata($session_data);
@@ -122,6 +127,7 @@ public function submit() {
         
    
 }
+
 
 	private function _submit_validate() {
 
