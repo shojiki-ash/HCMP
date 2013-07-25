@@ -261,7 +261,7 @@ table.data-table td {
       <td><?php echo $item['facility_code'];?></td>
       <td><?php echo $item['facility_name'];?></td>
       <td><?php echo $item['balance'];?></td>
-       <td><a href="<?php echo site_url('stock_expiry_management/expired/'.$item['facility_code']);?>" class='link'>View</a></td>
+      <td><a href="<?php echo site_url('stock_expiry_management/expired/'.$item['facility_code']);?>" class='link'>View</a></td>
       </tr>
       <tr><td></td><td></td><td></td><td></td></tr>
        <?php } ?>

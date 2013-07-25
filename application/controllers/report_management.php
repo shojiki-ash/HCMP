@@ -2058,7 +2058,7 @@ echo $strXML;
 }
 //county charts  5
 public function cost_of_ordered_commodities_chart(){
-$strXML ="<chart formatNumberScale='0'  lineColor='000000' lineAlpha='40' caption='cost of ordered commodities' xAxisName='Month' yAxisName='Ksh' alternateVGridColor='AFD8F8' baseFontColor='114B78' toolTipBorderColor='114B78' toolTipBgColor='E7EFF6' useRoundEdges='1' showBorder='0' bgColor='FFFFFF,FFFFFF'>
+$strXML ="<chart formatNumberScale='0'  lineColor='000000' lineAlpha='40' caption='Cost of Ordered Commodities' xAxisName='Month' yAxisName='Ksh' alternateVGridColor='AFD8F8' baseFontColor='114B78' toolTipBorderColor='114B78' toolTipBgColor='E7EFF6' useRoundEdges='1' showBorder='0' bgColor='FFFFFF,FFFFFF'>
 <set label='Jan' value='17400' />
 <set label='Feb' value='19800' />
 <set label='Mar' value='21800' />
@@ -2095,7 +2095,7 @@ echo $strXML;
 
 //county charts  8
 public function orders_placed_chart(){
-$strXML ="<chart caption=' Orders Placed By Districts' formatNumberScale='0' formatNumberScale='0' showBorder='0' bgcolor='FFFFF' color='FF4400'>
+$strXML ="<chart caption='Orders Placed By Districts' formatNumberScale='0' formatNumberScale='0' showBorder='0' bgcolor='FFFFF' color='FF4400'>
 <set label='Dagoretti' value='51852' />
 <set label='Embakasi' value='88168' />
 <set label='Kamukunji' value='73897' />
@@ -2194,7 +2194,7 @@ $strXML ="<chart palette='3' bgColor='FFFFFF' formatNumberScale='0' showBorder='
     </categories>
 
 
-    <dataset seriesName='Allocated Drawing ' color='A66EDD' >
+    <dataset seriesName='Allocated Drawing' color='A66EDD' >
 
         <set value='3500000' />
 
@@ -2216,7 +2216,7 @@ $strXML ="<chart palette='3' bgColor='FFFFFF' formatNumberScale='0' showBorder='
     </dataset>
 
 
-    <dataset seriesName='Drawing right Bal' color='F6BD0F'>
+    <dataset seriesName='Drawing Rights Balance' color='F6BD0F'>
 
         <set value='2200000' />
 
@@ -2320,7 +2320,7 @@ public function get_lead_time(){
 public function district_drawing_rights_chart(){
 		$drawing_rights=Facilities::get_drawingR_county_by_district();
 		$strXML= "";
-		$strXML ="<chart palette='3' caption='Districts Drawing Rights'  bgColor='FFFFFF' numberprefix='$' xaxisName='Districts'yaxisName='Amount' useRoundEdges='1' showValues='0' legendBorderAlpha='0'>  
+		$strXML ="<chart palette='3' caption='Districts Drawing Rights'  bgColor='FFFFFF' numberprefix='Ksh' xaxisName='Districts'yaxisName='Amount' useRoundEdges='1' showValues='0' legendBorderAlpha='0'>  
 
 <categories showValues='1'>";
 		

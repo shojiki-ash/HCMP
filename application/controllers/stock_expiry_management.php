@@ -271,25 +271,6 @@ public function county_expiries() {
 		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
 		$data['link'] = "district_expiries_v";
 		$data['quick_link'] = "district_expiries_v";
-
-		$this -> load -> view("county/district_expiries_v", $data);
-	}
-
-	public function county_potential_expiries($facility_code=NULL){
-		if (!isset($facility_code)) {			
-			$facility_c=$this -> session -> userdata('news');
-		}else{
-			$facility_c=$facility_code;
-		}		
-		$data['title'] = "Potential Expiries";
-		$data['content_view'] = "county/county_potential_expiries_v";
-		$data['banner_text'] = "Expired Products";
-		$data['report']=Facility_Stock::expiries($facility_c);
-	    $data['mycount']= count(Facility_Stock::expiries($facility_c));
-
-		$data['expired']=Districts::get_district_expiries($date,$district);
-		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
-		
 		$data['table_body2']="";
 		if (count($data['expired'])) {
 		foreach ($data['expired'] as $item) {
@@ -304,7 +285,23 @@ public function county_expiries() {
 			else{
 			$data['table_body2']="<div id='notification'>No records found</div>";
 		}
+		$this -> load -> view("county/district_expiries_v", $data);
+	}
 
+	public function county_potential_expiries($facility_code=NULL){
+		if (!isset($facility_code)) {			
+			$facility_c=$this -> session -> userdata('news');
+		}else{
+			$facility_c=$facility_code;
+		}
+		$county=$this->session->userdata('county_id');
+		$data['title'] = "Potential Expiries";
+		$data['content_view'] = "county/county_potential_expiries_v";
+		$data['banner_text'] = "Expired Products";
+		$data['report']=Facility_Stock::expiries($facility_c);
+	    $data['mycount']= count(Facility_Stock::expiries($facility_c));
+	   	$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
+		
 		$this -> load -> view("template", $data);
 	}
 	public function county_get_potential_expiries(){

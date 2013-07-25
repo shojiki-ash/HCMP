@@ -8,7 +8,7 @@ class User extends Doctrine_Record {
 		$this->hasColumn('username', 'string', 255, array('unique' => 'true'));
 		$this->hasColumn('password', 'string', 255);
 		$this->hasColumn('usertype_id', 'integer', 11);
-		$this->hasColumn('telephone', 'varchar', 255);
+		$this->hasColumn('telephone', 'varchar', 255);		
 		$this->hasColumn('county', 'varchar', 255);
 		$this->hasColumn('district', 'varchar', 255);
 		$this->hasColumn('facility', 'varchar', 255);

@@ -128,7 +128,6 @@ public function submit() {
    
 }
 
-
 	private function _submit_validate() {
 
 		$this->form_validation->set_rules('username', 'Username',
