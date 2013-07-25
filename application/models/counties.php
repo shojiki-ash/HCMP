@@ -73,6 +73,16 @@ public static function get_county_received($county){
 			AND d.id='$district' GROUP BY d.district");
 		return $query;
 	}
+	public static function get_county_order_details($county){
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='Pending') as pending_orders, (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='delivered') as delivered_orders, (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='approved') as approved_orders
+			FROM ordertbl o, facilities f, districts d, counties c
+			WHERE o.orderStatus='delivered'
+			AND o.facilityCode=f.facility_code
+			AND f.district=d.id
+			AND d.county=c.id
+			AND c.id='$county'");
+		return $query;
+	}
 
 	public static function get_county_p_stockouts($date,$county,$date1){
 		//echo $date.'<br>',$facility.'<br>',$date1.'<br>';
