@@ -417,7 +417,9 @@ public function historical_stock_take(){
 		$data['link'] = "home";
 		$data['drugs'] = Drug::getAll();
 		$data['drug_name']=Drug::get_drug_name();
-		$data['drug_categories'] = Drug_Category::getAll();;
+		$data['drug_categories'] = Drug_Category::getAll();
+		$data['historical_data'] = Historical_Stock::load_historical_stock($facility_code);
+		
 		$data['quick_link'] = "update_stock_level";
 		$this -> load -> view("template", $data);
 
@@ -438,15 +440,16 @@ public function historical_stock_take(){
 			->update('historical_stock')
 				->set('consumption_level','?',"$h_stock[1]")
 				->set('unit_count','?',"$h_stock[3]")
+				->set('selected_option','?',"$h_stock[4]")
 					->where("facility_code='$facilityCode' AND drug_id='$h_stock[0]'");
 						$q->execute();
 
 		} else if (count($stocktake)==0) {
 			$insert = Doctrine_Manager::getInstance()->getCurrentConnection();
-		$insert->execute("INSERT INTO historical_stock (`facility_code`, `drug_id`, `unit_size`, `consumption_level`, `unit_count`) VALUES ('".$facilityCode."', '".$h_stock[0]."', '".$h_stock[2]."', '".$h_stock[1]."', '".$h_stock[3]."')");
+		$insert->execute("INSERT INTO historical_stock (`facility_code`, `drug_id`, `unit_size`, `consumption_level`, `unit_count`, `selected_option`) VALUES ('".$facilityCode."', '".$h_stock[0]."', '".$h_stock[2]."', '".$h_stock[1]."', '".$h_stock[3]."', '".$h_stock[4]."')");
 		}
 		
-		echo 'success consumption_level= '.$h_stock[1].'unit_count= '.$h_stock[3].'drug_id= '.$h_stock[0];
+		echo 'success consumption_level= '.$h_stock[1].'unit_count= '.$h_stock[3].'drug_id= '.$h_stock[0].'selected_option= '.$h_stock[4];
 	}
 
 }

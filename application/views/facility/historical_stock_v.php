@@ -21,17 +21,15 @@ function calculate_a_stock (argument) {
     
     var x = argument;
     
+    //checking if an option has been selected
+    if (($("input[type='radio'][name="+x+"]").is(':checked'))==false) {
+      document.getElementsByName("consumption["+x+"]")[0].value='';
+      document.getElementsByName("total["+x+"]")[0].value='';
+      alert('Please select either pack or unit size.');
+      return;
+    };
+   
     var radiocheck =($("input[type='radio'][name="+x+"]:checked").val());
-    
-    // alert(radiocheck);
-    // return;
-    
-    
-    //do this
-
-        
-  
-    
     //checking if the quantity is a number      
 var num = document.getElementsByName("consumption["+x+"]")[0].value.replace(/\,/g,'');
 if(!isNaN(num)){
@@ -70,11 +68,12 @@ var drug_id = document.getElementsByName("drug_id["+x+"]")[0].value;
 var consumption = document.getElementsByName("consumption["+x+"]")[0].value;
 var unit_size = document.getElementsByName("u_size["+x+"]")[0].value;
 var total = document.getElementsByName("total["+x+"]")[0].value;
+var selected_option = ($("input[type='radio'][name="+x+"]:checked").val());
 
 json_obj={"url":"<?php echo site_url("stock_management/save_historical_stock/");?>",}
 var baseUrl=json_obj.url;
 
-save_historical_stock(baseUrl,"data_array="+drug_id+"|"+consumption+"|"+unit_size+"|"+total);
+save_historical_stock(baseUrl,"data_array="+drug_id+"|"+consumption+"|"+unit_size+"|"+total+"|"+selected_option);
 }
 /***********creating the request that will update the historical stock table ******/
 var c_id=1;
@@ -119,7 +118,19 @@ function save_historical_stock(baseUrl, data_array){
 
 
 </script>
+
+<h2 style="text-align:left; font-size: 14px">Please note this is a one off activity</h2>
+
 <div id="stocktable" title="Fill in the details below">
+<!--     <input type="hidden" name="option" value='<?php if(isset($update))
+{echo $update;} else  {?>post_stock <?php }  ?>' /> -->
+  <!--   <table>
+        <tr>
+            <td><label>enable auto calculate? </label></td>
+            <td><label>NO</label><input type="radio" name="group"  value="NO" checked="checked" /> </td><td><label>YES</label><input type="radio" name="group"  value="YES"   /></td>
+        </tr>
+    </table> -->
+
 <table id ='main' style="margin-left: 0;" width="100%">
     <thead>
             <tr><th style="text-align:center;"><b>Category&nbsp;Name</b></th>                
@@ -135,23 +146,59 @@ function save_historical_stock(baseUrl, data_array){
 <?php 
 $count = 0;
 foreach($drug_categories as $category):?>
-    <?php  foreach($category->Category as $drug): ?>
+
+    <?php 
+        foreach($category->Category as $drug):
+            ?>
             
         <tr>
+            
+            
             <td><?php echo $category->Category_Name?></td>
             <td><?php echo $drug->Drug_Name;?></td>
             <td><?php echo $drug->Kemsa_Code;?></td>
             <input type="hidden" name ='drug_id[<?php echo $count?>]' value="<?php echo $drug->id;?>"> </td>
             <td><?php echo $drug->Unit_Size;?> <input type="hidden" name ='u_size[<?php echo $count?>]' value="<?php echo $drug->Unit_Size;?>"> </td>
-            <td>
-                <input id='Unit_Size' type='radio' name='<?php echo $count?>' value='Unit_Size' class='<?php echo $count?>'>
+      
+                <?php if (count($historical_data)>0) {
+                  foreach ($historical_data as $data_item) {
+                  if($data_item['id']==$drug['id']) {
+                   if ($data_item['selected_option']!=NULL && $data_item['selected_option']=='Unit_Size') {?>
+              <td><input id='Unit_Size' type='radio' name='<?php echo $count?>' value='Unit_Size' class='<?php echo $count?>' checked='checked'>
                 <label for='Unit_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Unit Size</label>
                 <input id='Pack_Size' type='radio' name='<?php echo $count?>' value='Pack_Size' class='<?php echo $count?>' onkeyup='calculate_a_stock(<?php echo $count?>)'>
+                <label for='Pack_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Pack Size</label></td>            
+            <?php }elseif ($data_item['selected_option']!=NULL && $data_item['selected_option']=='Pack_Size') {?>
+              <td><input id='Unit_Size' type='radio' name='<?php echo $count?>' value='Unit_Size' class='<?php echo $count?>'>
+                <label for='Unit_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Unit Size</label>
+              <input id='Pack_Size' type='radio' name='<?php echo $count?>' value='Pack_Size' class='<?php echo $count?>' checked='checked' onkeyup='calculate_a_stock(<?php echo $count?>)'>
                 <label for='Pack_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Pack Size</label></td>
-                <td><input  id = 'consumption[<?php echo $count?>]' name = 'consumption[<?php echo $count;?>]' style='text-align:center;' type = 'text' onkeyup='calculate_a_stock(<?php echo $count?>)'></td>
+                <?php }
+                elseif ($data_item['selected_option']==NULL){?>
+                <td><input id='Unit_Size' type='radio' name='<?php echo $count?>' value='Unit_Size' class='<?php echo $count?>'>
+                <label for='Unit_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Unit Size</label>
+                <input id='Pack_Size' type='radio' name='<?php echo $count?>' value='Pack_Size' class='<?php echo $count?>' onkeyup='calculate_a_stock(<?php echo $count?>)'>
+                <label for='Pack_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Pack Size</label>
+              </td>
+               <?php }?>
+                <td><input  id = 'consumption[<?php echo $count?>]' name = 'consumption[<?php echo $count;?>]' value= "<?php echo $data_item['consumption_level']?>" style='text-align:center;' type = 'text' onkeyup='calculate_a_stock(<?php echo $count?>)'></td>
+                <td><input  id = 'total[<?php echo $count?>]' name='total[<?php echo $count?>]' value= "<?php echo $data_item['unit_count']?>"  style='text-align:center;' type = 'text' readonly = 'readonly' value=''></td>
+                 <?php }
+                 }
+              }
+                elseif (count($historical_data)==0) {?>
+                 <td>
+              <input id='Unit_Size' type='radio' name='<?php echo $count?>' value='Unit_Size' class='<?php echo $count?>'>
+                <label for='Unit_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Unit Size</label>
+              <input id='Pack_Size' type='radio' name='<?php echo $count?>' value='Pack_Size' class='<?php echo $count?>' onkeyup='calculate_a_stock(<?php echo $count?>)'>
+                <label for='Pack_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Pack Size</label>
+              </td>
+               <td><input  id = 'consumption[<?php echo $count?>]' name = 'consumption[<?php echo $count;?>]' style='text-align:center;' type = 'text' onkeyup='calculate_a_stock(<?php echo $count?>)'></td>
                 <td>
                     <input  id = 'total[<?php echo $count?>]' name='total[<?php echo $count?>]' style='text-align:center;' type = 'text' readonly = 'readonly' value=''>
                 </td>
+               <?php } ?>
+                
         </tr>
         
         <?php $count++;
@@ -162,3 +209,4 @@ endforeach;?>
 </table>
 </div>
 <br />
+<span><a href="<?php echo site_url('order_management/new_order');?>"><input class="button" id="post_stock" style="margin-left: 0%" value="Proceed To Make Order"></a></span>
