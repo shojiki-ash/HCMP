@@ -116,7 +116,7 @@ unset($popup);
                
           if (count($historical_stock)<163){?> 
 		<div class="message warning">
-			<h2>Incomplete Historical Stock</h2>
+			<h2>Incomplete Historical Stock (<?php echo $historical_stock[0]['percentage']; ?>% complete)</h2>
 			<p>
 				<a href="<?php 
 				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information </a>
@@ -124,7 +124,7 @@ unset($popup);
 		</div>
 		<?php }?>
                
-		</fieldset>
+	;	</%fieldset>
 		<fieldset>
 		<legend>Actions</legend>
 	     <?php

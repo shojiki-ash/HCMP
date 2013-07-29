@@ -39,6 +39,7 @@ class Home_Controller extends MY_Controller {
 		    $data['diff']=$difference;			
 			$data['exp']=Facility_Stock::get_exp_count($date,$facility_c);
 		    $data['historical_stock'] = Historical_Stock::count_historical_stock($facility_c);
+		    $data['percentage_complete'] = Historical_Stock::load_stock($facility_c);
 			$data['exp_count']=Facility_Stock::get_exp_count($date,$facility_c);
 			$data['stock']=Facility_Stock::count_facility_stock_first($facility_c);
 		    $data['pending_orders'] = Ordertbl::get_pending_count($facility_c);
