@@ -261,7 +261,7 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
 					
   $all_facility_users=user::get_user_info(get_user_info);
   
-  $all_facility_users=$facility=$this -> session -> userdata('user_email').",";
+  $email_address =$facility=$this -> session -> userdata('user_email').",";
 
 
  foreach($all_facility_users as $user_detail){
@@ -287,7 +287,8 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
 
  
    $this->session->set_flashdata('system_success_message', "Order No $code has been approved");	
-   $this->district_orders();
+   redirect("order_approval/district_orders");
+ 
 	}
 	 function getWorkingDays($startDate,$endDate,$holidays){
     //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24

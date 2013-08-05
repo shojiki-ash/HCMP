@@ -83,7 +83,7 @@ class User extends Doctrine_Record {
 		return $level;
 	}
 	public static function get_user_info($facility_code) {
-		$query = Doctrine_Query::create() -> select("DISTINCT usertype_id, telephone,district, facility") -> from("user")->where("status='1' and  facility='$facility_code'");
+		$query = Doctrine_Query::create() -> select("DISTINCT usertype_id, telephone,district, facility, email") -> from("user")->where("status='1' and  facility='$facility_code'");
 		$info = $query -> execute();
 		
 		return $info;

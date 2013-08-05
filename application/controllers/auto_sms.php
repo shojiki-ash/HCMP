@@ -30,6 +30,17 @@ public function get_facility_phone_numbers($facility_code){
 		}
 	return $phone;
 }
+public function get_facility_emails($facility_code){
+	$data=User::get_user_info($facility_code);
+	$email=""; 
+	foreach ($data as $info) {
+
+			$email_addr =$info->email;
+
+		    $email .=$email_addr.'+';	
+		}
+	return $email;
+}
 
 public function get_ddp_phone_numbers($district_id){
 	$data=User::get_dpp_details($district_id);

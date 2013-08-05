@@ -69,10 +69,6 @@
     chart.setDataURL(url);
     chart.render("chart1");
 
-    
-
-  
-
      var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "ChartId3", "100%", "70%", "0", "0");
     var url = '<?php echo base_url()."report_management/orders_chart"?>'; 
     chart.setDataURL(url);

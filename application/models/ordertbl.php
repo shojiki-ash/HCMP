@@ -211,6 +211,46 @@ public static function get_all_orders_moh(){
 		$order=$query->execute()->toArray();
 		return $order[0];
 	}
+	public static function get_county_order_turn_around_time($county_id){
+			$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT CEIL( AVG( DATEDIFF( o.`orderDate` , o.`approvalDate` ) ) ) AS order_approval, CEIL( AVG( DATEDIFF( o.`deliverDate` , o.`approvalDate` ) ) ) AS approval_delivery, CEIL( AVG( DATEDIFF( o.`dispatch_update_date` , o.`deliverDate` ) ) ) AS delivery_update, CEIL( AVG( DATEDIFF( o.`dispatch_update_date` , o.`orderDate` ) ) ) AS t_a_t
+FROM ordertbl o, facilities f, districts d, counties c
+WHERE f.district = d.id
+AND d.county = c.id
+AND c.id = '$county_id'
+");
+return $q;
+
+	}
+
+public static function get_district_ordertotal($district){
+     $year = date("Y");
+$district_ordertotal = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->fetchAll("SELECT districts.county, ordertbl.`facilityCode` , SUM( ordertbl.`orderTotal` ) AS OrderTotal, MONTH( ordertbl.`approvalDate` ) as month
+FROM ordertbl, facilities, districts
+WHERE ordertbl.facilityCode = facilities.facility_code
+AND (YEAR( ordertbl.`approvalDate` ) =$year
+OR YEAR( ordertbl.`approvalDate` ) =$year-1)
+AND districts.id =$district
+AND facilities.district = districts.id
+GROUP BY MONTH( ordertbl.`approvalDate` ) ");
+
+        return $district_ordertotal ;
+        }
+        
+        public static function get_county_fill_rate($county_id){
+        	$district_ordertotal = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->fetchAll(" SELECT IFNULL(avg( IFNULL( o_d.`quantityRecieved` , 0 ) / IFNULL( o_d.`quantityOrdered` , 0 ) ),0) as fill_rate
+FROM  `ordertbl` o, facilities f, counties c, districts d, orderdetails o_d
+WHERE f.facility_code = o.facilityCode
+AND o.id = o_d.orderNumber
+AND f.district = d.id
+AND d.county = c.id
+AND c.id ='$county_id'");
+
+        return $district_ordertotal ;
+ 
+        }
 		public static function get_county_orders($county){
 		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT
 			(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='Pending' AND o.facilityCode=f.facility_code
