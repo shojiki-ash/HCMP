@@ -84,7 +84,6 @@
     chart.setDataURL(url);
     chart.render("chart6");
 
-
      var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/StackedColumn2D.swf"?>", "ChartId6", "100%", "80%", "0", "0");
     var url = '<?php echo base_url()."report_management/district_drawing_rights_chart"?>'; 
     chart.setDataURL(url);

@@ -1721,10 +1721,6 @@ public function get_stock_status($option=NULL,$facility_code=NULL){
 		
 
 	}
- 
-
-
-
 
 $chart .="<chart palette='2' chartLeftMargin='0' useEllipsesWhenOverflow='1' plotSpacePercent='100' yAxisNamePadding='0'yAxisValuesPadding='0' bgColor='FFFFFF' showBorder='0' caption='Commodity Stock Level :$title' shownames='1' showvalues='1'   showSum='1' decimals='0' useRoundEdges='1'>";
 foreach($commodity_array as $commodity_detail){
@@ -2139,23 +2135,35 @@ echo $strXML;
 
 //county charts  9
 public function lead_time_chart_county(){
+$district=$this -> session -> userdata('district');
+$chart_raw_data[0]['t_a_t']=0;
+$chart_raw_data[0]['delivery_update']=0;
+$county_id=$this -> session -> userdata('county_id');
+$county_name=$this -> session -> userdata('county');
+$chart_raw_data=ordertbl::get_county_order_turn_around_time($county_name[0]['id']);			
+
+$step_data=0;	
+	
+	
 	$title='Lead Time';
 $str_xml_body="<value>1</value>";
 
 $strXML = '<Chart bgColor="FFFFFF" bgAlpha="0" showBorder="0" upperLimit="15" lowerLimit="0" gaugeRoundRadius="5" chartBottomMargin="10" ticksBelowGauge="1" showGaugeLabels="1" valueAbovePointer="1" pointerOnTop="1" pointerRadius="9" >
+<colorRange>';
 
-<colorRange>
-<color minValue="0" maxValue="5" label="5 days"  />
-<color minValue="5" maxValue="10" label="5 days"/>
-<color minValue="10" maxValue="15" label="5 days"/>
+$strXML .= "<color minValue='$step_data' maxValue='".$chart_raw_data[0]['order_approval']."' label='".$chart_raw_data[0]['order_approval']." days'  />";
+$step_data =$step_data+$chart_raw_data[0]['order_approval']+$chart_raw_data[0]['approval_delivery'];
+$strXML .= "<color minValue='".$chart_raw_data[0]['order_approval']."' maxValue='$step_data' label='".$chart_raw_data[0]['approval_delivery']." days'  />";
+$step_data =$step_data+$chart_raw_data[0]['delivery_update'];
+$step_data_=$step_data-$chart_raw_data[0]['delivery_update'];
+$strXML .= "<color minValue='$step_data_' maxValue='$step_data' label='".$chart_raw_data[0]['delivery_update']." days'  />";
 
+$strXML .='
 </colorRange>
 <pointers>
-   <pointer value="8.3" toolText="Total Turn Around Time" link="P-detailsWin,width=450,height=150,toolbar=no,scrollbars=no, resizable=no-provincialtatbreakdown.php?province=5%26mwaka=2012%26mwezi=07%26dcode=%26fcode=0" />
+   <pointer value="'.$chart_raw_data[0]['t_a_t'].'" toolText="Total Turn Around Time" link="P-detailsWin,width=450,height=150,toolbar=no,scrollbars=no, resizable=no-provincialtatbreakdown.php?province=5%26mwaka=2012%26mwezi=07%26dcode=%26fcode=0" />
  
 </pointers>
-
-
 <styles>
 
 <definition>
