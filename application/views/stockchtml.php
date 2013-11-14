@@ -1,7 +1,9 @@
 <?php
 
-$from=$this -> session -> userdata('from');
-$to=$this -> session -> userdata('to');
+$fromm=new DateTime($this -> session -> userdata('from'));
+$too=new DateTime($this -> session -> userdata('to'));
+$from=$fromm->format('d M Y');
+$to=$too->format('d M Y');
 $desc=$this -> session -> userdata('desc');
 $drugname=$this -> session -> userdata('drugname');
 $facility_Code=$this -> session -> userdata('news');
@@ -70,14 +72,12 @@ echo form_open('Raw_data/get_stockcontrolpdf');
  
 ?>
 <div class="whole_report">
-	<div class="try">
-<button class="awesome rosy">Download PDF</button>
-</div>
+	
 <div>
 	<img src="<?php echo base_url().'Images/coat_of_arms.png'?>" style="position:absolute;  width:90px; width:90px; top:0px; left:0px; margin-bottom:-100px;margin-right:-100px;"></img>
        
        <span style="margin-left:100px;  font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 15px;">
-     Ministry of Public Health and Sanitation/Ministry of Medical Services</span><br>
+     Ministry of Health</span><br>
        <span style=" font-size: 12px;  margin-left:100px;">Health Commodities Management Platform</span><span style="text-align:center;" >
        	<h2 style="text-align:center; font-size: 20px;">Stock Control Card</h2>
        <h2 style="text-align:center;"><?php echo $drugname ?>(<?php echo $desc?>)</h2>
@@ -106,10 +106,15 @@ echo form_open('Raw_data/get_stockcontrolpdf');
 		<?php 
 				foreach ($report as $user ) { ?>
 					
-					<?php foreach($user->Code as $d){ 
+					<?php foreach($user->Code as $d){
+						        $qty_receipts=0; 
 								$fname=$d->fname;
 								$lname=$d->lname;
 								$thedate=$user->date_issued;
+								$qty_receipts=$user->receipts;
+								
+								($qty_receipts==0) ? $qty_receipts=$user->balanceAsof+$user->qty_issued :$qty_receipts=$user->receipts;
+								
 								$thedate1=$user->expiry_date;
 								$formatme = new DateTime($thedate);
 								$myvalue= $formatme->format('d M Y');
@@ -131,7 +136,7 @@ echo form_open('Raw_data/get_stockcontrolpdf');
 							<td><font color = 'red'><?php echo $user->s11_No;?></font></td>
 							<td><font color = 'red'><?php echo $user->batch_no;?></font></td>
 							<td><font color = 'red'><?php echo $myvalue1;?></font></td>
-							<td><font color = 'red'><?php echo $user->balanceAsof+$user->qty_issued;?></font></td>
+							<td><font color = 'red'><?php echo $qty_receipts;?></font></td>
 							<td><font color = 'red'><?php echo $user->qty_issued;?></font></td>
 							<td><font color = 'red'><?php echo $user->balanceAsof;?></font></td>	
 							
@@ -144,7 +149,7 @@ echo form_open('Raw_data/get_stockcontrolpdf');
 							<td><?php echo $user->s11_No;?></td>
 							<td><?php echo $user->batch_no;?> </td>
 							<td><?php echo $myvalue1;?> </td>
-							<td><?php echo $user->balanceAsof+$user->qty_issued;?> </td>
+							<td><?php echo $qty_receipts;?> </td>
 							<td><?php echo $user->qty_issued;?></td>
 							<td><?php echo $user->balanceAsof;?></td>		
 							
@@ -164,7 +169,7 @@ echo form_open('Raw_data/get_stockcontrolpdf');
 
 </div>
 <input type="hidden" value="<?php echo $from ?>" id="datefromStockC" name="datefromStockC" />
-<input type="hidden"  value="<?php echo $to ?>" id="datetoStockC" name="datetoStockC" />
+<input type="hidden" value="<?php echo $to ?>" id="datetoStockC" name="datetoStockC" />
 <input type="hidden" value="<?php echo $desc ?>" id="desc" name="desc" />
 <input type="hidden" value="<?php echo $drugname ?>" id="drugname" name="drugname" />
 <input type="hidden" value="<?php echo $facility_Code ?>" id="facilitycode" name="facilitycode" />

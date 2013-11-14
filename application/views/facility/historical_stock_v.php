@@ -107,6 +107,13 @@ function save_historical_stock(baseUrl, data_array){
 
   $(document).ready(function() {
     
+      	
+  $( "#save" )
+			.button()
+			.click(function() {
+				
+			window.location="<?php echo base_url()."stock_management/fake_historical_response";?>";	
+			});
 
         var the_table = $('#main').dataTable( {
                     "bJQueryUI": true,
@@ -122,14 +129,7 @@ function save_historical_stock(baseUrl, data_array){
 <h2 style="text-align:left; font-size: 14px">Please note this is a one off activity</h2>
 
 <div id="stocktable" title="Fill in the details below">
-<!--     <input type="hidden" name="option" value='<?php if(isset($update))
-{echo $update;} else  {?>post_stock <?php }  ?>' /> -->
-  <!--   <table>
-        <tr>
-            <td><label>enable auto calculate? </label></td>
-            <td><label>NO</label><input type="radio" name="group"  value="NO" checked="checked" /> </td><td><label>YES</label><input type="radio" name="group"  value="YES"   /></td>
-        </tr>
-    </table> -->
+
 
 <table id ='main' style="margin-left: 0;" width="100%">
     <thead>
@@ -145,29 +145,34 @@ function save_historical_stock(baseUrl, data_array){
 <tbody>
 <?php 
 $count = 0;
-foreach($drug_categories as $category):?>
+foreach($historical_data as $data_item):?>
 
-    <?php 
-        foreach($category->Category as $drug):
-            ?>
             
         <tr>
             
             
-            <td><?php echo $category->Category_Name?></td>
-            <td><?php echo $drug->Drug_Name;?></td>
-            <td><?php echo $drug->Kemsa_Code;?></td>
-            <input type="hidden" name ='drug_id[<?php echo $count?>]' value="<?php echo $drug->id;?>"> </td>
-            <td><?php echo $drug->Unit_Size;?> <input type="hidden" name ='u_size[<?php echo $count?>]' value="<?php echo $drug->Unit_Size;?>"> </td>
-      
-                <?php if (count($historical_data)>0) {
-                  foreach ($historical_data as $data_item) {
-                  if($data_item['id']==$drug['id']) {
+            <td><?php echo $data_item['category_name']?></td>
+            <td><?php echo $data_item['drug_name'];?></td>
+            <td><?php echo $data_item['kemsa_code'];?></td>
+            <td><?php echo $data_item['unit_size'];?></td>
+            <input type="hidden" name ='drug_id[<?php echo $count?>]' value="<?php echo $data_item['id']?>"> 
+             <input type="hidden" name ='u_size[<?php echo $count?>]' value="<?php 
+             if($data_item['unit_size']==NULL){
+             	echo 1;
+             }
+			 else{
+			 echo $data_item['unit_size'];	
+			 }
+             
+             ?>">
+       <?php
+
+                  	
                    if ($data_item['selected_option']!=NULL && $data_item['selected_option']=='Unit_Size') {?>
               <td><input id='Unit_Size' type='radio' name='<?php echo $count?>' value='Unit_Size' class='<?php echo $count?>' checked='checked'>
-                <label for='Unit_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Unit Size</label>
+                <label for='Unit_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Unit Size</label> 
                 <input id='Pack_Size' type='radio' name='<?php echo $count?>' value='Pack_Size' class='<?php echo $count?>' onkeyup='calculate_a_stock(<?php echo $count?>)'>
-                <label for='Pack_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Pack Size</label></td>            
+                <label for='Pack_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Pack Size</label> </td>          
             <?php }elseif ($data_item['selected_option']!=NULL && $data_item['selected_option']=='Pack_Size') {?>
               <td><input id='Unit_Size' type='radio' name='<?php echo $count?>' value='Unit_Size' class='<?php echo $count?>'>
                 <label for='Unit_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Unit Size</label>
@@ -183,30 +188,16 @@ foreach($drug_categories as $category):?>
                <?php }?>
                 <td><input  id = 'consumption[<?php echo $count?>]' name = 'consumption[<?php echo $count;?>]' value= "<?php echo $data_item['consumption_level']?>" style='text-align:center;' type = 'text' onkeyup='calculate_a_stock(<?php echo $count?>)'></td>
                 <td><input  id = 'total[<?php echo $count?>]' name='total[<?php echo $count?>]' value= "<?php echo $data_item['unit_count']?>"  style='text-align:center;' type = 'text' readonly = 'readonly' value=''></td>
-                 <?php }
-                 }
-              }
-                elseif (count($historical_data)==0) {?>
-                 <td>
-              <input id='Unit_Size' type='radio' name='<?php echo $count?>' value='Unit_Size' class='<?php echo $count?>'>
-                <label for='Unit_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Unit Size</label>
-              <input id='Pack_Size' type='radio' name='<?php echo $count?>' value='Pack_Size' class='<?php echo $count?>' onkeyup='calculate_a_stock(<?php echo $count?>)'>
-                <label for='Pack_Size' style = 'font-size: 12px; font-family: arial,helvetica, sans-serif'>Pack Size</label>
-              </td>
-               <td><input  id = 'consumption[<?php echo $count?>]' name = 'consumption[<?php echo $count;?>]' style='text-align:center;' type = 'text' onkeyup='calculate_a_stock(<?php echo $count?>)'></td>
-                <td>
-                    <input  id = 'total[<?php echo $count?>]' name='total[<?php echo $count?>]' style='text-align:center;' type = 'text' readonly = 'readonly' value=''>
-                </td>
-               <?php } ?>
+                
                 
         </tr>
         
         <?php $count++;
         endforeach;?>
-<?php 
-endforeach;?>
+
 </tbody>
 </table>
 </div>
 <br />
-<span><a href="<?php echo site_url('order_management/new_order');?>"><input class="button" id="post_stock" style="margin-left: 0%" value="Proceed To Make Order"></a></span>
+<br />
+<button class="btn btn-primary" id="save">Save</button>

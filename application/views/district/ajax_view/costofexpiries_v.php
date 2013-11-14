@@ -6,7 +6,7 @@ $url_data=base_url()."report_management/generate_costofexpiries_chart/".$county;
 echo <<<HTMLCHART
 	<script type="text/javascript">
 jQuery(document).ready(function() {
-		var chart = new FusionCharts("$url_swf", "ChartId1", "100%", "100%", "0", "0");
+		var chart = new FusionCharts("$url_swf", "ChartId1", "90%", "100%", "0", "0");
 		var url = '$url_data'; 
 		chart.setDataURL(url);
 		chart.render("chart_exp");
@@ -14,7 +14,7 @@ jQuery(document).ready(function() {
 			});
 			
 </script>
-	<div id="chart-area" style="width: 100%; height: 100%; margin-left: 10em;">
+	<div id="chart-area" style="width: 100%; height: 100%;">
 	<div id="chart_exp" style="width: 100%; height: 100%;" >
 		
 	</div>
@@ -39,20 +39,8 @@ jQuery(document).ready(function() {
 			
 </script>
 
-		<div id="filter" align="center" style="margin: 0px">
+		<!--<div id="filter" align="center" >
 		<fieldset>
-			<!--<label for='expiriesselectedyear'>Select Year:</label>
-			<select name='expiriesselectedyear' id='expiriesselectedyear'>
-		<?php
-		for($x=$currentYear;$x>=$earliestYear;$x--){
-		?>
-		<option value='<?php echo $x;?>'
-		<?php
-		if ($x == $currentYear) {echo 'selected';
-		}
-		?>><?php echo $x;?></option>
-		<?php }?>
-		</select>-->
 	<label>Select Facility</label>
 	<select id="facilities">
 		<option>--facilities--</option>
@@ -66,9 +54,9 @@ jQuery(document).ready(function() {
 	</select>			
 	<input style="margin-left: 10px" type="button" id="filter-b" value="filter" />
 	</fieldset>
-	</div>
+	</div>-->
 	
-	<div id="chart-area" style="width: 100%; height: 100%; margin-left: 10em;">
+	<div id="chart-area" style="width: 100%; height: 100%;">
 	<div id="chart_exp" style="width: 100%; height: 100%;" >
 		
 	</div>

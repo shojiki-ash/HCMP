@@ -415,7 +415,7 @@ input[type=radio]:checked + label:before {
 					
    			</div>
    		<?php $att=array("name"=>'myform','id'=>'myform');
-	 echo form_open('stock_management/donation',$att); ?>
+	 echo form_open('issues_main/donation',$att); ?>
 <table id="main" width="100%">
 					<thead>
 					<tr>

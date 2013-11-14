@@ -179,7 +179,7 @@ unset($msg) ?>
 		
   <p><span>First Name</span><input type="text" name="f_name" id="f_name" required="required" /><b class="super">*</b></p> 
 <p><span>Other Name</span><input type="text" name="o_name" id="o_name" /><b class="super">*</b></p>
- <p><span>Email</span><input type="text" name="email" id="email" size="50" required="required" placeholder="someone@mail.com" /><b class="super">*</b><label id="feedback"></label><input type="hidden" /></p>
+     	 <p><span>Email</span><input type="text" name="email" id="email" size="50" required="required" placeholder="someone@mail.com" /><b class="super">*<div style="font-size: 0.9em;" id="feedback"></div></b></p>
    <p><span>User Name</span><input class="user" type="text" name="user_name" id="user_name" readonly="readonly"/> </p>
    <p><span>Phone No</span><input type="text" name="phone_no"  id="phone_no" required="required" placeholder="254...."/> <b class="super">*</b></p>
        <p><span>Facility Name</span>

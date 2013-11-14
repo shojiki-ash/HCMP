@@ -66,10 +66,10 @@ if (isset($styles)) {
 <script type="text/javascript">
 	$(document).ready(function() {
 		
-			$('.successreset').fadeOut(5000, function() {
+			$('.successreset').fadeOut(90000, function() {
     // Animation complete.
   });
-$('.errorlogin').fadeOut(5000, function() {
+$('.errorlogin').fadeOut(10000, function() {
     // Animation complete.
   });
 	});
@@ -99,7 +99,7 @@ $('.errorlogin').fadeOut(5000, function() {
 
 if (isset($popup)) {
 	
-	echo	'<p class="successreset">Successful reset. Please check your email.</p>';
+	echo	'<p class="successreset">Successful reset, an email has been sent to '.$email.' with the login details</p>';
 }
 unset($popup);
  ?>

@@ -2,12 +2,7 @@
 			@import "<?php echo base_url(); ?>DataTables-1.9.3 /media/css/jquery.dataTables.css";
 		</style>
         <script src="<?php echo base_url()?>DataTables-1.9.3/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="<?php echo base_url()?>DataTables-1.9.3/media/js/jquery.dataTables.editable.js" type="text/javascript"></script>
-        <script src="<?php echo base_url()?>DataTables-1.9.3/media/js/jquery.jeditable.js" type="text/javascript"></script>
-       
-    
-        
-        
+
         <script type="text/javascript" charset="utf-8">
 		    $(document).ready(function () {
 		    			  //popout
@@ -190,8 +185,7 @@ unset($msg) ?>
 	
       
         <p><span>Other Name</span><input type="text" name="o_name" id="o_name" /><b class="super">*</b></p>
-        <p><span>Email</span><input type="text" name="email" id="email" size="50" required="required" placeholder="someone@mail.com" /><b class="super">*</b></p>
-           <p> <label id="feedback"></label><input type="hidden" /></p>
+            	 <p><span>Email</span><input type="text" name="email" id="email" size="50" required="required" placeholder="someone@mail.com" /><b class="super">*<div style="font-size: 0.9em;" id="feedback"></div></b></p>
         
 	      <p><span>User Name</span><input class="user" type="text" name="user_name" id="user_name" readonly="readonly"/> </p>
 
@@ -209,6 +203,7 @@ unset($msg) ?>
      </p>
 </form>
 </div>
+  <button class="btn btn-primary" id="new_user" style="margin-bottom: 1em;" >Add A New User</button>
 <!-- <form id="formAddNewRow"  action="#"  title="Add new User" style="width:500px;" >
  	 <label for="name">First Name</label><br />
  	 <input type="hidden" rel="0" />
@@ -322,4 +317,4 @@ unset($msg) ?>
 	?>
 	</tbody>
 		</table>
-		<input  class="button" id="new_user"  value="Add A New User" >
+		

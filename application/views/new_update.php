@@ -40,6 +40,7 @@
 						<th><b>KEMSA code</b></th>
 						<th><b>Unit Size</b></th>
 						<th><b>Batch No</b></th>
+						<th>Manufacturer</th>
 						<th><b>Expiry Date &nbsp;</b></th>
 						<th><b>Quantity Received</b></th>
 						<th><b>Total Unit Count</b></th>
@@ -79,8 +80,9 @@
 						<td >
 						<input size="10" type="text" name="batchNo" />
 	</td>
+	<td><input class='user' type='text' name='manufacturer' id='manufacturer' value=''/></td>
 	<?php 
-$today= date("d M, Y",strtotime("+1 month -1 second",strtotime(date("Y-m-1")))); ?>
+$today= date("d M Y"); ?>
 	<td width="80">
 	<input size="15" type="text" name="Exp" value="<?php echo $today; ?>"  id="expiry_date" />
 	</td>
@@ -199,6 +201,7 @@ $att=array("name"=>'myform','id'=>'myform');
 						<th><b>Unit Size</b></th>
 						<th><b>Ordered Qty</b></th>
 						<th><b>Batch No</b></th>
+						<th>Manufacturer</th>
 						<th><b>Expiry Date</b></th>
 						<th><b>Quantity Received</b></th>
 						<th><b>Total Unit Count</b></th>					   				    
@@ -238,7 +241,8 @@ $att=array("name"=>'myform','id'=>'myform');
 						<td><input class='user1' readonly='readonly' type='text' name='u_size[$main_count]' value='$unit_size'/></td>
 						<td><input class='user1' readonly='readonly' type='text' name='u_size[$main_count]' value='$order_qty'/></td>
 						<td><input class='user' type='text' name='batchNo[$main_count]' value=''/></td>
-						<td><input  class='my_date' type='text' name='Exp[$main_count]'  value=''/></td>
+						<td><input class='user' type='text' name='manufacturer[$main_count]' value=''/></td>
+						<td><input  class='my_date user' type='text' name='Exp[$main_count]'  value=''/></td>
 						<td><input class='user' type='text' name='units1[$main_count]'  value='' onkeyup='calculate_units1($main_count)'/></td>
 						<td><input class='user1' readonly='readonly'  type='text' name='qreceived[$main_count]' value='' /> </td>
 						
@@ -354,14 +358,14 @@ return;
     },
 			changeMonth: true,
 			changeYear: true,
-			dateFormat: 'd M, yy'
+			dateFormat: 'd M yy'
 		});
 		
 		$( "#rdates,#dispby" ).datepicker({
 			showOn: "button",
 			changeMonth: true,
 			changeYear: true,
-			dateFormat: 'd M, yy', 
+			dateFormat: 'd M yy', 
 			buttonImage: baseUrl,
 			buttonImageOnly: true
 		});
@@ -370,7 +374,7 @@ return;
 			showOn: "button",
 			changeMonth: true,
 			changeYear: true,
-			dateFormat: 'd M, yy', 
+			dateFormat: 'd M yy', 
 			buttonImage: baseUrl,
 			buttonImageOnly: true
 		});
@@ -396,7 +400,8 @@ return;
 							'' +'<input class="user1" readonly="readonly" type="text" name="u_size['+count+']" value="'+$('#unit_size').val()+'"/>',
 							'' +'<input class="user1" readonly="readonly" type="text"  value="0"/>',
 							'' +'<input class="user" type="text" name="batchNo['+count+']" value="'+$('input:text[name=batchNo]').val()+'"/>',
-							'' +'<input class="my_date" type="text" name="Exp['+count+']"  value="'+ $('input:text[name=Exp]').val() +'"/>',
+							'' +'<input class="user" type="text" name="manufacturer['+count+']" value="'+$('input:text[name=manufacturer]').val()+'"/>',
+							'' +'<input class="my_date user" type="text" name="Exp['+count+']"  value="'+ $('input:text[name=Exp]').val() +'"/>',
 							'' +'<input class="user" type="text" name="units1['+count+']"  value="'+ $('#p_units1').val() +'" onkeyup="calculate_units1('+count+')" "/>',
 							'' +'<input class="user1" readonly="readonly" type="text" name="qreceived['+count+']"  value="'+ $('#qreceived').val() +'"/> <img class="del" src="<?php echo base_url()?>Images/close.png" />'
 							] ); 

@@ -145,14 +145,14 @@ $order_value =0;
 		} 
 
 ?>
-<!--<div>
+<div>
 <div id="notification" style="float: left; height: 5%"> Fill Rate = ( Quantity Received / Quantity Ordered ) * 100</div>
 <div style="margin-left: 80%" style="float: right" >
 <div class="activity pdf"><h2><a href="<?php echo site_url('report_management/get_order_details_report/'.$this->uri->segment(3).'/'.$this->uri->segment(4));?>">
  Download</h2></div>
 </a>
 </div>
-</div>-->
+</div>
 
 
 <table id="main1" width="100%">

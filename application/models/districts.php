@@ -35,10 +35,16 @@ class Districts extends Doctrine_Record {
 		$drugs = $query -> execute();
 		return $drugs;	
 	}
+public static function get_district_name_($district){
+	$query = Doctrine_Query::create() -> select("district") -> from("districts")->where("id='$district'");
+		$drugs = $query -> execute();
+		$drugs=$drugs->toArray();
+		return $drugs[0];
+	}
 
 
 	public static function get_district_expiries($date,$district){
-		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT(DISTINCT stock.facility_code) as facility_count, COUNT(DISTINCT stock.batch_no) as batches, stock.facility_code,stock.kemsa_code,stock.batch_no,stock.manufacture,stock.expiry_date,stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name, d.district, d.id as district_id
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT(DISTINCT stock.facility_code) as facility_count, COUNT(DISTINCT stock.batch_no) as batches, stock.facility_code,stock.kemsa_code,stock.batch_no,stock.manufacture,stock.expiry_date,stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name, d.district, d.id as district_id,
 			FROM Facility_Stock stock, facilities f, districts d, counties c
 			WHERE stock.expiry_date<='$date'
 			AND stock.facility_code=f.facility_code
@@ -80,4 +86,12 @@ class Districts extends Doctrine_Record {
 			GROUP BY d.district");	
 		return $query;
 	}
+	
+	public static function get_district_coverage($district_id){
+	$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT d.district, (select count(id) from facilities f where district=$district_id) as total, (select count(id) from 
+facilities f where district=$district_id and using_hcmp=1) as total_2 from districts d where d.id=$district_id");	
+		return $query;
+	}	
+	
 }

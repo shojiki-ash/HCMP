@@ -32,6 +32,12 @@ class Access_level extends Doctrine_Record {
 		$level = $query -> execute();
 		return $level;
 	}
+	public static function get_access_level_name($access_level_id) {
+		$query = Doctrine_Query::create() -> select("*") -> from("access_level")-> where("id=$access_level_id");
+		$level = $query -> execute();
+		$level=$level->toArray();
+		return $level[0];
+	}
 	
 
 }

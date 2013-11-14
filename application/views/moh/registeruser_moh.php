@@ -1,8 +1,5 @@
 <script>
-	
 	$(function() {
-		
-			
 
 		$('#counties').click(function(){
 			/*
@@ -77,7 +74,7 @@
         
     </head>
     <div id="registerme">
-    	<?php echo form_open('user_registration/register'); ?>
+    	<?php echo form_open('user_registration/submit'); ?>
     <section id="registersec">
     	<h2>Account Details</h2>
     	<label>First Name</label>
@@ -122,8 +119,9 @@
 		<option>Select District</option>
 	</select>
     	
+    	<input type="submit" value="submit" />
     	
-    	<button type="submit">Register</button>
+    </form>
     </section>
     
     

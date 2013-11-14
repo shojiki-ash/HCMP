@@ -78,7 +78,7 @@ return;
 		document.getElementsByName("cost["+x+"]")[0].value='';
 		//get the data from the row the user is at
 		var price= document.getElementsByName("price["+x+"]")[0].value;
-       
+     //  price=price.replace(/\,/g,'');
         var draw=0;
         //alert(draw);
         var newTotal=0; 
@@ -143,8 +143,6 @@ return;
 			 var code=document.getElementsByName("kemsaCode["+jay+"]")[0].value;  
 			 var chr=chr;
 			 if(chr==true){
-			 	
-			 
 			 update_transaction2(baseUrl,"data_array="+code+"|"+data_array+"|"+data_array2);   
 			 }  
 	}
@@ -205,6 +203,8 @@ function update_transaction(baseUrl,data_array){
 		}
  
 	$(function() {
+		
+	
 
 		/**********/
 		// a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
@@ -240,7 +240,7 @@ function update_transaction(baseUrl,data_array){
 						
 /******************************parameters to update the transaction table*********************************/		
 			
-					var data_array=$('input:text[name=k_code]').val();
+					var data_array=$('input:hidden[name=drug_id]').val();
 					json_obj={"url":"<?php echo site_url("order_management/update_facility_transaction_t");?>",}
 			        var baseUrl=json_obj.url;
 			        
@@ -264,10 +264,12 @@ function update_transaction(baseUrl,data_array){
 							'<input class="user2" type="text" name="losses['+new_count+']" value="0"   />' ,
 							'<input class="user2" type="text" name="closing['+new_count+']" value="0"   />',
 							 '<input class="user2" type="text" name="days['+new_count+']" value="0"   />',
+							 '<input class="user2" type="text" name="historical['+new_count+']" value="0"   />',
+							 '<input class="user2" type="text" value="0" readonly="yes"  />',
 							'<input class="user2" type="text" name="quantity['+new_count+']" value="0"  onkeyup="checker('+new_count+','+txz+')"/>',
 							'<input class="user" type="text" id="actual_quantity['+new_count+']" name="actual_quantity['+new_count+']" value="0" readonly="yes" />',
 							'<input id="cost[]" class="user" type="text" name="cost['+new_count+']" value="0" readonly="yes" />',
-							'<input type="text" name="comment['+new_count+']" value="N/A"/>'
+							'<input type="text" class="user2" name="comment['+new_count+']" value="N/A"/>'
 						 ]); 
 						
 						$( this ).dialog( "close" );
@@ -339,6 +341,22 @@ function update_transaction(baseUrl,data_array){
 			$( "#Make-Order" )
 			.button()
 			.click(function() {
+					
+					if($("#order_no").val()==""){
+						alert("Please input the Order Number as is in the SORF");
+						return;
+						
+					}
+					if($("#bed_capacity").val()==""){
+						alert("Please input the Bed Capacity as is in the SORF");
+						return;
+						
+					}
+					if($("#workload").val()==""){
+						alert("Please input the Workload as is in the SORF");
+						return;
+						
+					}
 				
 				$('#user-order tbody').empty();
 				$('#test-hapa tbody').empty();
@@ -347,13 +365,15 @@ function update_transaction(baseUrl,data_array){
                 var t=$('#t').html();
                 var t_new=  t.replace(',', 'new');
                 var bal=drawingRights-c_total;
-                
+              t=t+1;  
         if(t==0){
+
         	$( "#demo" ).append('<div id="pop" title="System Message"><p>Please Enter Order Quantity</p></div>');
         	$("#pop").dialog({
 			height: 140,
 			modal: true
 		});
+
         }
         else{
         	$('#test-hapa tbody').append(
@@ -505,17 +525,17 @@ function update_transaction(baseUrl,data_array){
 	<tr>
 		<td>
 	
-     <b id="notification">Oder Form Number:</b> <input type="text" class="input_text" name="order_no"  />
+     <b id="notification">Order Form Number:</b> <input type="text" class="input_text" name="order_no" id="order_no" required="required"/>
 	
 	</td>
 	<td>
 	
-	 <b id="notification">Bed Capacity:</b><input type="text" class="input_text" name="bed_capacity"  />
+	 <b id="notification">Bed Capacity:</b><input type="text" class="input_text" name="bed_capacity" id="bed_capacity" required="required"/>
 	 
 	  	</td>	
 	  	<td>
 	
-	 <b id="notification">Number of Patients:</b><input type="text" class="input_text" name="workload" /></p>
+	 <b id="notification">Number of Patients:</b><input type="text" class="input_text" name="workload" id="workload" required="required"/></p>
 	  
 	   </td>
 	   </tr>
@@ -554,10 +574,13 @@ function update_transaction(baseUrl,data_array){
 								for($i=0;$i<$j;$i++){?>
 						<tr>
 							<td><?php echo $facility_order[$i]['category_name'];?></td>
-							<?php echo form_hidden('drugCode['.$count.']', $facility_order[$i]['drug_code']);
+							<?php 
+							      $price=$facility_order[$i]['unit_cost'];
+								  $price=str_replace(",", '',$price);
+							      echo form_hidden('drugCode['.$count.']', $facility_order[$i]['drug_code']);
 							      echo form_hidden('kemsaCode['.$count.']', $facility_order[$i]['kemsa_code']);
 							      echo form_hidden('drugName['.$count.']', $facility_order[$i]['drug_name']);
-							      echo form_hidden('price['.$count.']'  ,$facility_order[$i]['unit_cost']);
+							      echo form_hidden('price['.$count.']'  , $price);
 							      echo form_hidden('unit_size['.$count.']'  ,$facility_order[$i]['unit_size']);
 								  echo form_hidden('historical['.$count.']'  ,$facility_order[$i]['historical']);
 								  echo form_hidden('closing_stock_['.$count.']'  ,$facility_order[$i]['closing_stock']);

@@ -27,7 +27,7 @@ class Counties extends Doctrine_Record {
 	
 	public static function get_county_name($county_id){
 $q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
-SELECT county
+SELECT county, id
 FROM counties
 WHERE counties.id='$county_id' ");
 return $q;
@@ -45,24 +45,30 @@ return $q;
 		return $query;
 	}
 	public static function get_potential_expiry_summary($county){
-		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT(stock.facility_code) as facility_count, stock.facility_code, stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name, d.id as district_id, d.district
-			FROM Facility_Stock stock, facilities f, districts d, counties c
-			WHERE stock.expiry_date BETWEEN CURDATE()AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)
-			AND stock.status=1
-			AND stock.facility_code=f.facility_code
-			AND f.district=d.id
-			AND d.county=c.id
-			AND c.id='$county'
-			GROUP BY d.district");	
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT d1.district, f.facility_code, f.facility_name, ROUND( (
+SUM( f_s.balance ) / d.total_units ) * d.unit_cost, 1
+) AS total
+FROM facilities f, drug d, facility_stock f_s, districts d1
+WHERE f.facility_code = f_s.facility_code
+AND d.id = f_s.kemsa_code
+AND f.district = d1.id
+AND d1.county =$county
+AND f_s.expiry_date between DATE_ADD(CURDATE(), INTERVAL 1 day) and  DATE_ADD(CURDATE(), INTERVAL 6 MONTH)
+AND f_s.status=(1 or 2)
+GROUP BY f.facility_code having total >1");	
 		return $query;
 	}
 public static function get_county_received($county){
-		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT o.id,o.orderDate,o.facilityCode, COUNT(o.facilityCode) as facility_count,o.deliverDate,o.remarks,o.orderStatus,o.dispatchDate,o.approvalDate,o.kemsaOrderid,o.orderTotal,o.status,o.orderby,o.order_no, f.facility_code, f.facility_name, d.id as district_id, d.district FROM ordertbl o, facilities f, districts d, counties c WHERE o.orderStatus='delivered'
-			AND o.facilityCode=f.facility_code
-			AND f.district=d.id
-			AND d.county=c.id
-			AND c.id='$county' GROUP BY d.district");
-		return $query;
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+ SELECT o.id, d.district, f.facility_name, f.facility_code,orderDate,year(orderDate) as mwaka,
+o.orderTotal, o.total_delivered, round((sum(o_d.quantityRecieved)/sum(o_d.quantityOrdered))*100) as fill_rate
+          FROM ordertbl o, facilities f, districts d,orderdetails o_d
+		   WHERE o.orderStatus='delivered'
+			and o_d.orderNumber=o.id
+		   AND o.facilityCode=f.facility_code
+		   AND f.district=d.id
+		   AND d.county='$county'");		
+		   return $query;
 	}
 	public static function get_district_received($district){
 		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT o.id,o.orderDate,o.facilityCode, COUNT(o.facilityCode) as facility_count,o.deliverDate,o.remarks,o.orderStatus,o.dispatchDate,o.approvalDate,o.kemsaOrderid,o.orderTotal,o.status,o.orderby,o.order_no, f.facility_code, f.facility_name, d.id as district_id, d.district
@@ -74,8 +80,11 @@ public static function get_county_received($county){
 		return $query;
 	}
 	public static function get_county_order_details($county){
-		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='Pending') as pending_orders, (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='delivered') as delivered_orders, (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='approved') as approved_orders
-			FROM ordertbl o, facilities f, districts d, counties c
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT 
+		(SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='Pending') as pending_orders,
+		 (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='delivered') as delivered_orders, 
+		 (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='approved') as approved_orders
+		FROM ordertbl o, facilities f, districts d, counties c
 			WHERE o.orderStatus='delivered'
 			AND o.facilityCode=f.facility_code
 			AND f.district=d.id
@@ -109,16 +118,20 @@ public static function get_county_received($county){
 	}
 	
 	public static function get_county_expiries($date,$county){
-		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT(DISTINCT stock.facility_code) as facility_count, COUNT(DISTINCT stock.batch_no) as batches, d.id as district_id, d.district, stock.facility_code, stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name
-			FROM districts d, counties c, facilities f
-            INNER JOIN facility_stock stock
-            ON stock.facility_code=f.facility_code
-			AND stock.expiry_date<=CURDATE()
-			AND stock.status=1
-            WHERE f.district=d.id
-			AND d.county=c.id
-			AND c.id=$county
-			GROUP BY d.district");	
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+		SELECT d1.id as district_id, d1.district, f.facility_code, f.facility_name, ROUND( (
+SUM( f_s.balance ) / d.total_units ) * d.unit_cost, 1
+) AS total
+FROM facilities f, drug d, facility_stock f_s, districts d1
+WHERE f.facility_code = f_s.facility_code
+AND d.id = f_s.kemsa_code
+AND f.district = d1.id
+AND d1.county =$county
+AND f_s.expiry_date < NOW( ) 
+AND f_s.status = ( 1
+OR 2 ) 
+GROUP BY f.facility_code having total >1
+order by total desc ");	
 		return $query;
 	}
 }

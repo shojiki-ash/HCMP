@@ -1,10 +1,46 @@
+<SCRIPT LANGUAGE="Javascript" SRC="<?php echo base_url();?>Scripts/FusionCharts/FusionCharts.js"></SCRIPT>
 <script type="text/javascript" language="javascript" src="<?php echo base_url(); ?>Scripts/jquery.dataTables.js"></script>
 		<style type="text/css" title="currentStyle">
 			
 			@import "<?php echo base_url(); ?>DataTables-1.9.3 /media/css/jquery.dataTables.css";
+	</style>
+<style>
+	.multiple_chart_content{
+    float:left;
+    width:33%; 
+    height:22em; 
+    padding:0.2em
+    background-color:#0E90D2;
+    
+    
+  }
+  .multiple_chart_content h2 {
+		background: #b6b6b6; /* Old browsers */
+		padding: 5px;
+		text-align: center;
+		margin: 0 0 0.625em 0;
+		border-right-style: inset;
+		
+	}
+	.multiple_chart_content label{
+		font-size:12px;
+	}
+
 		</style>
 
-			
+		<script type="text/javascript">
+		var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "Chart1", "85%", "80%", "0", "0");
+		var url = '<?php echo base_url()."report_management/generate_facilitycostoforders_chart"?>'; 
+		chart.setDataURL(url);
+		chart.render("costoforderschart");
+
+		</script>
+
+
+	<div style = "margin-left:40em" class="multiple_chart_content">
+<h2 >Cost of Ordered Commodities</h2>
+<div id="costoforderschart" style = "float:center"></div>
+</div>			
 <table id="main" width="100%">
 	<thead>
 			<tr>

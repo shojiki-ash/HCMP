@@ -7,6 +7,7 @@ class Stock_Management extends auto_sms {
 		$this->load->helper(array('form','url'));
 	}
 	
+	
 	public function reset_facility_details(){
 		$facility_code=$this -> session -> userdata('news');
 		
@@ -30,8 +31,14 @@ class Stock_Management extends auto_sms {
 	    $reset_facility_order_table = Doctrine_Manager::getInstance()->getCurrentConnection();
 	    $reset_facility_order_table->execute("DELETE FROM `ordertbl` WHERE  facilityCode=$facility_code; ");
 		
+		$reset_facility_historical_stock_table = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $reset_facility_historical_stock_table->execute("DELETE FROM `historical_stock` WHERE  facility_code=$facility_code; ");
 		
-		$this->session->set_flashdata('reset_message', 'Facility Stock Details Have Been Reset');
+		$reset_facility_update_stock_first_temp = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $reset_facility_update_stock_first_temp->execute("DELETE FROM `update_stock_first_temp` WHERE  facility_code=$facility_code; ");
+		
+		
+		$this->session->set_flashdata('system_success_message', 'Facility Stock Details Have Been Reset');
 		redirect('Home_Controller');
 	}
 	
@@ -40,7 +47,7 @@ class Stock_Management extends auto_sms {
 	
 	//the facility is meant to update their stock level when they first run the system
 	public function facility_first_run(){
-		$facility_code=$this -> session -> userdata('news');
+	    $facility_code=$this -> session -> userdata('news');
 		
 		$data['title'] = "Update Stock Level on First Run";
      	$data['content_view'] = "update_stock_first_run";
@@ -78,7 +85,7 @@ class Stock_Management extends auto_sms {
 			'kemsa_code'=>$kemsa_code[$i],
 			'batch_no'=>$batch_no[$i],
 			'manufacture'=>$manuf[$i],
-			'expiry_date'=> date('y-m-d ,', strtotime($expiry_date[$i])),
+			'expiry_date'=> date('y-m-d', strtotime($expiry_date[$i])),
 			'balance'=>$a_stock[$i],
 			'quantity'=>$a_stock[$i],
 			'stock_date'=>$orderDate);
@@ -123,25 +130,169 @@ class Stock_Management extends auto_sms {
 //////////////////////////////////////////////////////////////////////////////////////////
 		
           $this->send_stock_update_sms();
-		  $this->stock_level();
+		  $this->session->set_flashdata('system_success_message', "Stock Levels Have Been Updated");
+		  redirect('stock_management/stock_level');	
+////////////////////////////////////////////////////////////////////////////////////////
+}
+
+    public function facility_add_stock_data(){
+    	$facility_code=$this -> session -> userdata('news');
+		
+		$data['title'] = "Update Stock Level on First Run";
+     	$data['content_view'] = "facility/facility_data/facility_add_stock_data";
+		$data['banner_text'] = "Update Stock Level";
+		$data['quick_link'] ="load_stock";
+		$data['link'] = "home";
+		$data['drugs'] = Drug::getAll();
+		$data['drug_name']=Drug::get_drug_name();
+		$data['first_run_temp']=Update_stock_first_temp::get_facility_temp($facility_code);
+		$data['quick_link'] = "update_stock_level";
+		$this -> load -> view("template", $data);	
+    }
+	public function add_stock_level()
+	{
+		
+		$facility_c=$this -> session -> userdata('news');
+		
+		$kemsa_code=$_POST['kemsa_code'];
+		$expiry_date=$_POST['expiry_date'];
+		$batch_no=$_POST['batch_no'];
+		$manuf=$_POST['manuf'];
+		$a_stock=$_POST['qreceived'];
+		$count=count($kemsa_code);
+		$orderDate=date('y-m-d H:i:s');
+		
+
+		
+		for($i=0;$i<=$count;$i++){
+			
+			if(isset($kemsa_code[$i])&&$kemsa_code[$i]!=''){
+			$mydata=array('facility_code'=>$facility_c,
+			'kemsa_code'=>$kemsa_code[$i],
+			'batch_no'=>$batch_no[$i],
+			'manufacture'=>$manuf[$i],
+			'expiry_date'=> date('y-m-d', strtotime($expiry_date[$i])),
+			'balance'=>$a_stock[$i],
+			'quantity'=>$a_stock[$i],
+			'stock_date'=>$orderDate);
+			
+			Facility_Stock::update_facility_stock($mydata);
+			
+			$kemsa_code_=$kemsa_code[$i];
+				
+			
+			$facility_has_commodity=Facility_Transaction_Table::get_if_drug_is_in_table($facility_c,$kemsa_code_);
+			
+			
+		   
+		   if($facility_has_commodity>0){
+		  	$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select `opening_balance` from `facility_transaction_table`
+                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
+		
+			
+			$new_value=$inserttransaction_1[0]['opening_balance']+$a_stock[$i];
+			
+		   	$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
+			$inserttransaction->execute("UPDATE `facility_transaction_table` SET `opening_balance` =$new_value
+                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
+                                          
+           $inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
+			
+
+			$inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
+			 FROM facility_stock WHERE kemsa_code = '$kemsa_code_' and availability='1' and facility_code='$facility_c')
+             WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code ='$facility_c'; "); 
+                                          
+     
+            $facility_stock=Facility_Stock::get_facility_drug_total($facility_c,$kemsa_code_)->toArray();	
+		    
+			
+			$mydata=array('facility_code'=>$facility_c,
+			's11_No' => 'Update Stock Level',
+			'kemsa_code'=>$kemsa_code[$i],
+			'receipts'=>$a_stock[$i],
+			'batch_no'=>$batch_no[$i],
+			'expiry_date'=> date('y-m-d ,', strtotime($expiry_date[$i])),
+			'balanceAsof'=>$facility_stock[0]['balance'],
+			'date_issued' => date('y-m-d'),
+			'issued_to' => 'N/A',
+			'issued_by' => $this -> session -> userdata('identity'));   
+			Facility_Issues::update_issues_table($mydata);                                                   
+		   }
+		   else{
+		   	$mydata3 = array('facility_code'=>$facility_c,
+			's11_No' => 'Physical Stock Count',
+			'kemsa_code'=>$kemsa_code_,
+			'batch_no' => $batch_no[$i],
+			'expiry_date' => date('y-m-d ,', strtotime($expiry_date[$i])),
+			'qty_issued' => 0,
+			'balanceAsof'=>$a_stock[$i],
+			'date_issued' => date('y-m-d'),
+			'issued_to' => 'N/A',
+			'issued_by' => $this -> session -> userdata('identity')
+			);
+			Facility_Issues::update_issues_table($mydata3);
+		   		
+		   	
+		   	$mydata2=array('Facility_Code'=>$facility_c,
+			'Kemsa_Code'=>$kemsa_code_,
+			'Opening_Balance'=>$a_stock[$i],
+			'Total_Issues'=>0,
+			'Total_Receipts'=>0,
+			'Adj'=>0,
+			'Closing_Stock'=>$a_stock[$i],
+			'availability'=>1);
+			
+			Facility_Transaction_Table::update_facility_table($mydata2);
+		   }
+			
+			}
+			
+	
+			
+			
+			
+		}
+		
+		
+		Update_stock_first_temp::delete_facility_temp(NULL,$facility_c);
+		//test
+//////////////////////////////////////////////////////////////////////////////////////////
+		
+          $this->send_stock_update_sms();
+		  $this->session->set_flashdata('system_success_message', "Stock Levels Have Been Updated");
+		  redirect('stock_management/stock_level');	
+		  
 ////////////////////////////////////////////////////////////////////////////////////////
 }
  		
 public function autosave_update(){
-	$facility_c=$this -> session -> userdata('news');
+	$facility_code=$this -> session -> userdata('news');
 	
-	    $kemsa_code=$_POST['kemsa_code'];
+	    if($this->input->post('category')){
+	    $kemsa_code=$_POST['kemsa_code'];	
+	    $category=$_POST['category'];
+		$description=$_POST['description'];
+		$unit_size=$_POST['unit_size'];	
+	    }
+	    
 		$expiry_date=$_POST['expiry_date'];
 		$batch_no=$_POST['batch_no'];
 		$manuf=$_POST['manu'];
-		$stock_level=$_POST['stock_level'];
+		$stock_level=$_POST['stock_level'];				
 		$unit_count=$_POST['unit_count'];
-		$category=$_POST['category'];
-		$unit_size=$_POST['unit_size'];
-		$facility_code=$facility_c;
 		$drug_id=$_POST['drug_id'];
-        $description=$_POST['description'];
-	
+        
+		
+		$does_facility_have_this_drug_in_temp_table=Update_stock_first_temp::check_if_facility_has_drug_in_temp($drug_id, $facility_code);
+	    
+		
+		if($does_facility_have_this_drug_in_temp_table>0){
+			
+		Update_stock_first_temp::update_facility_temp_data($expiry_date,$batch_no,$manuf,$stock_level,$unit_count,$drug_id,$facility_code);	
+		 echo "UPDATE SUCCESS  BATCH NO: $batch_no ";	
+			
+		}else{
 			$mydata=array('facility_code'=>$facility_code,
 			'kemsa_code'=>$kemsa_code,
 			'batch_no'=>$batch_no,
@@ -154,11 +305,15 @@ public function autosave_update(){
 			'drug_id'=>$drug_id,
 			'description'=>$description);
 			
-			Update_stock_first_temp::update_temp($mydata);
+			 Update_stock_first_temp::update_temp($mydata);
 			
-	echo "SUCCESS ".$description." ".$manuf;
+	        echo "SUCCESS  BATCH NO: $batch_no";	
+		}
+	
+	
+		
 }
-public static function delete_temp_autosave(){
+public  function delete_temp_autosave(){
 		if (isset($_POST['drugid'])) {
 			$facilitycode=$_POST['facilitycode'];
 			$drugid=$_POST['drugid'];			
@@ -172,86 +327,6 @@ else{
 }
 }
 
-public function donation()
-	{
-		
-		$facility_c=$this -> session -> userdata('news');
-		
-		$kemsa_code=$_POST['kemsa_code'];
-		$expiry_date=$_POST['expiry_date'];
-		$batch_no=$_POST['batch_no'];
-		$manuf=$_POST['manuf'];
-		$a_stock=$_POST['qreceived'];
-		$count=count($kemsa_code);
-		$source=$_POST['source'];
-		$orderDate=date('y-m-d H:i:s');
-				;
-		
-		for($i=0;$i<=$count;$i++){
-			
-			if(isset($kemsa_code[$i])&&$kemsa_code[$i]!=''){
-				
-			$mydata=array('facility_code'=>$facility_c,
-			'kemsa_code'=>$kemsa_code[$i],
-			'batch_no'=>$batch_no[$i],
-			'manufacture'=>$manuf[$i],
-			'expiry_date'=> date('y-m-d ,', strtotime($expiry_date[$i])),
-			'balance'=>$a_stock[$i],
-			'quantity'=>$a_stock[$i],
-			'stock_date'=>$orderDate,
-			'sheet_no'=>$source[$i]
-			);
-			
-			Facility_Stock::update_facility_stock($mydata);
-
-			}
-		}
-
-//updating the facility transaction table
-		$data=Facility_Stock::count_facility_stock($facility_c,$orderDate);
-
-		foreach ($data as $infor) {
-			$qty=$infor->quantity1;
-			$kemsa_code_=$infor->kemsa_code;
-			
-			$mydata3 = array('facility_code'=>$facility_c,
-			's11_No' => 'Physical Stock Count',
-			'kemsa_code'=>$kemsa_code_,
-			'batch_no' => 'N/A',
-			'expiry_date' => 'N/A',
-			'qty_issued' => 0,
-			'balanceAsof'=>$qty,
-			'date_issued' => date('y-m-d'),
-			'issued_to' => 'N/A',
-			'issued_by' => $this -> session -> userdata('identity')
-			);
-			Facility_Issues::update_issues_table($mydata3);
-		   $facility_has_commodity=Facility_Transaction_Table::get_if_drug_is_in_table($facility_c,$kemsa_code_);
-		   
-		   if($facility_has_commodity>0){
-		   	$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
-			$inserttransaction->execute("UPDATE `facility_transaction_table` SET adj =$qty
-                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
-		   }
-		   else{
-		   	$mydata2=array('Facility_Code'=>$facility_c,
-			'Kemsa_Code'=>$kemsa_code_,
-			'Opening_Balance'=>0,
-			'Total_Issues'=>0,
-			'Total_Receipts'=>0,
-			'Adj'=>$qty,
-			'Closing_Stock'=>$qty,
-			'availability'=>1);
-			
-			Facility_Transaction_Table::update_facility_table($mydata2);
-		   }
-		   
-		
-			}
-
-      $this->send_stock_donate_sms($other_facility_code);
-      $this->stock_level(); 	
-	}
 
 
 
@@ -342,20 +417,38 @@ public function donation()
 		    $status=*/
 			
 		     if($status==TRUE){     	
-				$this->stock_level();
+				 redirect('stock_management/stock_level');	
 		     }
 	}
-public function stock_level(){
-	 $facility_c=$this -> session -> userdata('news');
-		//$checker=$this->uri->segment(3);
+public function stock_level($msg=Null){
+	    $facility_c=$this -> session -> userdata('news');
+		$checker=$this->uri->segment(3);
 		$data['title'] = "Stock";
 		$data['content_view'] = "facility/stock_level_v";
-		$data['banner_text'] = "Update Physical Stock";
+		$data['banner_text'] = "Physical Stock";
 		$data['link'] = "order_management";
-		$data['msg']=NULL;
+		if(isset($msg)){
+			$data['msg']=$msg;
+			$data['update']='update stock levels';
+		}
+		if($msg==NULL){
+		$data['update']=NULL;
+		$data['msg']=" ";
+		$data['checker']="no_order";	
+		}
+		 if($checker=="v"){
+			$data['msg']="Verify that the system stock levels are the same as your physical stock count";
+			$data['update']='update stock levels';
+		}
+		 if($msg=='c0N123'){
+		 	$data['update']=NULL;
+		 	$data['msg']="Please confirm your stock details before placing your order";
+		 }
 		$data['facility_order'] = Facility_Transaction_Table::get_all($facility_c);
+		$data['max_date'] = Facility_Stock::get_max_date($facility_c)->toArray();
 		$data['quick_link'] = "stock_level";
 		$this -> load -> view("template", $data);
+
 	}
 public function allProducts(){
 	
@@ -390,22 +483,64 @@ public function get_facility_stock_details($confirmation_message=NULL){
 }
 public function update_facility_stock_details(){
 	 $id=$_POST['id'];
+	 $durg_id=$_POST['kemsa_code'];
 	 $batch_no=$_POST['batch_no'];
 	 $manufacturer=$_POST['manufacturer'];
 	 $expiry_date=$_POST['expiry_date'];
+	 $stock_level=$_POST['stock_level'];
+	  $delete=$_POST['delete'] ;
+	 
+	 $access_level = $this -> session -> userdata('user_type_id');
+	 $facility_code=$this -> session -> userdata('news');
+
+		
+		 
+	
+	
+
+	 
+
+	 
+	
 	 
 	 foreach ( $id as $key => $value) {
+	
+	if($delete[$key]==1):
+	
+
+	    $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->execute("update facility_transaction_table t, 
+		(select `opening_balance`,`closing_stock` from facility_transaction_table 
+		where facility_code='$facility_code' and kemsa_code=$durg_id[$key] and availability=1) temp
+		 set t. `opening_balance`=temp.`opening_balance`-$stock_level[$key] and t. `closing_stock`=temp.`closing_stock`-$stock_level[$key] 
+		 where t.facility_code='$facility_code' and t.kemsa_code=$durg_id[$key] and t.availability=1");
+		 
+          $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->execute("delete from facility_stock where id=$id[$key]"); 
+
+	
+	 else:
+	     $expiry_date[$key]=str_replace(",", " ", $expiry_date[$key]);
 		 $myobj = Doctrine::getTable('Facility_Stock')->find($id[$key]);
          $myobj->batch_no=$batch_no[$key] ;
 		 $myobj->manufacture=$manufacturer[$key];
 		 $myobj->expiry_date=date('y-m-d',strtotime($expiry_date[$key]));
          $myobj->save(); 
-	 }
+		
+	 endif;
+	 		
+	 	
 	 
-	$this->get_facility_stock_details($confirmation_message="Stock Details Have Been Updated");
+	 	
+	 	
+	 }
+
+	$this->session->set_flashdata('system_success_message', 'Stock Details Have Been Updated');
+	redirect('stock_management/get_facility_stock_details');
+	 
+	//$this->get_facility_stock_details($confirmation_message="Stock Details Have Been Updated");
 	
 }
-
 //////////
 public function historical_stock_take(){
 		$facility_code=$this -> session -> userdata('news');
@@ -445,12 +580,20 @@ public function historical_stock_take(){
 						$q->execute();
 
 		} else if (count($stocktake)==0) {
+			$data=$h_stock[2];
+			
+			$data='"'.$data.'"';
 			$insert = Doctrine_Manager::getInstance()->getCurrentConnection();
-		$insert->execute("INSERT INTO historical_stock (`facility_code`, `drug_id`, `unit_size`, `consumption_level`, `unit_count`, `selected_option`) VALUES ('".$facilityCode."', '".$h_stock[0]."', '".$h_stock[2]."', '".$h_stock[1]."', '".$h_stock[3]."', '".$h_stock[4]."')");
+		$insert->execute("INSERT INTO historical_stock (`facility_code`, `drug_id`, `unit_size`, `consumption_level`, `unit_count`, `selected_option`) 
+		VALUES ('".$facilityCode."', '".$h_stock[0]."', ".$data.", '".$h_stock[1]."',".$h_stock[3].", '".$h_stock[4]."')");
 		}
 		
 		echo 'success consumption_level= '.$h_stock[1].'unit_count= '.$h_stock[3].'drug_id= '.$h_stock[0].'selected_option= '.$h_stock[4];
 	}
+public function fake_historical_response(){
+	$this->session->set_flashdata('system_success_message', "Historical Stock Details Have Been Saved");
+	redirect('home_controller');
+}
 
 }
 ?>

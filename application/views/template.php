@@ -67,16 +67,18 @@ if ($access_level == "dpp") {
 <link href="<?php echo base_url().'CSS/bootstrap-responsive.css'?>" type="text/css" rel="stylesheet"/>
 <link href="<?php echo base_url().'CSS/jquery-ui.css'?>" type="text/css" rel="stylesheet"/> 
 <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
-<script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script> 
+<script src="<?php echo base_url();?>Scripts/HighCharts/highcharts.js"></script>
+<script src="<?php echo base_url();?>Scripts/HighCharts/modules/exporting.js"></script>
+<!--<script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script> -->
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
-<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+<!--<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>-->
 
 <script src="<?php echo base_url().'Scripts/validator.js'?>" type="text/javascript"></script>
 <script src="<?php echo base_url().'Scripts/jquery.validate.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/waypoints.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/waypoints-sticky.min.js'?>" type="text/javascript"></script>
 <script src="<?php echo base_url().'Scripts/bootstrap.js'?>" type="text/javascript"></script>
-
+<SCRIPT LANGUAGE="Javascript" SRC="<?php echo base_url();?>Scripts/FusionCharts/FusionCharts.js"></SCRIPT>
 
 
 
@@ -110,7 +112,7 @@ if (isset($styles)) {
 	fieldset {
 		padding: 0;
 		border: 0;
-		margin-top: 25px;
+		
 	}
 	h1 {
 		font-size: 1.2em;
@@ -285,7 +287,12 @@ if ($quick_link == "new_order") {echo "active";
 ?>">Reports</a></li>
 
 
-	<li><a data-clone="Commodity List" href="<?php echo base_url(); ?>report_management/commodity_list" class="<?php
+	<li><a data-clone="Commodity List" href="<?php echo base_url(); ?>report_management/get_facility_evaluation_form_results" class="<?php
+	if ($quick_link == "commodity_list") {echo "active";
+	}
+?>">Evaluation Forms</a></li>
+
+<li><a data-clone="Commodity List" href="<?php echo base_url(); ?>report_management/commodity_list" class="<?php
 	if ($quick_link == "commodity_list") {echo "active";
 	}
 ?>">Commodity List</a></li>
@@ -353,21 +360,34 @@ if ($current == "home_controller") {echo "active";
 	<!--<li class="active"><a data-clone="Orders" href="<?php echo base_url();?>rtk_management/rtk_orders">Orders</a></li>-->
 	<li class="active"><a data-clone="Deliveries" href="<?php echo base_url(); ?>stock_expiry_management/county_deliveries">Deliveries</a></li>
 	<li class="active"><a data-clone="Expiries" href="<?php echo base_url(); ?>stock_expiry_management/county_expiries">Expiries</a></li>
+	<li><a data-clone="Commodity List" href="<?php echo base_url(); ?>report_management/get_county_evaluation_form_results" class="<?php
+	if ($quick_link == "commodity_list") {echo "active";
+	}
+?>">Evaluation Forms</a></li>
 	<li class="active"><a data-clone="Commodity List" href="<?php echo base_url(); ?>report_management/commodity_list">Commodity List</a></li>
 	<li><a data-clone="Facility Mapping" href="<?php echo site_url('report_management/get_county_facility_mapping'); ?>"  class="<?php
 	if ($quick_link == "kemsa_order_v") {echo "active";
 	}
 ?>">Facility Mapping</a></li>
 	<?php } ?>
-
 <?php if($user_is_dpp){
 	?>
-	<li class="active"><a data-clone="Home" href="<?php echo base_url(); ?>home_controller">Home </a></li>
-
-	<?php } ?>
+	<li class="active"><a data-clone="Home" href="<?php echo base_url();?>home_controller">Home </a></li>
+	<li class="active"><a data-clone="Orders" href="<?php echo base_url();?>rtk_management/rtk_orders">Orders</a></li>
+	<li><a data-clone="Facility Mapping" href="<?php echo site_url('rtk_management/rtk_mapping/dpp');?>"  class="<?php
+	if ($quick_link == "kemsa_order_v") {echo "active";
+	}
+?>">Facility Mapping</a></li>
+	<?php
+}
+?>
 <?php if($user_is_allocation_committee){
 	?>
-	<li class="active"><a data-clone="Home" href="<?php echo base_url(); ?>home_controller">Home </a></li>
+	<li class="active"><a data-clone="RTK Home" href="<?php echo base_url();?>home_controller">RTK</a></li>
+
+ <li><a  data-clone="RTK Allocation" href="<?php echo base_url();?>rtk_management/allocations">RTK Allocations</a></li>
+	<li><a  data-clone="CD4 Home" href="<?php echo base_url();?>cd4_management/">CD4</a></li> 
+	<li><a  data-clone="CD4 Allocation" href="<?php echo base_url();?>cd4_management/allocations">CD4 Allocations</a></li>
 	<?php } ?>
 <?php if($user_is_moh){
 	?>
@@ -408,22 +428,22 @@ if ($current == "home_controller") {echo "active";
 </nav>
 </div>
   	
-	<div style="font-size:15px; float:right; padding: 1em "><?php echo date('l, dS F Y'); ?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div>
+	<div style="font-size:15px; float:right; padding: 1em "><?php  echo date('l, dS F Y'); ?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div>
 	 </div><div style="width :53em;height: 4.2em; margin: auto; ;" ></div>
-	 
-<div class="banner_content" style="font-size:20px; float:right; margin-top: 0.3em;padding-bottom: 0.35em;"><div style="float: left;"><?php echo $this -> session -> userdata('full_name') . ": " . $banner_text; ?></div>
-<div>
+	 <div >
 <?php $flash_success_data = NULL;
 	$flash_error_data = NULL;
 	$flash_success_data = $this -> session -> flashdata('system_success_message');
 	$flash_error_data = $this -> session -> flashdata('system_error_message');
 	if ($flash_success_data != NULL) {
-		echo '<p class="successreset">' . $flash_success_data . '</p>';
+		echo '<p class="successreset" style="margin: auto;">' . $flash_success_data . '</p>';
 	} elseif ($flash_error_data != NULL) {
-		echo '<p class="errorlogin">' . $flash_error_data . '</p>';
+		echo '<p class="errorlogin" style="margin: auto;">' . $flash_error_data . '</p>';
 	}
  ?>
 </div>
+<div class="banner_content" style="font-size:20px; float:right; margin-top: 0.3em;padding-bottom: 0.35em;"><div style="float: left;"><?php echo $this -> session -> userdata('full_name') . ": " . $banner_text; ?></div>
+
 		<div style="float:right">
 		
 		
@@ -509,12 +529,12 @@ if ($current == "home_controller") {echo "active";
 <script>
 	$(document).ready(function() {
 		
-					$('.successreset').fadeOut(5000, function() {
+					$('.successreset').fadeOut(10000, function() {
     // Animation complete.
   });
-$('.errorlogin').fadeOut(5000, function() {
+//$('.errorlogin').fadeOut(10000, function() {
     // Animation complete.
-  });	
+ // });	
 			
 	
 		//$('#myModal').modal('hide')

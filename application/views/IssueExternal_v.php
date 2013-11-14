@@ -58,7 +58,7 @@ json_obj = {
 					var remainder=hidden-issues;
 					
 					
-					if (remainder<=0) {
+					if (remainder<0) {
 						$('input:text[name=qty]').val('');
 						$('input:[name=avlb_Stock]').val(hidden);
 						alert("Can not issue beyond available stock");

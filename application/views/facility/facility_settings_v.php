@@ -1,6 +1,22 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	  $( "#dialog-confirm" ).dialog({
+      resizable: false,
+      autoOpen: false,
+      height:140,
+      modal: true,
+      buttons: {
+        "Delete all items": function() {
+        	window.location="<?php echo site_url('stock_management/reset_facility_details');?>";	
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+	
 		$("#dialog" ).dialog({
 		  
             title: "facility Reporting Details",
@@ -72,6 +88,11 @@ $(document).ready(function(){
                 
             });
             
+               $("#facility_reset" ).click(function() {		   	
+		  
+    $( "#dialog-confirm" ).dialog( "open" );
+});
+      
             
             /////ajax request function 
 			  	function ajax_request (url){
@@ -83,8 +104,6 @@ $(document).ready(function(){
                   $('#feedback').html('');
                       },
                      success: function(msg) {
-                     	
-                     	
                      	switch (msg){
                      		case 'User name is available':
                      		$('#feedback').html("<label class='error_2'>"+msg+"</label>");
@@ -105,7 +124,9 @@ $(document).ready(function(){
                      }  
 });
 </script>
-	
+	<div id="dialog-confirm" title="Delete facility data?">
+  <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>All facility data will be permanently deleted and cannot be recovered!. Are you sure?</p>
+</div>
 	<div id="left_content">
 		<div id="dialog"></div> 
 		<fieldset>
@@ -119,8 +140,18 @@ $(document).ready(function(){
 		<div class="activity users">
 		<a id="user_profile" href="#"><h2>User Profile</h2></a>
 		</div>
+		
+	
+		
 			<div class="activity update">
-	    <a href="<?php echo site_url('stock_management/reset_facility_details');?>"><h2>Reset Facility Stock Data</h2></a>
+	    <a id="facility_reset"><h2>Reset Facility Stock Data</h2></a>
 		</div>
+	
+			<div class="activity update">
+	    <a href="<?php echo site_url('stock_management/facility_add_stock_data');?>"><h2>Add Facility Stock Data</h2></a>
+		</div>
+		    <div class="activity update">
+      <a href="<?php echo site_url('report_management/facility_evaluation');?>"><h2>Perform HCMP Training Evaluation</h2></a>
+    </div>
 		</fieldset>
 	</div>

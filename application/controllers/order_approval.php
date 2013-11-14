@@ -46,7 +46,9 @@ include_once('auto_sms.php');
 		$this -> load -> view("template", $data);
 	}
 	public function update_order(){
+		 ini_set('memory_limit','32M'); 
 		$this->load->library('mpdf');
+exit;
 		$this->load->helper('file');
 		$this->load->helper('url');
 		
@@ -253,8 +255,10 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
 			{
 				
 		$this->session->set_flashdata('system_error_message', 'An error occured');			
-    
-        $this->district_orders();
+        redirect("order_approval/district_orders");
+ 
+	
+     //   $this->district_orders();
              }
                   else{
                   	
@@ -277,15 +281,15 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
   
   $message=$html_title.$html_body;
   
- $response= $this->send_email(substr($email_address,0,-1),$message,$subject,$attach_file,$bcc_email);
- 
- if($response){
- 	delete_files('./pdf/'.$report_name.'.pdf');
- }
+ //$response= $this->send_email(substr($email_address,0,-1),$message,$subject,$attach_file,$bcc_email);
+
+ //if($response){
+ 	//delete_files('./pdf/'.$report_name.'.pdf');
+ //}
 					
   }
 
- 
+   $this->send_order_approval_sms();
    $this->session->set_flashdata('system_success_message', "Order No $code has been approved");	
    redirect("order_approval/district_orders");
  

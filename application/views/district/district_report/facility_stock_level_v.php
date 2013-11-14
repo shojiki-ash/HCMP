@@ -1,6 +1,6 @@
 <script type="text/javascript" language="javascript" src="<?php echo base_url();  ?>Scripts/jquery.dataTables.js"></script>
 		<style type="text/css" title="currentStyle">	
-			@import "<?php echo base_url(); ?>DataTables-1.9.3 /media2/css/jquery.dataTables.css";
+			@import "<?php echo base_url(); ?>DataTables-1.9.3/media2/css/jquery.dataTables.css";
 		</style>
 <style>
 .user{

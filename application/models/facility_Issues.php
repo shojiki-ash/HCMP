@@ -5,6 +5,7 @@ class Facility_Issues extends Doctrine_Record {
 	{
 		$this -> hasColumn('facility_code', 'int'); 
 		$this -> hasColumn('s11_No', 'int'); 
+		$this -> hasColumn('receipts', 'int'); 
 		$this -> hasColumn('kemsa_code', 'varchar',20); 
 	    $this -> hasColumn('batch_no', 'varchar',20); 
 		$this -> hasColumn('expiry_date', 'date'); 
@@ -25,11 +26,25 @@ class Facility_Issues extends Doctrine_Record {
 		
 		
 	}
-	public static function getAll() {
-		$desc=$_POST['desc'];
-		$from=$_POST['from'];
-		$to=$_POST['to'];
-		$facility_Code=$_POST['facilitycode'];		
+	public static function getAll($description=NULL, $from2=NULL, $to2=NULL, $facility_code2=NULL) {
+		if (isset($_POST['desc'])) {
+			$desc=$_POST['desc'];
+		}
+		elseif (!isset($_POST['desc'])) {
+			$desc = $description;
+		}
+
+		if ($from2!=NULL && $to2!=NULL) {
+			$from = $from2;
+			$to = $to2;
+			$facility_Code=$facility_code2;
+		}
+		else{
+			$from=$_POST['from'];
+			$to=$_POST['to'];
+			$facility_Code=$_POST['facilitycode'];
+		}
+				
 		$convertfrom=date('y-m-d',strtotime($from ));
 		$convertto=date('y-m-d',strtotime($to ));
 		
@@ -38,11 +53,17 @@ class Facility_Issues extends Doctrine_Record {
 		$stocktake = $query ->execute();
 		return $stocktake;
 	}
-	public static function getcissues() {
-		
-		$from=$_POST['fromcommodity'];
-		$to=$_POST['tocommodity'];
-		$facility_Code=$_POST['facilitycode'];
+	public static function getcissues($from2=NULL, $to2=NULL, $facility_code2=NULL) {
+		if ($from2!=NULL && $to2!=NULL) {
+			$from = $from2;
+			$to = $to2;
+			$facility_Code=$facility_code2;
+		}
+		else{
+			$from=$_POST['fromcommodity'];
+			$to=$_POST['tocommodity'];
+			$facility_Code=$_POST['facilitycode'];
+		}
 		$convertfrom=date('y-m-d',strtotime($from ));
 		$convertto=date('y-m-d',strtotime($to ));
 		

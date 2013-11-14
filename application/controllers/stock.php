@@ -131,6 +131,7 @@ public function submit(){
 	$rname=$_POST['rname'];
 	$lsn=$_POST['lsn'];
 	$date = date('Y-m-d h:i');
+	$orderDate=date('y-m-d H:i:s');
 	$dispdate=date('y-m-d',strtotime($_POST['dispdate']));
 	//$dispby=$_POST['dispby'];
 	$dispby="";
@@ -154,6 +155,21 @@ public function submit(){
 	$pass->sheet_no=$lsn;
 	$dates=date('y-m-d',strtotime($date));
 	$pass->save();
+	
+	
+	       $facility_stock=Facility_Stock::get_facility_drug_total($facility,$code)->toArray();	
+			
+			$mydata=array('facility_code'=>$facility,
+			's11_No' => 'Delivery From KEMSA',
+			'kemsa_code'=>$kemsaCode[$i],
+			'batch_no'=>$batchNo[$i],
+			'expiry_date'=>date('y-m-d',strtotime($Exp[$i])),
+			'balanceAsof'=>$facility_stock[0]['balance'],
+			'date_issued' => date('y-m-d'),
+			'issued_to' => 'N/A',
+			'issued_by' => $this -> session -> userdata('identity'));  
+			 
+			Facility_Issues::update_issues_table($mydata);  
 	
 	}
 	//setting previous cycle's values to 0 then updating a fresh
@@ -237,6 +253,8 @@ AND fs.kemsa_code='$id'");
 						$transact1->date_t=$today;
 						$transact1->availability=1;
 						$transact1->save();
+						
+						
 					}
 					
 	/*********************************option 2********************************/
@@ -339,12 +357,7 @@ SET price=".$pushed_items_from_kemsa[$i]['unit_cost']." , quantityRecieved =".$p
 		
 		redirect('order_management/new_order');
 
-		
-		
-	
-
-
-		$this -> load -> view("template", $data);
+		//$this -> load -> view("template", $data);
 	
 }
  function getWorkingDays($startDate,$endDate,$holidays){

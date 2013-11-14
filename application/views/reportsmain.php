@@ -127,13 +127,19 @@ background:url('<?php echo base_url()?>
 	}
 
 </style>
-<div class="leftpanel"><h3 class="accordion" id="section1">Commodity Expiries<span></span><h3>
+<div class="leftpanel"><h3 class="accordion" id="section1">Expiries<span></span><h3>
 <div class="container">
     <div class="content">
       
-    <h3> <a href="#"  id="expired">View Expired Commodities</a></h3> 
+    <h3> <a href="#"  id="expired">View Expiries</a></h3> 
     </n>
      <h3> <a href="#" id="potentialexpiries">View Potential Expiries</a></h3> 
+     <?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
+	 echo form_open('raw_data/gen_pdf',$attributes); ?>	
+<button id="downloader" class="btn" >Download PDF<i class="icon-circle-arrow-down" style="margin-left: 3px"></i></button>
+<input type="hidden" id="timer" name="timer" value="3" readonly="readonly"/>
+<?php  echo form_close();
+		?>
       
     
     
@@ -157,12 +163,23 @@ background:url('<?php echo base_url()?>
 			
 		<?php } ?>		
 	</select>
-	<input  type="hidden"  name="drugname" id="drugname" value="" />
-	
+		
 	<h2>Click below to choose date range</h2>
 	<input type="text" size="10"  value="" id="from" placeholder="From" />
 	<input type="text" size="10"  value="" id="to" placeholder="To"/>
-	<button class="awesome blue" id="stockcontrol" style="margin-left:30%">Generate Report</button>
+
+	<input  type="hidden"  name="drugname" id="drugname" value="" />
+	<input  type="hidden"  name="drugid" id="drugid" value="" />
+
+	<button class="awesome blue" id="stockcontrol" style="margin-left:0%">Generate Report</button>
+
+	<?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
+	 echo form_open('raw_data/get_stockcontrolpdf/download/',$attributes); ?>	
+<button id="stockcontroldwnld" class="btn" >Download PDF<i class="icon-circle-arrow-down" style="margin-left: 3px"></i></button>
+
+<?php  echo form_close();
+		?>
+
 	<input type="hidden"  value="<?php echo $facility_Code ?>" id="facilitycode" name="facilitycode" />
     </div>
     
@@ -173,8 +190,16 @@ background:url('<?php echo base_url()?>
 <h3 class="accordion" id="section3">Order Report<span></span><h3>
 <div class="container">
     <div class="content">
-    <h2><a href="#" id="orders">Click to view orders</a></h2> 
-   
+    		 <select id="year" name="year" class="dropdownsize">
+    <option>Select Year</option>
+		<?php 
+		for ($i=$current_year; $i >= $earliest_year; $i--) { ?>
+
+			<option value="<?php echo $i; ?>"><?php echo $i; ?></option>		
+			
+		<?php } ?>		
+	</select>
+    <h2><a href="#" id="orders">Click to view orders</a></h2>
 
     </div>
     
@@ -187,15 +212,24 @@ background:url('<?php echo base_url()?>
 	<input type="text" size="10"  value="" id="fromcommodity" placeholder="From" />
 	<input type="text" size="10"  value="" id="tocommodity" placeholder="To"/>
 	<button class="awesome blue" id="commodityissue" style="margin-left:30%">Generate Report</button>
+	<?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
+	 echo form_open('Raw_data/get_commodityIpdf',$attributes); ?>	
+<button id="downloader" class="btn" >Download PDF<i class="icon-circle-arrow-down" style="margin-left: 3px"></i></button>
+
+<?php  echo form_close();
+		?>
+	<input type="hidden"  value="" id="c_issued" name="c_issued" />
 	
     </div>
 </div>
 
 
 </div>
+
 <div class="reportDisplay">
 	
 </div>
+
 <script type="text/javascript">
 	$(function() {
 			
@@ -239,11 +273,17 @@ background:url('<?php echo base_url()?>
     });
     
     $("#orders").click(function(){
-      var url = "<?php echo base_url().'order_management/get_delivered_orders_ajax'?>";
+    if ($('#year').val()!=='Select Year') {
+    var yearfrom = $('#year').val();
+      var url = "<?php echo base_url().'order_management/get_delivered_orders_ajax/'?>"+yearfrom;
+  }else if($('#year').val()=='Select Year'){
+  	var url = "<?php echo base_url().'order_management/get_delivered_orders_ajax/'?>";
+  };
     ajax_request (url,'');
     });
     
     			$("#from,#from_order,#fromcommodity").datepicker({
+    			dateFormat : 'dd-mm-yy',
 				defaultDate : "+1w",
 				changeMonth : true,
 				changeYear : true,
@@ -253,6 +293,7 @@ background:url('<?php echo base_url()?>
 				}
 			});
 			$("#to,#to_order,#tocommodity").datepicker({
+				dateFormat : 'dd-mm-yy',
 				defaultDate : "+1w",
 				changeMonth : true,
 				changeYear : true,
@@ -318,10 +359,8 @@ background:url('<?php echo base_url()?>
            $(".reportDisplay").html(msg);           
           }
         }); 
-}
-			
-			
-			
+	}
+					
 	}); 
 </script>
 

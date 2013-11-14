@@ -1,4 +1,4 @@
-<script type="text/javascript" language="javascript" src="<?php echo base_url();  ?>Scripts/jquery.dataTables.js"></script>
+<script type="text/javascript" language="javascript" src="<?php echo base_url(); ///////// ?>Scripts/jquery.dataTables.js"></script>
 <script type="text/javascript" language="javascript" src="<?php echo base_url();  ?>Scripts/unit_size.js"></script>
 		<style type="text/css" title="currentStyle">
 			
@@ -64,20 +64,14 @@ input[type=radio]:checked + label:before {
 
    <script>    
   function calculate_a_stock (argument) {
-  	
-  	
-  	var radiocheck =($("input[type='radio'][name='unitissue']:checked").val());
-  	
-  	
-  	
-  	if (radiocheck == 'Unit_Size'){
-    //do this
 
-     	var x= argument;
-  
-  	
+  	var x= argument;
+
+    //do this
     //checking if the quantity is a number 	    
 	var num = document.getElementsByName("a_stock["+x+"]")[0].value.replace(/\,/g,'');
+	
+	
 if(!isNaN(num)){
 if(num.indexOf('.') > -1) {
 alert("Decimals are not allowed.");
@@ -90,24 +84,68 @@ alert('Enter only numbers');
 document.getElementsByName("a_stock["+x+"]")[0].value= document.getElementsByName("a_stock["+x+"]")[0].value.substring(0,document.getElementsByName("a_stock["+x+"]")[0].value.length-1);
 return;
 }
-  var actual_unit_size=get_unit_quantity(document.getElementsByName("u_size["+x+"]")[0].value);
 
- var total_a_stock=actual_unit_size*num;
+
+
+  	
+  	
+  	if(x==0){
+  	var radiocheck =($("input[type='radio'][name='unitissue']:checked").val());
+  		
+  	if (radiocheck == 'Pack_Size'){
+  		
+  		do_the_math(x,false);
+   }
+   else{
+	//do this other
+	var actual_unit_size=1;
+
+    var total_a_stock=actual_unit_size*num;
  
    document.getElementsByName("qreceived["+x+"]")[0].value=total_a_stock; 
+    }	
     
-    
+  	}
+  	else{
+  	do_the_math(x,true);	
+  	}
+  	
+   }
+   
+   function do_the_math(x,status){
+   	var x=x;
+   	var status=status;
+   	var num = document.getElementsByName("a_stock["+x+"]")[0].value.replace(/\,/g,'');
+    var actual_unit_size=get_unit_quantity(document.getElementsByName("u_size["+x+"]")[0].value);
+
+
   
-  }
-else{
-	//do this other
-	$(function() {
-		
-		$("#qreceived").val($("#a_stock").val());
-		
-		
-	});
-}
+   var total_a_stock=actual_unit_size*num;
+ 
+   document.getElementsByName("qreceived["+x+"]")[0].value=total_a_stock; 
+   
+   if(status){
+   	   var url = "<?php echo base_url().'stock_management/autosave_update'?>";
+        $.ajax({
+          type: "POST",
+          data: "batch_no="+document.getElementsByName("batch_no["+x+"]")[0].value+
+          "&manu="+document.getElementsByName("manuf["+x+"]")[0].value+
+          "&expiry_date="+document.getElementsByName("expiry_date["+x+"]")[0].value+
+          "&stock_level="+document.getElementsByName("a_stock["+x+"]")[0].value+
+          "&unit_count="+document.getElementsByName("qreceived["+x+"]")[0].value+
+          "&drug_id="+document.getElementsByName("kemsa_code["+x+"]")[0].value,
+          url: url,
+          beforeSend: function() {
+           // console.log("data to send :"+data);
+          },
+          success: function(msg) {
+            console.log(msg);
+            
+             }
+         }); 
+   }
+    
+
    }
    /*********************getting the last day of the month***********/
   function getLastDayOfYearAndMonth(year, month)
@@ -129,9 +167,12 @@ json_obj = {
         		
            var data =$("#desc").val();
            
-           var data_array=data.split("|");
+           var data_array=data.split("^");
          
            $('#unit_size').val(data_array[4]);
+          
+          
+           
             $('#kemsa_code').val(data_array[1]);
          
             $( "#desc_hidden" ).val(data);
@@ -148,7 +189,7 @@ json_obj = {
 			buttons: {
 				"Add Commodity": function() {
 					var details=$("#desc_hidden").val();	
-					var details_array=details.split("|");
+					var details_array=details.split("^");
 					
 var r=confirm("Are you sure you want to add"+" "+details_array[3]+" "+" with a total unit count of"+" "+$('#qreceived').val()+"?"+"Please confirm values before submitting.");
 if (r==true)
@@ -265,7 +306,7 @@ else
 				
 		$( "#datepicker" ).datepicker({
 			showOn: "button",
-			dateFormat: 'd M, yy', 
+			dateFormat: 'd M yy', 
 			buttonImage: baseUrl,
 			buttonImageOnly: true
 		});
@@ -283,7 +324,7 @@ else
         return [false, ''];
     },
 					
-					dateFormat: 'd M, yy', 
+					dateFormat: 'd M yy', 
 					changeMonth: true,
 			        changeYear: true,
 			        buttonImage: baseUrl,
@@ -297,7 +338,8 @@ else
    	
    	var dTable= $('#main').dataTable( {
          "bJQueryUI": true,
-          "bPaginate": false
+          "bPaginate": false,
+           "bFilter":false
 				} );
    	
  
@@ -351,7 +393,7 @@ $('.del').live('click',function(){
 
         return [false, ''];
     },
-        	dateFormat: 'd M, yy', 
+        	dateFormat: 'd M yy', 
         	        buttonImage: baseUrl,
 					changeMonth: true,
 			        changeYear: true
@@ -369,7 +411,7 @@ $('.del').live('click',function(){
 		<tr>
 			<td><h4>Stock level as of</h4></td>
 			<td>			 
-				<?php $today= ( date('d M, Y')); //get today's date in full?>
+				<?php $today= ( date('d M Y')); //get today's date in full?>
 				<input type="text" name="datepicker" readonly="readonly" value="<?php echo $today;?>" id="datepicker"/>			
 			</td>
 		</tr>
@@ -410,7 +452,7 @@ $('.del').live('click',function(){
 				
 			}
 			?>
-			<option value="<?php echo $id."|".$id1."|".$cat_name."|".$drug."|".$unit_size;?>"><?php echo $drug;?></option>
+			<option value="<?php echo $id."^".$id1."^".$cat_name."^".$drug."^".$unit_size;?>"><?php echo $drug;?></option>
 		<?php }
 		?>
 	</select>
@@ -418,9 +460,9 @@ $('.del').live('click',function(){
 	<td><input size="10" type="text"  class="user1" readonly="readonly" name="kemsa_code[0]" id="kemsa_code" /></td>
 	<td><input size="10" type="text" class="user1" readonly="readonly"  name="u_size[0]" id="unit_size" /></td>
 	<td><div class="radio">
-	<input id="Unit_Size" type="radio" name="unitissue" value="Unit_Size" class="radioOptions">
+	<input id="Unit_Size" type="radio" name="unitissue" value="Pack_Size" class="radioOptions">
 	<label for="Unit_Size">Pack Size</label>
-	<input id="Pack_Size" type="radio" name="unitissue" value="Pack_Size" class="radioOptions">
+	<input id="Pack_Size" type="radio" name="unitissue" value="Unit_Size" class="radioOptions">
 	<label for="Pack_Size">Unit Size</label>
 </div>
 </td>
@@ -460,6 +502,7 @@ $('.del').live('click',function(){
 						<td>$data->category</td>
 						<td>$data->kemsa_code
 						<input type='hidden' name='kemsa_code[".$count."]' value='$data->drug_id' id='h_v' />
+						<input type='hidden' name='u_size[".$count."]' value='$data->unit_size' id='h_v' />
 						</td>
 						<td>$data->description</td>
 						<td><input class='user1' readonly='readonly' type ='text' name='unit_size[".$count."]' value='$data->unit_size'></td>

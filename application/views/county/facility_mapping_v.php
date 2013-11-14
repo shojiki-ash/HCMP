@@ -1,9 +1,6 @@
 <SCRIPT LANGUAGE="Javascript" SRC="<?php echo base_url();?>Scripts/FusionCharts/FusionCharts.js"></SCRIPT>
+<script src="<?php echo base_url().'Scripts/accordion.js'?>" type="text/javascript"></script> 
 <script type="text/javascript" language="javascript" src="<?php echo base_url(); ?>Scripts/jquery.dataTables.js"></script>
-		<style type="text/css" title="currentStyle">
-			
-			@import "<?php echo base_url(); ?>DataTables-1.9.3 /media/css/jquery.dataTables.css";
-		</style>
 		<style>
 
 			.warning2 {
@@ -11,112 +8,223 @@
 	border: 1px solid #F1AA2D;
 	}
 		</style>
-
 		<script type="text/javascript" charset="utf-8">
 			
 			$(document).ready(function() {
+			  //default action 
+	    
+					        //$('.accordion').accordion({defaultOpen: ''});
+         //custom animation for open/close
+    $.fn.slideFadeToggle = function(speed, easing, callback) {
+        return this.animate({opacity: 'toggle', height: 'toggle'}, speed, easing, callback);
+    };
+    $('.accordion').accordion({
+        defaultOpen: 'section1',
+        cookieName: 'nav',
+        speed: 'medium',
+        animateOpen: function (elem, opts) { //replace the standard slideUp with custom function
+            elem.next().slideFadeToggle(opts.speed);
+        },
+        animateClose: function (elem, opts) { //replace the standard slideDown with custom function
+            elem.next().slideFadeToggle(opts.speed);
+        }
+    });
 				/* Build the DataTable with third column using our custom sort functions */
 				$('#example_main').dataTable( {
 					"bJQueryUI": true,
 					"bPaginate": false
 				} );
+		
+		var url = "<?php echo base_url().'report_management/get_county_facility_mapping_data/'?>";	
+		ajax_request_special(url,'main_div','');				
+	   
+
+		$(".ajax_call").click(function(){
+		var url = "<?php echo base_url().'report_management/get_district_facility_mapping_/'?>";	
+		var id  = $(this).attr("id"); 
+		ajax_request_special(url+id,'main_div','');					
+	    });
+	    
+	  
+	    
+	    $("#section_2").click(function(){
+		var url = "<?php echo base_url().'report_management/get_county_facility_mapping_data/'?>";	
+		ajax_request_special(url,'main_div','');		
+	    });
+	
 	
 		
-		
-		
-		
-						$(".ajax_call_1").click(function(){
-							var id  = $(this).attr("id"); 
-							
-							if(id=="county_facility"){
-								
-  	                         var url= $(this).attr("name"); 
-  	
-  	                     ajax_request_special (url);
-  	                  return;
-                        }
-	
-	});
-		function ajax_request_special (url){
+    function ajax_request_special(url,checker,date){
 	var url =url;
+	var checker=checker;
+	
+	var loading_icon="<?php echo base_url().'Images/loader.gif' ?>";
 	 $.ajax({
           type: "POST",
           url: url,
           beforeSend: function() {
-            $("#pop_up").html("");
+          	
+          	if(checker=="main_div"){
+          	 $("#test_a").html("<img style='margin-left:20%;' src="+loading_icon+">");	
+          	}else{
+          	 $('#dialog').html("");	
+          	}
+          	
+           
           },
           success: function(msg) {
-  
-        	
-        	$('#dialog').html(msg);
-         $( "#dialog" ).dialog({
-			height: 650,
-			width:900,
-			modal: true
-		});
+          	if(checker=="main_div"){	
+          		
+          $("#test_a").html(""); 	
+          $("#test_a").html(msg); 
+          
+          }else{
+          	
+         $('#dialog').html(msg);
+         $('#dialog').dialog({
+         	title: 'HCMP Monthly roll out activity '+date,
+         })
+         $('#dialog').dialog('open');
+    
+          	
+          }
           }
         }); 
 }
-		
-		
-		var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Bar2D.swf"?>","ChartId", "100%", "50%", "0", "1" );
-		var url = '<?php echo base_url()."rtk_management/facility_ownership_bar_chart/county/1"?>'; 
-		chart.setDataURL(url);
-		chart.render("chart");
-		
-
-	
-		var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Doughnut2D.swf"?>", "ChartId", "100%", "50%", "0", "0");
-		var url = '<?php echo base_url()."rtk_management/facility_ownership_doghnut/county/1"?>'; 
-		chart.setDataURL(url);
-		chart.render("chart1");
-		
-	
-	
-			$( "#filter-b" )
-			.button()
-			.click(function() {
-				
-});	
 
 	});
 	</script>
-	<style>
-	.chart_content{
-		margin:0 auto;
-		margin-left: 0px;
-	}
-	.multiple_chart_content{
-		float:left; 
-	}
+<style>
+.leftpanel{
+    	width: 17%;
+    	height:auto;
+    	float: left;
+    }
+
+    .dash_menu{
+    width: 100%;
+    float: left;
+    height:auto; 
+    -webkit-box-shadow: 2px 3px 5px#888;
+	box-shadow: 2px 3px 5px #888; 
+	margin-bottom:3.2em; 
+    }
+    
+    .dash_main{
+    width: 80%;
+    min-height:100%;
+    height:600px;
+    float: left;
+       -webkit-box-shadow: 2px 2px 6px #888;
+	box-shadow: 2px 2px 6px 2px #888; 
+    margin-left:0.75em;
+    margin-bottom:0em;
+    
+    }
+    
+#accordion {
+    width: 300px;
+    margin: 50px auto;
+    float:left;
+    margin-left:0.45em;
+}
+.collapsible,
+.page_collapsible,
+.accordion {
+    margin: 0;
+    padding:5%;
+    height:15px;
+    border-top:#f0f0f0 1px solid;
+    background: #cccccc;
+    font:normal 1.3em 'Trebuchet MS',Arial,Sans-Serif;
+    text-decoration:none;
+    text-transform:uppercase;
+	background: #29527b; /* Old browsers */
+     border-radius: 0.5em;
+     color: #fff; }
+.accordion-open,
+.collapse-open {
+	background: #289909; /* Old browsers */    
+    color: #fff; }
+.accordion-open span,
+.collapse-open span {
+    display:block;
+    float:right;
+    padding:10px; }
+.accordion-open span,
+.collapse-open span {
+    background:url('<?php echo base_url()?>Images/minus.jpg') center center no-repeat; }
+.accordion-close span,
+.collapse-close span {
+    display:block;
+    float:right;
+    background:url('<?php echo base_url()?>Images/plus.jpg') center center no-repeat;
+    padding:10px; }
+div.container {
+    width:auto;
+    height:auto;
+    padding:0;
+    margin:0; }
+div.content {
+    background:#f0f0f0;
+    margin: 0;
+    padding:10px;
+    font-size:.9em;
+    line-height:1.5em;
+    font-family:"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif; }
+div.content ul, div.content p {
+font-size: 1em;
+    padding:.2em;
+    margin:.2em;
+    padding:3px; }
+div.content ul li {
+    list-style-position:inside;
+    line-height:25px; }
+div.content ul li a {
+    color:#555555; }
+code {
+    overflow:auto; }
+.accordion h3.collapse-open {}
+.accordion h3.collapse-close {}
+.accordion h3.collapse-open span {}
+.accordion h3.collapse-close span {}   
 </style>
-	<div class="chart_content" style="width:100%;">
-		<div id="dialog"></div> 
-	<div class="multiple_chart_content" style="width:50%;" id="chart"></div>
-	<div class="multiple_chart_content" style="width:50%;" id="chart1"></div>
-	</div>
-	<div class="chart_content" style="width:100%;" id="chart2"></div>
+<div class="leftpanel">
+
+<div class="dash_menu">
 	
-						<table  style="margin-left: 0;" id="example_main" width="100%">
-					<thead>
-					<tr>
-						<th><b>District</b></th>
-						<th><b>No. of Facilities</b></th>
-						 <th><b>GOK</b></th>
-						<th><b>CBO</b></th>
-						<th><b>FBO</b></th>
-						<th><b>NGO</b></th>
-						<th><b>Private</b></th>
-						<th><b>Other</b></th>
-										    
-					</tr>
-					</thead>
-					<tbody>
-		<?php echo $table_body; ?>
-							
-				</tbody>
-						
-						
-				</table>
+	<h3 class="accordion" id="section_2" >Roll Out At A glance<span></span>
+	<h3>
+
+
+<h3 class="accordion" id="section1" >Districts in the county<span></span><h3>
+<div class="container">
+	<div id="content">
+		<ol>
+<?php
+foreach($district_data as $district_detail){
+
+echo "<li>
+<a class='ajax_call' id='$district_detail->id' href='#'>$district_detail->district</a>
+</li>";			
+			
+		//////////////////////////////////	
+		}
+
+?>		
+</ol>		
+	</div>
+</div>
+</div>
+
+</div>
+
+<div class="dash_main" id = "dash_main">
+<div id="test_a" style="overflow: scroll; height: 51em; min-height:100%; margin: 0; width: 100%">
+
+
+
+		</div>
+</div>
  
  

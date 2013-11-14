@@ -1,6 +1,6 @@
 <?php
 class User extends Doctrine_Record {
-
+/////
 	public function setTableDefinition() {
 		$this->hasColumn('fname', 'varchar', 255);
 		$this->hasColumn('lname', 'varchar', 255);
@@ -8,11 +8,11 @@ class User extends Doctrine_Record {
 		$this->hasColumn('username', 'string', 255, array('unique' => 'true'));
 		$this->hasColumn('password', 'string', 255);
 		$this->hasColumn('usertype_id', 'integer', 11);
-		$this->hasColumn('telephone', 'varchar', 255);		
-		$this->hasColumn('county', 'varchar', 255);
+		$this->hasColumn('telephone', 'varchar', 255);
 		$this->hasColumn('district', 'varchar', 255);
 		$this->hasColumn('facility', 'varchar', 255);
 		$this->hasColumn('status', 'int', 11);
+		$this->hasColumn('county_id', 'int', 11);
 		
 	}
 	
@@ -83,7 +83,7 @@ class User extends Doctrine_Record {
 		return $level;
 	}
 	public static function get_user_info($facility_code) {
-		$query = Doctrine_Query::create() -> select("DISTINCT usertype_id, telephone,district, facility, email") -> from("user")->where("status='1' and  facility='$facility_code'");
+		$query = Doctrine_Query::create() -> select("DISTINCT usertype_id, telephone,district, facility") -> from("user")->where("status='1' and  facility='$facility_code'");
 		$info = $query -> execute();
 		
 		return $info;
@@ -130,6 +130,95 @@ public static function check_user_exist($email){
 		$level = $query -> execute();
 		return count($level);
 }
+
+public static function get_user_details($email){
+	$query = Doctrine_Query::create() -> select("*") -> from("user")->where("`email` like '%$email%'");
+		$level = $query -> execute();
+		return $level;
+}
+
+public static function get_all_moh_users(){
+	$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT u.id, a.level, u.status, c.county, d.district, u.fname, u.lname, u.email, u.telephone, f.facility_name
+FROM access_level a, user_type_definition u_t, user u
+LEFT JOIN facilities f ON u.facility = f.facility_code
+LEFT JOIN districts d ON u.district = d.id
+LEFT JOIN counties c ON u.county_id = c.id
+WHERE u.usertype_id = a.id
+AND a.type = u_t.id
+AND u_t.id =1
+ORDER BY f.facility_name ASC ");
+return $q;
+}
+
+public static function get_no_of_users_using_hcmp($county_id=NULL,$district_id=NULL){
+
+if($district_id!=NULL){
+		$q_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( DISTINCT u.`id` ) AS total_no_of_users
+FROM facilities f, districts d, counties c, user u, log l
+WHERE f.district = d.id
+AND u.facility = f.facility_code
+AND d.county = c.id
+AND u.id = l.user_id
+AND u.status =  '1'
+AND d.id =  '$district_id'
+AND l.action =  'Logged In'
+AND l.start_time_of_event BETWEEN (NOW() - INTERVAL 7 DAY) AND NOW()
+");
+
+$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( DISTINCT u.`id` ) AS total_no_of_users
+FROM facilities f, districts d, counties c, user u, log l
+WHERE f.district = d.id
+AND u.facility = f.facility_code
+AND d.county = c.id
+AND u.id = l.user_id
+AND u.status =  '1'
+AND d.id =  '$district_id'
+");
+
+$q_2 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( l.id ) AS users_logged_in
+FROM log l, user u
+WHERE UNIX_TIMESTAMP(  `end_time_of_event` ) =0
+AND  `action` =  'Logged In'
+AND l.`user_id` = u.id
+AND u.district ='$district_id'
+");
+	
+}else{
+	$q_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( DISTINCT u.`id` ) AS total_no_of_users
+FROM counties c, user u, log l
+WHERE u.id = l.user_id 
+AND u.county_id=c.id
+AND u.status =  '1'
+AND c.id =  '$county_id'
+AND l.start_time_of_event BETWEEN (NOW() - INTERVAL 7 DAY) AND NOW()
+");
+
+$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( DISTINCT u.`id` ) AS total_no_of_users
+FROM  counties c, user u
+WHERE u.county_id=c.id
+AND u.status =  '1'
+AND c.id =  '$county_id'
+");
+
+$q_2 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( l.id ) AS users_logged_in
+FROM log l, user u
+WHERE UNIX_TIMESTAMP(  `end_time_of_event` ) =0
+AND  `action` =  'Logged In'
+AND l.`user_id` = u.id
+AND u.county_id ='$county_id'
+");
+}
+
+return array('total_no_of_users'=>$q[0]['total_no_of_users'],'total_no_of_users_7_days'=>$q_1[0]['total_no_of_users'],"active_users"=>$q_2[0]['users_logged_in']);
+}
+
 
 
 }

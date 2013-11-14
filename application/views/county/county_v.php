@@ -75,7 +75,7 @@
     chart.render("chart4");
 
       var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "ChartId4", "100%", "80%", "0", "0");
-    var url = '<?php echo base_url()."report_management/cost_of_ordered_commodities_chart"?>'; 
+    var url = '<?php echo base_url()."report_management/generate_costofordered_County_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart5");
 
@@ -83,6 +83,7 @@
     var url = '<?php echo base_url()."report_management/cummulative_fill_rate_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart6");
+
 
      var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/StackedColumn2D.swf"?>", "ChartId6", "100%", "80%", "0", "0");
     var url = '<?php echo base_url()."report_management/district_drawing_rights_chart"?>'; 
@@ -100,12 +101,12 @@
     chart.render("chart9");
     
     var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/StackedColumn2D.swf"?>", "ChartId9", "100%", "80%", "0", "0");
-    var url = '<?php echo base_url()."report_management/county_ordering_rate_chart"?>'; 
+    var url = '<?php echo base_url()."report_management/get_county_ordering_rate_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart10");
     
     var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/MSColumn2D.swf"?>", "ChartId10", "100%", "80%", "0", "0");
-    var url = '<?php echo base_url()."report_management/County_orders_placed_chart"?>'; 
+    var url = '<?php echo base_url()."report_management/get_county_drawing_rights_data"?>'; 
     chart.setDataURL(url);
     chart.render("chart11");
 
@@ -141,6 +142,9 @@
 		border-right-style: inset;
 		
 	}
+	.multiple_chart_content label{
+		font-size:12px;
+	}
   
 </style>
   
@@ -162,9 +166,10 @@
 <h2 >Ordering Rate</h2>
 <div id="chart10"></div>
 	</div>
-	<div class="multiple_chart_content"  >
-<h2 >Allocated Drawing rights/Drawing rights Bal</h2>
-<div id="chart11"></div>
+	<div class="multiple_chart_content" style="">
+<h2 >Notifications</h2>
+	<?php echo $stats; ////// ?>			
+			
 	</div>
 	
 	
@@ -174,8 +179,8 @@
 </div>
 	
 	<div class="multiple_chart_content"  >
-<h2 >Drawing Rights Bal</h2>
-<div id="chart7"></div>
+<h2 >Allocated Drawing rights/Drawing rights Bal</h2>
+<div id="chart11"></div>
 </div>
 
 

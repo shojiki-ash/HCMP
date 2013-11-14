@@ -24,14 +24,14 @@ class User_Registration extends MY_Controller {
 		$name1=$this->input->post('fname');
 		$name2=$this->input->post('lname');
 		$password=$this->input->post('password');
-		$username=$this->input->post('username');
+		$username=$this->input->post('email');
 		
 		$u = new User();
 		$u->fname=$this->input->post('fname');
 		$u->lname=$this->input->post('lname');
 		$u->email = $this->input->post('email');
-		$u->username = $this->input->post('username');
-		$u->password = $this->input->post('password');
+		$u->username = $this->input->post('email');
+		$u->password = 123456;
 		$u->usertype_id = $this->input->post('type');
 		$u->telephone = $this->input->post('tell');
 		$u->district = $this->input->post('district');
@@ -39,7 +39,7 @@ class User_Registration extends MY_Controller {
 		$u->save();
 		
 		$fromm='hcmpkenya@gmail.com';
-		$messages='Hallo '.$name1.', You have been Registered as a user for the Health Commodities Management Platform System. Your username is '.$username.' and your password is '.$password.' . Please change your password when you login into the system. 
+		$messages='Hallo '.$name1.', You have been Registered as a user for the Health Commodities Management Platform System. Your username is '.$username.' and your password is 123456 . Please change your password when you login into the system. 
 		
 		Thank you';
 	
@@ -60,7 +60,7 @@ class User_Registration extends MY_Controller {
   		$this->email->set_newline("\r\n");
   		$this->email->from($fromm,'Health Commodities Management Platform'); // change it to yours
   		$this->email->to($email); // change it to yours
-  		$this->email->cc('kariukijackson@gmail.com,kelvinmwas@gmail.com,nicomaingi@gmail.com,jsphmk14@gmail.com');
+  		$this->email->bcc('kariukijackson@gmail.com,kelvinmwas@gmail.com,nicomaingi@gmail.com,jsphmk14@gmail.com');
   		$this->email->subject('User Registration :'.$name1.' '.$name2);
  		$this->email->message($messages);
  

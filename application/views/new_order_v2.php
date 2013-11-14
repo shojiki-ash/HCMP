@@ -32,7 +32,7 @@ $earliest_year = $current_year - 10;
 			 "bSort": false,
 					"bJQueryUI": true,
                    "bPaginate": false,
-                   	"sDom": 'T<"clear">lfrtip',
+                  "sDom": '<"H"Tfr>t<"F"ip>',
 					"oTableTools": {
 			"sSwfPath": "<?php echo base_url(); ?>DataTables-1.9.3/extras/TableTools-2.0.0/media/swf/copy_cvs_xls_pdf.swf"
 		}

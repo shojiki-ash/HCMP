@@ -2,6 +2,17 @@
 $facility=$this -> session -> userdata('news');
 $access_level = $this -> session -> userdata('user_indicator');
 ?>
+<style>
+
+	  #right_content h2 {
+		background: #b6b6b6; /* Old browsers */
+		padding: 5px;
+		text-align: center;
+		margin: 0 0 0.625em 0;
+		border-right-style: inset;
+
+	}
+</style>
 <SCRIPT LANGUAGE="Javascript" SRC="<?php echo base_url();?>Scripts/FusionCharts/FusionCharts.js"></SCRIPT>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -11,7 +22,7 @@ $(document).ready(function(){
         var url = "<?php echo base_url()."report_management/get_district_facility_stock_/bar2d_facility/$facility"?>";	
 		
 		
-		var div="#stock_status";
+		var div=".stockstatuschart";
 		
 		ajax_request(url,div);
 		
@@ -39,21 +50,12 @@ $(document).ready(function(){
 });
 
 </script>
-<?php 
-$flash_data=NULL;
-$flash_data=$this->session->flashdata('reset_message');
 
-if ($flash_data !=NULL) {
-	
-	echo	'<p class="successreset">'.$flash_data.'</p>';
-}
-unset($popup);
- ?>
 <div id="main_content">
 	<div id="left_content">
 		<fieldset>
 			<legend>Notifications</legend>
-			<?php if($incomplete_order > 0): ?>
+			<!--<?php if($incomplete_order > 0): ?>
 			<div class="message warning">
 			<h2>Incomplete Order</h2>
 			<p>
@@ -70,7 +72,7 @@ unset($popup);
 				echo site_url('stock_management/stock_level');?>" <a class="link"><?php echo $diff.' Days to deadline. Order now'?> </a>
 			</p>
 		</div>
-			<?php endif; ?>
+			<?php endif; ?>-->
 		<?php if($dispatched>0):?>
 		<div class="message information">			
 			<h2>Dispatched Orders</h2>			
@@ -112,24 +114,44 @@ unset($popup);
                        <a href="<?php echo site_url('stock_expiry_management/default_expiries_notification');?>" <a class="link"><?php echo $exp_count['balance']; ?> Product(s) Expiring in the next 6 months</a>
                        </p>
                </div>
-               <?php endif;
+               <?php endif;?>
+                <?php 
                
-          if (count($historical_stock)<163){?> 
-		<div class="message warning">
-			<h2>Incomplete Historical Stock (<?php echo $historical_stock[0]['percentage']; ?>% complete)</h2>
+          if (count($stock)<1){?> 
+	<div class="message warning">
+			<h2>1. No Stock (On First Run)</h2>
 			<p>
 				<a href="<?php 
-				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information </a>
+				echo site_url('stock_management/facility_first_run');?>" <a class="link"> Please update your stock details </a>
+			</p>
+		</div>
+	
+		<?php }
+		  
+               $histrorical_count= count($percentage_complete)==0 ? 0 : round($percentage_complete[0]['percentage'],1);
+			   
+			   
+			
+       if ($histrorical_count<100){?> 
+		<div class="message warning">
+<h2>2. Incomplete Historical Stock (<?php echo $histrorical_count ?>% complete)</h2>
+			<p>
+				<a href="<?php 
+				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information (<?php
+				
+				echo ($histrorical_count==0)? $total_drugs : $percentage_complete[0]['balance'] ; 
+				?> commodities remaining) </a>
 			</p>
 		</div>
 		<?php }?>
+		
                
-	;	</%fieldset>
+		</fieldset>
 		<fieldset>
 		<legend>Actions</legend>
 	     <?php
 	   //  $stock=1;
-	      if(count($stock)>0 && count($historical_stock)>0){?>
+	      if(count($stock)>0){?>
 	     	 
 		<!--<div class="activity update">
 	    <a href="<?php echo site_url('service_point/index');?>"><h2>Add Service Points</h2>	</a>
@@ -140,17 +162,6 @@ unset($popup);
 		<div class="activity issue">
 		<a href="<?php echo site_url('Issues_main/Index/Internal/'.$facility);?>"><h2>Issue Commodities to Sevice Points</h2></a>
 		</div>
-		<div class="activity order">
-		<a href="<?php echo site_url('order_management/new_order');?>">	<h2>Order Commodities</h2></a>
-		</div>
-		<div class="activity update_order">
-		<a href="<?php echo site_url('order_management/#tabs-2');?>"><h2>Update Order Delivery from KEMSA</h2>	</a>
-		</div>
-		<?php if($access_level=="facility"): ?>
-		<div class="activity users">
-		<a href="<?php echo site_url('user_management/users_manage');?>"><h2>User Management</h2></a>
-		</div>
-		<?php endif; ?>
 		<div class="activity ext">
 		<a href="<?php echo site_url('Issues_main/Index/External/'.$facility);?>"><h2>Donate Commodities</h2></a>
 		</div>	
@@ -158,6 +169,18 @@ unset($popup);
 		<div class="activity ext">
 		<a href="<?php echo site_url('Issues_main/Index/Donation/'.$facility)?>"><h2>Receive Donation From Other Sources</h2></a>
 		</div>
+		<div class="activity order">
+		<a href="<?php echo site_url('order_management/new_order');?>">	<h2>Order Commodities</h2></a>
+		</div>
+		<div class="activity update_order">
+		<a href="<?php echo site_url('order_management/#tabs-2');?>"><h2>Update Order Delivery</h2>	</a>
+		</div>
+		<?php if($access_level=="facility"): ?>
+		<div class="activity users">
+		<a href="<?php echo site_url('user_management/users_manage');?>"><h2>User Management</h2></a>
+		</div>
+		<?php endif; ?>
+		
 	    <!-- <div class="activity update">
 	    <a href="<?php echo site_url('order_management/stock_level/v');?>"><h2>Update Physical Stock Count</h2>	</a>
 		</div>-->
@@ -167,39 +190,34 @@ unset($popup);
 		<!--<div class="activity settings">
 	    <a href="<?php echo site_url('report_management/facility_settings');?>"><h2>Settings</h2>	</a>
 		</div>-->
-		    <?php } else if (count($stock)==0 && count($historical_stock)>0){?> 
+		    <?php } else if (count($stock)==0){?> 
 	    <div class="activity update">
 	    <a href="<?php echo site_url('stock_management/facility_first_run');?>"><h2>Update Stock Level</h2>	</a>
 		</div>
 		<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/historical_stock_take');?>"><h2>Provide Historical Stock Data</h2></a>
 		</div>
-		<div class="message warning">
-			<h2>No Stock</h2>
-			<p>
-				<a href="<?php 
-				echo site_url('stock_management/facility_first_run');?>" <a class="link"> Please update your stock details </a>
-			</p>
-		</div>
-		<?php } else if (count($historical_stock)==0){?> 
+	<?php }else if (count($percentage_complete)==0){?> 
 	
 		<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/historical_stock_take');?>"><h2>Provide Historical Stock Data</h2></a>
 		</div>
-		<div class="message warning">
-			<h2>No Historical Stock</h2>
-			<p>
-				<a href="<?php 
-				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information </a>
-			</p>
-		</div>
+	
 		<?php }?>
 		
 		</fieldset>
 	</div>
 	<div id="right_content">
+
+		<h2 style="margin-bottom: 1.5em">Commodity Stock Level in Pack Size</h2>
+        <h4>Mouse over to see values</h4>
 	
-		<div id="stock_status" style="overflow: scroll; height: 80em; min-height:100%; margin: 0;"></div>
+		
+			<div id="stock_status" class='stockstatuschart' style="overflow: scroll; height: 80em; min-height:100%; margin: 0;">
+				
+			
+		</div>
+
 	</div>
 	
 </div>

@@ -19,7 +19,8 @@
         }
     });
     //default call
-    var url = "<?php echo base_url().'report_management/get_stock_status_ajax'?>"
+    var url = "<?php ////////
+     echo base_url().'report_management/get_stock_status_ajax'?>"
 		var div=".stockstatuschart";
 		ajax_request (url,div);
 
@@ -41,14 +42,14 @@
 		
 		
        $('#facilities').change(function() {
-       	var div=".stockstatuschart";
+       	var div="#stock_status";
 		var url = "<?php echo base_url().'report_management/get_district_facility_stock_/'?>";	
 		url=url+"bar2d_facility/"+$(this).val();
 		ajax_request(url,div);
 		});
 
         $('#desc').change(function() {
-        var div=".stockstatuschart";
+        var div="#stock_status";
 		var url = "<?php echo base_url().'report_management/get_district_facility_stock_/'?>";	
 		url=url+"bar2d_drug/"+$(this).val();
 		ajax_request(url,div);
@@ -78,24 +79,34 @@
 
 
 <style>
+.right-content{
+	width:70%;	
+		display:inline-block;
+		vertical-align:top;
+		margin-bottom: 1%;
+}
 	.dash_container {
 		width: 96%;
 		margin: auto;
+		padding-top:1%;
 		margin-bottom: 5em;
 	}
 	
 	.notifications_container{
-		padding-left:5%;
-		width:95%;
+		margin-top:2%;
+		padding:3%;
+		width:94%;
+		border-radius:4px;
+		
 		
 	}
 	.statistics {
 		width: 29%;
 		height: 35em;
-		float: left;
+		display:inline-block;
+		vertical-align:top;
 		margin-right: 1.1em;
 		margin-bottom: 1em;
-		background:#d9d9d9;
 		
 	}
 	.statistics h2, .stockstatus h2, .cost_expiries h2, .cost_orders h2, .consumption h2, .lead_time h2 {
@@ -110,14 +121,12 @@
 	}
 	.stockstatus {
 
-		width: 70%;
-		height: 35em;
+		width: 49%;
+		height: 60em;
 		float: left;
 		margin-bottom: 1em;
 	}
 	.stockstatus_dropdown {
-
-		width: 100%;
 		height: auto;
 		display: inline-block;
 		padding-bottom: 0.5em;
@@ -136,23 +145,19 @@
 		display: inline-block;
 	}
 
-	.cost_expiries {
-		width: 49%;
-		height: 36em;
-		float: left;
-		margin-right: 1.1em;
-		margin-bottom: 0.5em;
-		
-	}
 	.cost_expirieschart {
 		width: 100%;
 		margin: auto;
 	}
-	.cost_orders {
+	.cost_orders{
+		
+	}
+	.cost_orders,.cost_expiries {
+		float:right;
+		display:inline-block;
+		vertical-align:top;
 		width: 49%;
-		height: 36em;
-		float: left;
-		margin-bottom: 0.5em;
+		height: 35em;
 		
 	}
 	.cost_orderschart {
@@ -183,50 +188,16 @@
 
 
 <div class="dash_container">
-
 <div class="statistics">
 	<h2 style="margin-bottom: 1.5em">Statistics & Notification</h2>
 	<div class="notifications_container">
 		 
-  			<div style="display: table-row;  ">
-    			<div style="display: table-cell;padding-bottom: 3em; ">
-      				<label style=" font-weight: 600">Total No of Orders Placed </label>
-            			<a class="badge success" href="#" >14</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row; ">
-    			<div style="display: table-cell;padding-bottom: 3em">
-      				<label style="font-weight: 600">Total Value of Orders Placed </label>
-            		<a class="badge success" href="#" >1,221,001</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row;">
-    			<div style="display: table-cell; padding-bottom: 3em">
-      				<label style="font-weight: 600">Total District Drawing Rights Bal (2013/2014)</label>
-            		 <a class="badge success" href="#" >6,000,000</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row;">
-    			<div style="display: table-cell; padding-bottom: 3em">
-      				<label style="font-size: 1.6em;font-weight: 600">Total Cost of Expired Commodities </label>
-            		<a class="badge success" href="#" >457,100</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row;">
-    			<div style="display: table-cell;padding-bottom: 3em">
-      				<label style="font-size: 1.6em;font-weight: 600">Orders Lead Time</label>
-            		<a class="badge success" href="#" >12 days</a>
-    				</div>
-  				</div>
+<?php echo $stats?>
 			
 	</div>
 	
 </div>
-
+<div class="right-content">
 <div class="stockstatus">
 	<h2>Stock Status</h2>
 	
@@ -254,7 +225,7 @@
 	</select>
 	
 </div>
-	<div class="stockstatuschart">
+	<div class="stockstatuschart"  id="stock_status" style="height:100%;  overflow: auto;">
 	
 	
 </div>
@@ -277,8 +248,10 @@
 	
 </div>
 	
+</div>	
 </div>
 
+<!--
 <div class="consumption">
 	<h2>Consumption Trends</h2>
 	<div class="consumptionchart">
@@ -294,5 +267,5 @@
 	
 </div>
 </div>
-
+-->
 </div>

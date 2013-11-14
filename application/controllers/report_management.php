@@ -151,8 +151,8 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 		//echo $table_body;
 	
 $table_foot='</tbody></table>';
-$report_name="Order-$order_id-detail-fill-rate";
-$title="Order number $order_id fill rate";
+$report_name="Order-$order_id-Details-Fill-Rate";
+$title="Order Number $order_id Fill Rate";
 $html_data=$table_head.$table_body.$table_foot;
 $report_type='Download PDF';
 
@@ -1470,7 +1470,7 @@ public function generate_costofexpiries_chart($option=NULL,$location_id=NULL){
 		
 	    $strXML = "<chart formatNumberScale='0'
 	    lineColor='000000' lineAlpha='40' showValues='1' rotateValues='1' valuePosition='auto'
-	     palette='1' caption='Monthly Cost of Expired Commodities' subcaption='For the year $year' xAxisName='Months' yAxisName='Cost of Commodities (KES)' yAxisMinValue='15000' showValues='0'  useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '0' showBorder='0' bgColor='FFFFFF'>";
+	     palette='1' xAxisName='Months' yAxisName='Cost of Commodities (KES)' yAxisMinValue='15000' showValues='0'  useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '0' showBorder='0' bgColor='FFFFFF'>";
 
 	    for($i=0;$i<12;$i++){
 
@@ -1609,12 +1609,145 @@ $strXML .= "<styles>
 	
 }
 
+
+public function generate_facilitycostoforders_chart(){
+	$facility = $this -> session -> userdata('news');
+	$orders = Ordertbl::get_facility_ordertotal($facility);
+	$year = date("Y");
+	
+	$rowcountname=count($orders);
+	$arrayQ1 = array();
+	$arrayQ2 = array();
+	$arrayQ3 = array();
+	$arrayQ4 = array();
+	for ($i=0; $i < $rowcountname ; $i++) { 
+	
+	if ($orders[$i]["month"] >= 1 && $orders[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$orders[$i]["OrderTotal"];
+			
+		}elseif($orders[$i]["month"] >= 4 && $orders[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$orders[$i]["OrderTotal"];
+			
+		}elseif($orders[$i]["month"] >= 7 && $orders[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$orders[$i]["OrderTotal"];
+		}else
+		$arrayQ1[] = (int)$orders[$i]["OrderTotal"];
+	}
+	$Q1=array_sum($arrayQ1);
+	$Q2=array_sum($arrayQ2);
+	$Q3=array_sum($arrayQ3);
+	$Q4=array_sum($arrayQ4);
+	//exit;
+	
+$strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
+<set label='Jan-Mar (".$year.")' value='".$Q2."'/>
+<set label='Apr-Jun (".$year.")' value='".$Q3."'/>
+<set label='Jul-Sep (".$year.")' value='".$Q4."'/>
+<set label='Oct-Dec (".($year).")' value='".$Q1."'/>
+<styles>
+<definition>
+<style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>
+<style name='Anim2' type='animation' param='_alpha' start='0' duration='0.6'/>
+<style name='DataShadow' type='Shadow' alpha='40'/>
+</definition>
+<application>
+<apply toObject='DIVLINES' styles='Anim1'/>
+<apply toObject='HGRID' styles='Anim2'/>
+<apply toObject='DATALABELS' styles='Anim2'/>
+</application>
+</styles>
+</chart>";
+echo $strXML;
+}
 public function generate_costofordered_chart(){
-$strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' caption='Cost Implication of Orders' subcaption='For the year 2012 to 2013' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
-<set label='Oct-Dec (2012)' value='18000'/>
-<set label='Jan-Mar (2013)' value='16000'/>
-<set label='Apr-Jun (2013)' value='21800'/>
-<set label='Jul-Sep (2013)' value='19800'/>
+	 $district=$this -> session -> userdata('district1');
+	 $year = date("Y");
+	
+	$orderDetails = Ordertbl::get_district_ordertotal($district);	
+	$rowcountname=count($orderDetails);
+	$arrayQ1 = array();
+	$arrayQ2 = array();
+	$arrayQ3 = array();
+	$arrayQ4 = array();
+	for ($i=0; $i < $rowcountname ; $i++) { 
+	
+	if ($orderDetails[$i]["month"] >= 1 && $orderDetails[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$orderDetails[$i]["OrderTotal"];
+			
+		}elseif($orderDetails[$i]["month"] >= 4 && $orderDetails[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$orderDetails[$i]["OrderTotal"];
+			
+		}elseif($orderDetails[$i]["month"] >= 7 && $orderDetails[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$orderDetails[$i]["OrderTotal"];
+		}else
+		$arrayQ1[] = (int)$orderDetails[$i]["OrderTotal"];
+	}
+	$Q1=array_sum($arrayQ1);
+	$Q2=array_sum($arrayQ2);
+	$Q3=array_sum($arrayQ3);
+	$Q4=array_sum($arrayQ4);
+	//exit;
+	
+$strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
+<set label='Oct-Dec (".($year-1).")' value='".$Q1."'/>
+<set label='Jan-Mar (".$year.")' value='".$Q2."'/>
+<set label='Apr-Jun (".$year.")' value='".$Q3."'/>
+<set label='Jul-Sep (".$year.")' value='".$Q4."'/>
+<styles>
+<definition>
+<style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>
+<style name='Anim2' type='animation' param='_alpha' start='0' duration='0.6'/>
+<style name='DataShadow' type='Shadow' alpha='40'/>
+</definition>
+<application>
+<apply toObject='DIVLINES' styles='Anim1'/>
+<apply toObject='HGRID' styles='Anim2'/>
+<apply toObject='DATALABELS' styles='Anim2'/>
+</application>
+</styles>
+</chart>";
+echo $strXML;
+	
+}
+
+public function generate_costofordered_County_chart(){
+	 $district=$this -> session -> userdata('district1');
+	// $county_id=districts::get_county_id($district);
+	 $county_id=14;
+	 //exit;
+	 $year = date("Y");
+	 
+	
+	$orderDetails = Ordertbl::get_county_ordertotal($county_id);	
+	$rowcountname=count($orderDetails);
+	$arrayQ1 = array();
+	$arrayQ2 = array();
+	$arrayQ3 = array();
+	$arrayQ4 = array();
+	for ($i=0; $i < $rowcountname ; $i++) { 
+	
+	if ($orderDetails[$i]["month"] >= 1 && $orderDetails[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$orderDetails[$i]["OrderTotal"];
+			
+		}elseif($orderDetails[$i]["month"] >= 4 && $orderDetails[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$orderDetails[$i]["OrderTotal"];
+			
+		}elseif($orderDetails[$i]["month"] >= 7 && $orderDetails[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$orderDetails[$i]["OrderTotal"];
+		}else
+		$arrayQ1[] = (int)$orderDetails[$i]["OrderTotal"];
+	}
+	$Q1=array_sum($arrayQ1);
+	$Q2=array_sum($arrayQ2);
+	$Q3=array_sum($arrayQ3);
+	$Q4=array_sum($arrayQ4);
+	//exit;
+	
+$strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
+<set label='Oct-Dec (".($year-1).")' value='".$Q1."'/>
+<set label='Jan-Mar (".$year.")' value='".$Q2."'/>
+<set label='Apr-Jun (".$year.")' value='".$Q3."'/>
+<set label='Jul-Sep (".$year.")' value='".$Q4."'/>
 <styles>
 <definition>
 <style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>
@@ -1673,6 +1806,7 @@ public function get_stock_status($option=NULL,$facility_code=NULL){
 	$chart =NULL;
 	$title=NULL;
 	$district=$this -> session -> userdata('district');
+	$county_id=$this -> session -> userdata('county_id');
 	$district_name=districts::get_district_name($district)->toArray();
 
 
@@ -1702,27 +1836,29 @@ public function get_stock_status($option=NULL,$facility_code=NULL){
 		}
 		
 	elseif($option=="ajax-request_county") {
-	$county_id=districts::get_county_id($district);
-	$county_name=counties::get_county_name($county_id[0]['county']);
+	
+	$county_name=counties::get_county_name($county_id);
 	$title=$county_name[0]["county"]." County";
-        switch ($facility_code) {
-			   case 'r_h':
-			 $commodity_array=facility_stock::get_county_drug_stock_level(1,8);	
-				break;
-				case 'malaria':
-			 $commodity_array=facility_stock::get_county_drug_stock_level(1,1);	
-				break;
-
-			default:
-				 $commodity_array=facility_stock::get_county_drug_stock_level(1);
-				break;
-		}
-        
-		
+	
+	    $commodity_array=isset($facility_code)?
+	    facility_stock::get_county_drug_stock_level($county_id,$facility_code):
+	    facility_stock::get_county_drug_stock_level($county_id);
+       	
 
 	}
+		elseif($option=="consumption"){
+		
+	 $commodity_array=isset($facility_code)?
+	     facility_stock::get_county_drug_consumption_level($county_id,$facility_code):
+	     facility_stock::get_county_drug_consumption_level($county_id);
+		
+		
+	}
+ 
 
-$chart .="<chart palette='2' chartLeftMargin='0' useEllipsesWhenOverflow='1' plotSpacePercent='100' yAxisNamePadding='0'yAxisValuesPadding='0' bgColor='FFFFFF' showBorder='0' caption='Commodity Stock Level :$title' shownames='1' showvalues='1'   showSum='1' decimals='0' useRoundEdges='1'>";
+
+
+$chart .="<chart palette='2' chartLeftMargin='0' useEllipsesWhenOverflow='1' plotSpacePercent='100' yAxisNamePadding='0'yAxisValuesPadding='0' bgColor='FFFFFF' showBorder='0' shownames='1' showvalues='1'   showSum='1' decimals='0' useRoundEdges='1'".'exportEnabled="1" exportHandler="' . base_url() . 'scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php" exportAtClient="0" exportAction="download"'." >";
 foreach($commodity_array as $commodity_detail){
 $chart .="<set label='".preg_replace("/[^A-Za-z0-9 ]/", "", $commodity_detail['drug_name'])."' value='$commodity_detail[total]' />";
 }
@@ -1741,7 +1877,7 @@ echo $chart;
 //////
 public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
 	$district=$this -> session -> userdata('district1');
-	
+	$county_id=$this -> session -> userdata('county_id');
 	
 	$width="100%";
     $height="100%";
@@ -1756,25 +1892,56 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
 		$district_name=facilities::get_facility_name_($facility_code);
 	    $title=$district_name["facility_name"];		
         $commodity_array=facility_stock::get_facility_stock_level($facility_code);
+		
+		if(count($commodity_array)<20){
+		$width="100%";
+        $height="50%";	
+		}
+		
+		if(count($commodity_array)>20 && count($commodity_array)<40){
+		$width="100%";
+        $height="100%";		
+		}
+		if(count($commodity_array)>50){
+		$width="100%";
+        $height="400%";		
+		}
+		
+		
+		$commodity_name=array();
+		$current_values=array();
+		$monthly_values=array();
+		foreach($commodity_array as $data):
+			
+			//array_key_exists($data['drug_name'],$commodity_name) ? $commodity_name['drug_name']=$data['drug_name'] : $commodity_name=array_merge($commodity_name, array($data['drug_name']=>$data['drug_name'])) ;
+		array_push($commodity_name,$data['drug_name']); 
+		array_push($current_values,isset($data['total']) ? (int) $data['total'] : (int) 0); 
+		array_push($monthly_values, isset($data['consumption_level']) ? (int)  $data['consumption_level'] : (int) 0); 
+		
+		endforeach;
+	$data['width']=$width;
+    $data['height']=$height;
+	
+	$data['title_1']="Current Balance";
+	$data['title_2']="Average Monthly Consumption";	
+	$data['commodity_name']=stripslashes(json_encode($commodity_name));
+	$data['current_values']=json_encode($current_values);
+	$data['monthly_values']=json_encode($monthly_values);
+	
+	
+	 
+	return $this->load->view("facility/facility_reports/facility_commodity_stock_level_v",$data);
+		
+	
 
 	}
 	
 	
 	elseif($option=="ajax-request_county") {
 		
-		switch ($facility_code) {
-			   case 'r_h':
-			 $commodity_array=facility_stock::get_county_drug_stock_level(1,8);	
-				break;
-				case 'malaria':
-			 $commodity_array=facility_stock::get_county_drug_stock_level(1,1);	
-				break;
-
-			default:
-				 $commodity_array=facility_stock::get_county_drug_stock_level(1);
-				break;
-		}
-		
+		 $commodity_array=isset($facility_code)?
+	    facility_stock::get_county_drug_stock_level($county_id,$facility_code):
+	    facility_stock::get_county_drug_stock_level($county_id);
        
         
 		
@@ -1786,10 +1953,20 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
         $commodity_array=facility_stock::get_district_drug_stock_level($district,$facility_code);
 
 	}
+	elseif($option=="consumption"){
+		//$commodity_array=0;
+		
+		
+		 $commodity_array=isset($facility_code)?
+	     facility_stock::get_county_drug_consumption_level($county_id,$facility_code):
+	     facility_stock::get_county_drug_consumption_level($county_id);
+		
+		
+	}
 	
 	if(count($commodity_array)<20){
 		$width="100%";
-        $height="70%";	
+        $height="50%";	
 		}
 		
 		if(count($commodity_array)>20 && count($commodity_array)<50){
@@ -1798,16 +1975,17 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
 		}
 		if(count($commodity_array)>50){
 		$width="100%";
-        $height="200%";		
+        $height="300%";		
 		}
  
- $data['width']=$width;
- $data['height']=$height;
+       $data['width']=$width;
+       $data['height']=$height;
 	
 	
 	$data['facilities']=Facilities::getFacilities($district);
 	$data['option']=$option;
 	$data['facility_code']=$facility_code;
+	
 	$this->load->view("district/ajax_view/stock_status_v",$data);
 }
 	
@@ -1861,6 +2039,7 @@ public function get_costofexpiries_chart_ajax($option=NULL,$location_id=NULL){
 		break;
 		
 		default:
+		 $data['county']='_';
 	$district=$this -> session -> userdata('district1');
 	$data['facilities']=Facilities::getFacilities($district);	
 			break;
@@ -1869,10 +2048,22 @@ public function get_costofexpiries_chart_ajax($option=NULL,$location_id=NULL){
 	
 	$this->load->view("district/ajax_view/costofexpiries_v",$data);
 }
+public function get_facilitycostoforders_chart_ajax(){
+	$facility=$this -> session -> userdata('news');
+	$data['orders']=Ordertbl::get_facilitiy_orders($facility);
+	$this->load->view("facility/ajax-view/cost_of_orders_chart",$data);
+}
 public function get_costoforders_chart_ajax(){
 	$district=$this -> session -> userdata('district1');
 	$data['facilities']=Facilities::getFacilities($district);
 	$this->load->view("district/ajax_view/costoforders_v",$data);
+}
+public function get_costofordersCounty_chart_ajax(){
+	$district=$this -> session -> userdata('district1');
+	 $county_id=districts::get_county_id($district);
+	 //$county_id=14;
+	$data['facilities']=Facilities::getFacilities($district);
+	$this->load->view("county/ajax_view/costoforders_v",$data);
 }
 public function get_leadtime_chart_ajax(){
 	$district=$this -> session -> userdata('district1');
@@ -1908,36 +2099,359 @@ public function facility_settings(){
 		}
 	}
 	
+	public function get_county_facility_mapping_ajax_request($option=null){
+		
+		$county_id=$this -> session -> userdata('county_id');
+		$district_data=districts::getDistrict($county_id);
+		
+	   $table_data="<tbody>";
+	   $district_names="<thead><tr><th>Monthly Activities</th>";
+	   $district_total=array();
+	   $district_total_facilities=array();
+	   $table_district_totals="";
+	   $all_facilities=0;
+	   $total_facility_list='';
+	   $total_facilities_in_county=0;
+	   $percentage_coverage="";
+	   $percentage_coverage_total=0;
+	    
+	    $get_dates_facility_went_online=facilities::get_dates_facility_went_online($county_id);
+		
+		foreach ($get_dates_facility_went_online as $facility_dates):
+			
+		$monthly_total=0;
+		$date=$facility_dates['date_when_facility_went_online'];
+		
+	    $table_data .="<tr>
+	    <td>".$date."</td>";
+			
+	    foreach($district_data as $district_detail):
+	    
+		$district_id=$district_detail->id;
+		$district_name=$district_detail->district;
+		$get_facilities_which_went_online_=facilities::get_facilities_which_went_online_($district_id,$facility_dates['date_when_facility_went_online']);
+	    $total=$get_facilities_which_went_online_[0]['total'];
+		$total_facilities=$get_facilities_which_went_online_[0]['total_facilities'];
+		
+	
+	    $monthly_total=$monthly_total+$total;
+		$all_facilities=$all_facilities+$total;
+
+		(array_key_exists($district_name,$district_total)) ? 
+        $district_total[$district_name]=$district_total[$district_name]+$total
+	    :$district_total=array_merge($district_total,array($district_name=>($total)));
+	    
+		
+		(array_key_exists($district_name,$district_total_facilities)) ? 
+        $district_total_facilities[$district_name]=$total_facilities
+	    :$district_total_facilities=array_merge($district_total_facilities,array($district_name=>$total_facilities));
+		
+	    ($total>0)  ? $table_data .="<td><a href='#' id='$district_id' class='ajax_call_1 link' option='monthly' date='$date'> $total</a></td>" : $table_data .="<td>$total</td>" ;
+	
+		
+
+		endforeach;
+		
+		$table_data .="<td>$monthly_total</td></tr>";
+	
+		
+		endforeach;
+		$table_data .="<tr>";
+		
+		$checker=1;
+		
+	
+		foreach($district_total as $key=>$value):
+		
+		$coverage=0;	
+			
+		@$coverage =round((($value/$district_total_facilities[$key]))*100,1);	
+		
+		$percentage_coverage_total=$percentage_coverage_total+$coverage;
+			
+		$district_names .="<th>$key</th>";
+			
+		($checker==1) ? $table_data .="<td><b>TOTAL: Facilities using HCMP</b></td><td>$value</td>" :$table_data .="<td>$value</td>";	
+		
+		($checker==1) ? $total_facility_list .="<tr><td><b>TOTAL: Facilities in District</b></td><td>$district_total_facilities[$key]</td>" :$total_facility_list .="<td>$district_total_facilities[$key]</td>";	
+		
+		$total_facilities_in_county=$total_facilities_in_county+$district_total_facilities[$key];
+			
+		
+		($checker==1) ?  $percentage_coverage .="<tr><td><b>% Coverage</b></td><td>$coverage %</td>" : $percentage_coverage .="<td>$coverage %</td>";	
+		
+		$checker++;
+		
+		endforeach;
+		
+		$table_data .="<td><a href='#' id='total' class='ajax_call_1 link' option='total' date='total'>$all_facilities</a></td></tr></tbody>";
+		$district_names .="<th>TOTAL</th></tr></thead>";
+			
+		$final_coverage_total=0;
+		
+		@$final_coverage_total=round((($all_facilities/$total_facilities_in_county))*100,1);	
+		
+		$data_= "
+		<div class='label label-info'> Below is the project status in the county</div>
+		<table class='data-table' width='100%'>"
+		.$district_names.$table_data.$total_facility_list.
+		"<td>$total_facilities_in_county</td></tr>".$percentage_coverage."<td>$final_coverage_total %</td></tr></table>";
+		
+		
+		if(isset($option)): 
+		return $data_; 
+		else: echo $data_; 
+		endif;
+	}
+	
 	public function get_county_facility_mapping(){
+		
+		$county_id=$this -> session -> userdata('county_id');
+		
+		$district_data=districts::getDistrict($county_id);
 		
 		$data['title'] = "Facility Mapping";
 		$data['banner_text'] = "Facility Mapping";
-		$data['content_view'] = "county/facility_mapping_v";	
-		$owner_array=array("GOK","CBO","FBO","NGO","Private","Other");
-		$counties=districts::getDistrict(1);
-		$table_body='';
+		$data['content_view'] = "county/facility_mapping_v";
+	    $data['district_data']=$district_data;
+	   
+	
+	    $this -> load -> view("template",$data);
+	}
+	
+	public function get_county_facility_mapping_data(){
 		
-		foreach($counties as $county_detail){
-			$id=$county_detail->id;
-			$table_body .="<tr><td><a class='ajax_call_1' id='county_facility' name='get_rtk_county_detail/$id' href='#'> $county_detail->district</a></td>";
-			
-			$county_detail=facilities::get_total_facilities_in_district($id);
-			
-			$table_body .="<td>".$county_detail[0]['total_facilities']."</td>";
-			foreach($owner_array as $key => $value){
-				
-				$owner_count=facilities::get_total_facilities_district_ownership($id, $value);
-				
-				
-				$table_body .="<td>".$owner_count[0]['ownership_count']."</td>";
-			}
-			$table_body .="</tr>";
-			
-		}
+		$county_id=$this -> session -> userdata('county_id');
+		
+	$first_day_of_the_month=date("Y-m-1", strtotime("this month") );
+	$last_day_of_the_month=date("Y-m-t", strtotime("this month") ) ;
+	
+    $date_1 = new DateTime($first_day_of_the_month);
+    $date_2 = new DateTime($last_day_of_the_month);
 
-		$data['table_body']=$table_body;
-	  
-	  $this -> load -> view("template",$data);
+	$district_data=districts::getDistrict($county_id);
+	$series_data=array();
+	$category_data=array();
+	
+	$interval = $date_1->diff($date_2);
+
+	for($i=0;$i<=$interval->d;$i++):
+	
+	$day=1+$i;
+	
+    $new_date=date("Y")."-".date("m")."-".$day;
+	
+     
+      if(date('N', strtotime($new_date)) < 6){
+        	
+	   $date_=date('D d',strtotime($new_date));		  
+	   $category_data =array_merge($category_data, array($date_));	
+			
+       $temp_1=array();	
+       
+		foreach($district_data as $district_):
+			
+		$district_id=$district_->id;
+		$district_name=$district_->district;	
+		$county_data=Log::get_county_login_count($county_id,$district_id,$new_date);	
+
+	    (array_key_exists($district_name,$series_data)) ?
+        $series_data[$district_name]=array_merge($series_data[$district_name],array((int)$county_data[0]['total']))
+	    : $series_data=array_merge($series_data,array($district_name=>array((int) $county_data[0]['total'])));
+
+		endforeach;
+
+        } else {
+         // do nothing
+        }
+	endfor;
+		
+		
+		
+		$data['series_data']=$series_data;
+		$data['category_data']=stripslashes(json_encode($category_data));
+	    $data['data']=$this->get_county_facility_mapping_ajax_request("on_load");	
+	    $this -> load -> view("county/ajax_view/facility_roll_out_at_a_glance_v",$data);
+	}
+	
+	public function get_district_drill_down_detail($district_id,$option,$date_of_activation){
+	
+	$district_data="";
+	$county_id=$this -> session -> userdata('county_id');
+	
+	if($option=='monthly'):
+		
+	$get_facility_data=facilities::get_facilities_reg_on_($district_id,urldecode($date_of_activation));	
+	
+
+	foreach($get_facility_data as $facility_data):
+		
+	$facility_code=$facility_data->facility_code;
+	$facility_user_data=user::get_user_info($facility_code);
+	$facility_name=$facility_data->facility_name;
+	
+	$district_data .='<span class="label label-info" width="100%">'.$facility_name.'</span>
+	
+	<table class="data-table" width="100%">
+	<thead>
+	<tr>
+	<th>First Name</th><th>Last Name</th><th>Email </th><th>Phone No.</th>
+	</tr>
+	</thead>
+	<tbody>';
+	
+	foreach($facility_user_data as $user_data_):
+	
+	$district_data .="<tr>
+	<td>$user_data_->fname</td><td>$user_data_->lname</td><td>$user_data_->email</td><td>$user_data_->telephone</td>
+	<tr>";
+	
+	
+	endforeach;
+	
+	$district_data .="</tbody></table>";
+		
+		endforeach;
+	
+	
+	
+	elseif($option="total"):
+	
+		
+	$get_facility_data=facilities::get_facilities_online_per_district($county_id);	
+	
+   	$district_data .='
+	<table class="data-table" width="100%">
+	<thead>
+	<tr>
+	<th>District Name</th><th>MFL No</th><th>Facility Name</th><th>Date Activated</th>
+	</tr>
+	</thead>
+	<tbody>';
+	foreach($get_facility_data as $facility_data):
+		
+	$facility_code=$facility_data['facility_code'];
+	$facility_name=$facility_data['facility_name'];
+	$district_name=$facility_data['district'];
+	$date=$facility_data['date'];
+	
+
+	$district_data .="<tr>
+	<td>$district_name</td><td>$facility_code</td><td>$facility_name</td><td>$date</td>
+	<tr>";
+	
+	
+	
+	endforeach;	
+	$district_data .="</tbody></table>";
+		
+	
+		
+		
+	endif;
+	echo $district_data;
+	
+		
+	}
+	
+	public function get_district_facility_mapping_($district_id){
+	$facility_data=facilities::getFacilities($district_id);	
+	$table_body="";
+	
+	$dpp_details=user::get_dpp_details($district_id)->toArray();
+	$district_name=districts::get_district_name($district_id)->toArray();
+    
+    $dpp_fname='';
+	$dpp_lname='';
+	$dpp_phone='';
+	$dpp_email='';
+	
+	if(count($dpp_details)>0){
+		
+	$dpp_fname=$dpp_details[0]['fname'];
+	$dpp_lname=$dpp_details[0]['lname'];
+	$dpp_phone=$dpp_details[0]['telephone'];
+	$dpp_email=$dpp_details[0]['email'];
+	
+	}
+
+	$indicator="District";
+	$no_of_facility_users=0;
+	$no_of_facility_users_online=0;
+	$no_of_facilities=0;
+	$no_of_facilities_using=0;
+	
+	foreach($facility_data as $facility_detail){
+	$facility_code=$facility_detail->facility_code;
+	$facility_extra_data=facilities::get_facility_status_no_users_status($facility_code);	
+	$no_of_facility_users=$no_of_facility_users+$facility_extra_data[0]['number_of_users'];
+	$no_of_facility_users_online=$no_of_facility_users_online+$facility_extra_data[0]['number_of_users_online'];
+		
+	
+	$no_of_facilities=$no_of_facilities+1;
+	
+	if($facility_extra_data[0]['number_of_users']>0){
+		$no_of_facilities_using=$no_of_facilities_using+1;
+	}
+	
+	$table_body .="<tr>";
+	$status=null;
+	$temp=$facility_extra_data[0]['status'];
+	($temp=="Active") ? $status="<span class='label label-success'>$temp</span>" : $status="<span class='label label-important'>$temp</span>";
+	
+   $table_body .="<td>$facility_code</td>
+	              <td>$facility_detail->facility_name</td>
+	              <td>$facility_detail->owner</td>
+	              <td>$status</td>
+	              <td>".$facility_extra_data[0]['number_of_users']."</td>
+	              <td>".$facility_extra_data[0]['number_of_users_online']."</td>";
+	              
+	$table_body .="</tr>";			  
+		
+	}
+	
+	
+		$stats_data='
+		<table style="float:left">
+		<tr>
+		<td><label style=" font-weight: ">'.$district_name[0]['district'].' '.$indicator.' Pharmacist :</label></td>
+		<td><a class="badge">'.$dpp_fname.' '.$dpp_lname.'</a></td>
+		</tr>
+		<tr>
+		<td><label style="font-weight: ">Phone No.</label></td>
+		<td><a class="badge">'.$dpp_phone.'</a></td>
+		</tr>
+		<tr>
+		<td><label style="font-weight: ">Email Address</label></td>
+		<td><a class="badge">'.$dpp_email.'</a></td>
+		</tr>
+		</table>
+		<table style="float:left">
+		<tr>
+		<td><label style=" font-weight: ">Total No of Facilities in The '.$indicator.' </label></td>
+		<td><a class="badge" >'.$no_of_facilities.'</a></td>
+		</tr>
+		<tr>
+		<td><label style="font-weight: ">Total No of Facilities in The '.$indicator.'  Using HCMP </label></td>
+		<td>	<a class="badge">'.$no_of_facilities_using.'</a></td>
+		</tr>
+		</table>
+		<table style="float:left">
+		<tr>
+		<td><label style="font-weight: ">Total No of Users in The '.$indicator.' </label></td>
+		<td><a class="badge" >'.$no_of_facility_users.'</a></td>
+		</tr>
+		<tr>
+		<td><label style="font-weight: ">Users online in The '.$indicator.'</label></td>
+		<td><a class="badge" >'.$no_of_facility_users_online.'</a></td>
+		</tr>
+		</table>
+';	
+	
+	$data['stats_data']=$stats_data;
+	$data['table_body']=$table_body;
+	$this->load->view("county/ajax_view/facility_mapping_v",$data);
+	
 	}
 	
 	/////////county
@@ -2054,7 +2568,7 @@ echo $strXML;
 }
 //county charts  5
 public function cost_of_ordered_commodities_chart(){
-$strXML ="<chart formatNumberScale='0'  lineColor='000000' lineAlpha='40' caption='Cost of Ordered Commodities' xAxisName='Month' yAxisName='Ksh' alternateVGridColor='AFD8F8' baseFontColor='114B78' toolTipBorderColor='114B78' toolTipBgColor='E7EFF6' useRoundEdges='1' showBorder='0' bgColor='FFFFFF,FFFFFF'>
+$strXML ="<chart formatNumberScale='0'  lineColor='000000' lineAlpha='40' caption='cost of ordered commodities' xAxisName='Month' yAxisName='Ksh' alternateVGridColor='AFD8F8' baseFontColor='114B78' toolTipBorderColor='114B78' toolTipBgColor='E7EFF6' useRoundEdges='1' showBorder='0' bgColor='FFFFFF,FFFFFF'>
 <set label='Jan' value='17400' />
 <set label='Feb' value='19800' />
 <set label='Mar' value='21800' />
@@ -2072,6 +2586,14 @@ echo $strXML;
 }
 //county charts  6
 public function cummulative_fill_rate_chart(){
+$district=$this -> session -> userdata('district');
+
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);	
+$chart_raw_data=ordertbl::get_county_fill_rate($county_name[0]['id']);					
+			
+		
+	
 	$strXML ="<chart bgAlpha='0' bgColor='FFFFFF' lowerLimit='0' upperLimit='100' numberSuffix='%25' showBorder='0' basefontColor='#000000' chartTopMargin='25' chartBottomMargin='25' chartLeftMargin='25' chartRightMargin='25' toolTipBgColor='80A905' gaugeFillMix='{dark-10},FFFFFF,{dark-10}' gaugeFillRatio='3'>
 <colorRange>
 <color minValue='0' maxValue='45' code='FF654F'/>
@@ -2079,7 +2601,7 @@ public function cummulative_fill_rate_chart(){
 <color minValue='80' maxValue='100' code='8BBA00'/>
 </colorRange>
 <dials>
-<dial value='60' rearExtension='10' baseWidth='2'/>
+<dial value='".$chart_raw_data[0]['fill_rate']."' rearExtension='10' baseWidth='2'/>
 </dials>
 
 </chart>";
@@ -2091,7 +2613,7 @@ echo $strXML;
 
 //county charts  8
 public function orders_placed_chart(){
-$strXML ="<chart caption='Orders Placed By Districts' formatNumberScale='0' formatNumberScale='0' showBorder='0' bgcolor='FFFFF' color='FF4400'>
+$strXML ="<chart caption=' Orders Placed By Districts' formatNumberScale='0' formatNumberScale='0' showBorder='0' bgcolor='FFFFF' color='FF4400'>
 <set label='Dagoretti' value='51852' />
 <set label='Embakasi' value='88168' />
 <set label='Kamukunji' value='73897' />
@@ -2138,8 +2660,8 @@ public function lead_time_chart_county(){
 $district=$this -> session -> userdata('district');
 $chart_raw_data[0]['t_a_t']=0;
 $chart_raw_data[0]['delivery_update']=0;
-$county_id=$this -> session -> userdata('county_id');
-$county_name=$this -> session -> userdata('county');
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);	
 $chart_raw_data=ordertbl::get_county_order_turn_around_time($county_name[0]['id']);			
 
 $step_data=0;	
@@ -2164,6 +2686,8 @@ $strXML .='
    <pointer value="'.$chart_raw_data[0]['t_a_t'].'" toolText="Total Turn Around Time" link="P-detailsWin,width=450,height=150,toolbar=no,scrollbars=no, resizable=no-provincialtatbreakdown.php?province=5%26mwaka=2012%26mwezi=07%26dcode=%26fcode=0" />
  
 </pointers>
+
+
 <styles>
 
 <definition>
@@ -2179,141 +2703,68 @@ echo $strXML;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public function County_orders_placed_chart(){
-$strXML ="<chart palette='3' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' caption='' yAxisName='Units' showValues='0' numVDivLines='10' divLineAlpha='30' useRoundEdges='1' legendBorderAlpha='0'>
+	public function get_county_drawing_rights_data(){
+		
+$district=$this -> session -> userdata('district');
 
-    <categories>
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);	
+$chart_raw_data=facilities::get_county_drawing_rights($county_name[0]['id']);
 
-      <category label='Dagoretti' />
-      
-      <category label='Embakasi' />
-      
-      <category label='Kamukunji' />
-      
-      <category label='Kasarani' />
-      
-      <category label='Langata' />
-      
-      <category label='Makadara' />
-      <category label='Njiru' />
-      <category label='Starehe' />
-      <category label='Westlands' />
+$category_data='<categories>';
+$allocated_data="";
+$balance_data="";
+$chart_data='';		
+		
+$strXML ="<chart palette='3' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' caption='' yAxisName='Units' showValues='0' numVDivLines='10' divLineAlpha='30' useRoundEdges='1' legendBorderAlpha='0'>";
 
-    </categories>
-
-
-    <dataset seriesName='Allocated Drawing' color='A66EDD' >
-
-        <set value='3500000' />
-
-        <set value='4200000' />
-
-        <set value='3100000' />
-
-        <set value='2800000' />
-
-        <set value='3400000' />
-
-        <set value='3000000' />
-        <set value='2000000' />
-
-        <set value='2600000' />
-
-        <set value='1900000' />
-
-    </dataset>
+foreach($chart_raw_data as $chart_data){
+	$category_data .="<category label='$chart_data[district]' />";
+	
+	$allocated_data .="<set value='$chart_data[initial_drawing_rights]' />";
+    $balance_data .="<set value='$chart_data[drawing_rights_balance]' />";
+}
+    
 
 
-    <dataset seriesName='Drawing Rights Balance' color='F6BD0F'>
-
-        <set value='2200000' />
-
-        <set value='2500000' />
-
-        <set value='1800000' />
-
-        <set value='2200000' />
-
-        <set value='1700000' />
-
-        <set value='1600000' />
-        <set value='1200000' />
-
-        <set value='1700000' />
-
-        <set value='1000000' />
-
-    </dataset>
-
+$strXML .=$category_data."</categories><dataset seriesName='Allocated Drawing ' color='A66EDD' >$allocated_data</dataset> <dataset seriesName='Drawing right Bal' color='F6BD0F'>$balance_data</dataset>
 
 </chart>";
+
 echo $strXML;
 
 }
-	public function county_ordering_rate_chart(){
-$strXML ="<chart stack100Percent='1' showPercentValues='1' palette='2' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' showLabels='1' showvalues='0'  numberPrefix=''  showSum='1' decimals='0' useRoundEdges='1' legendBorderAlpha='0'>
+	public function get_county_ordering_rate_chart(){
+$district=$this -> session -> userdata('district');
 
-    <categories>
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);
 
-        <category label='Dagoretti' />
+$districts_in_this_county=districts::getDistrict($county_name[0]['id']);		
+	
+$category_data='<categories>';	
 
-        <category label='Embakasi' />
+$orders_made_data="";
+$total_no_of_facilities="";
+	
+		
+$strXML ="<chart stack100Percent='1' showPercentValues='1' palette='2' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' showLabels='1' showvalues='0'  numberPrefix=''  showSum='1' decimals='0' useRoundEdges='1' legendBorderAlpha='0'>";
 
-        <category label='Kamukunji' />
+foreach($districts_in_this_county as $chart_data){
+	$category_data .="<category label='$chart_data->district' />";
+	
+	$district_data=facilities::get_orders_made_in_district($chart_data->id);
+	
+	$orders_made_data .="<set value='$district_data[orders_made_data]' />";
+	
+	$bal=$district_data['total_no_of_facilities']-$district_data['orders_made_data'];
+	
+	$total_no_of_facilities .="<set value='$bal'/>";
+	
 
-        <category label='Kasarani' />
+}
 
-        <category label='Langata' />
-        <category label='Makadara' />
-      <category label='Njiru' />
-      <category label='Starehe' />
-      <category label='Westlands' />
-
-    </categories>
-
-     <dataset seriesName='Orders Made' color='659EC7' showValues='0'>
-
-        <set value='15' />
-
-        <set value='19' />
-
-        <set value='27' />
-
-        <set value='16' />
-
-        <set value='26' />
-        <set value='22' />
-
-        <set value='21' />
-
-        <set value='14' />
-
-        <set value='30' />
-
-    </dataset>
-
-    <dataset seriesName='No of Facilities' color='E8E8E8' showValues='0'>
-
-        <set value='65' />
-
-        <set value='76' />
-
-        <set value='18' />
-
-        <set value='31' />
-
-        <set value='68' />
-        <set value='90' />
-
-        <set value='71' />
-
-        <set value='45' />
-
-        <set value='52' />
-
-    </dataset>
-
-</chart>";
+$strXML .=$category_data."</categories><dataset seriesName='Orders Made' color='659EC7' showValues='0'>$orders_made_data</dataset><dataset seriesName='Orders not made' color='E8E8E8' showValues='0'>$total_no_of_facilities</dataset></chart>";
 echo $strXML;
 }
 
@@ -2328,7 +2779,7 @@ public function get_lead_time(){
 public function district_drawing_rights_chart(){
 		$drawing_rights=Facilities::get_drawingR_county_by_district();
 		$strXML= "";
-		$strXML ="<chart palette='3' caption='Districts Drawing Rights'  bgColor='FFFFFF' numberprefix='Ksh' xaxisName='Districts'yaxisName='Amount' useRoundEdges='1' showValues='0' legendBorderAlpha='0'>  
+		$strXML ="<chart palette='3' caption='Districts Drawing Rights'  bgColor='FFFFFF' numberprefix='$' xaxisName='Districts'yaxisName='Amount' useRoundEdges='1' showValues='0' legendBorderAlpha='0'>  
 
 <categories showValues='1'>";
 		
@@ -2360,6 +2811,507 @@ public function district_drawing_rights_chart(){
 			
 		
 		}
+
+public function facility_evaluation($facility_code=null,$user_id=null){
+	   
+	    if(!isset($facility_code) && !isset($user_id)){
+	    $facility_code=$this->session->userdata('news');  
+		$user_id=$this->session->userdata('identity');  	
+	    }
+		
+		             //New
+	   
+		$evaluation=facility_evaluation::getAll($facility_code,$user_id)->toArray();
+		
+		$data=(count($evaluation)==0)? array(0=>array(
+			'fhead_no' => null, 
+			'fdep_no' =>  null, 
+			'nurse_no' =>  null,  
+			'sman_no' =>  null, 
+			'ptech_no' =>  null, 
+			'trainer' =>  null, 
+			'comp_avail' =>  null, 
+			'modem_avail' => null, 
+			'bundles_avail' =>  null, 
+			'manuals_avail' =>  null, 
+			'satisfaction_lvl' =>  null, 
+			'agreed_time' =>  null, 
+			'feedback' =>  null, 
+			'pharm_supervision' =>  null, 
+			'coord_supervision' =>  null, 
+			'req_id' =>  null, 
+			'req_spec' =>  null, 
+			'req_addr' =>  null, 
+			'train_remarks' =>  null, 
+			'train_recommend' => null, 
+			'train_useful' => null, 
+			'comf_issue' =>  null, 
+			'comf_order' =>  null, 
+			'comf_update' =>  null, 
+			'comf_gen' =>  null, 
+			'use_freq' =>  null, 
+			'freq_spec' => null, 
+			'improvement' =>  null, 
+			'ease_of_use' =>  null, 
+			'meet_expect' =>  null, 
+			'expect_suggest' => null, 
+			'retrain' =>null))
+		  : $evaluation;
+		
+		$data['title'] = "Facility Training Evaluation";
+		$data['content_view'] = "facility/facility_reports/facility_evaluation";
+	    $data['banner_text'] = "Facility Training Evaluation";
+	    $data['facilities']=Facilities::get_one_facility_details($facility_code,$user_id);
+		$data['facility_code']=$facility_code;
+		$data['user_id']=$user_id;
+		$data['evaluation_data']=$data;
+
+	    $this -> load -> view("template", $data);           
+}
+
+public function facility_evaluation_($message=NULL){
+	
+$this->session->set_flashdata('system_success_message', "Facility Training Evaluation Has been ".$message);
+redirect('report_management/facility_evaluation');	
+}
+public function save_facility_eval()
+{
+		$facility_code=$this->session->userdata('news');
+		$current_user=$this->session->userdata('identity');
+		$date=date('y-m-d');
+		$data_array=$_POST['data_array'];
+		$dataarray=explode("|", $data_array);
+		$f_headno=$dataarray[0];
+		$f_depheadno=$dataarray[1];
+		$nurse_no=$dataarray[2];
+		$store_mgrno=$dataarray[3];
+		$p_techno=$dataarray[4];
+		$trainer=$dataarray[5];
+		$comp_avail=$dataarray[6];
+		$modem_avail=$dataarray[7];
+		$bundles_avail=$dataarray[8];
+		$manuals_avail=$dataarray[9];
+		$satisfaction_lvl=$dataarray[10];
+		$agreed_time=$dataarray[11];
+		$feedback=$dataarray[12];
+		$pharm_supervision=$dataarray[13];
+		$coord_supervision=$dataarray[14];
+		$req_id=$dataarray[15];
+		$req_spec=$dataarray[16];
+		$req_addr=$dataarray[17];
+		$train_remarks=$dataarray[18];
+		$train_recommend=$dataarray[19];
+		$train_useful=$dataarray[20];
+		$comf_issue=$dataarray[21];
+		$comf_order=$dataarray[22];
+		$comf_update=$dataarray[23];
+		$comf_gen=$dataarray[24];
+		$use_freq=$dataarray[25];
+		$freq_spec=$dataarray[26];
+		$improvement=$dataarray[27];
+		$ease_of_use=$dataarray[28];
+		$meet_expect=$dataarray[29];
+		$expect_suggest=$dataarray[30];
+		$retrain=$dataarray[31];
+
+		$mydata = array(
+		    'facility_code' => $facility_code,
+			'assessor' => $current_user, 
+			'date' => $date, 
+			'fhead_no' => $f_headno, 
+			'fdep_no' => $f_depheadno, 
+			'nurse_no' => $nurse_no, 
+			'sman_no' => $store_mgrno, 
+			'ptech_no' => $p_techno,
+			'trainer' => $trainer,
+			'comp_avail' => $comp_avail,
+			'modem_avail' => $modem_avail,
+			'bundles_avail' => $bundles_avail,
+			'manuals_avail' => $manuals_avail,
+			'satisfaction_lvl' => $satisfaction_lvl,
+			'agreed_time' => $agreed_time,
+			'feedback' => $feedback,
+			'pharm_supervision' => $pharm_supervision,
+			'coord_supervision' => $coord_supervision,
+			'req_id' => $req_id,
+			'req_spec' => $req_spec,
+			'req_addr' => $req_addr,
+			'train_remarks' => $train_remarks,
+			'train_recommend' => $train_recommend,
+			'train_useful' => $train_useful,
+			'comf_issue' => $comf_issue,
+			'comf_order' => $comf_order,
+			'comf_update' => $comf_update,
+			'comf_gen' => $comf_gen,
+			'use_freq' => $use_freq,
+			'freq_spec' => $freq_spec,
+			'improvement' => $improvement,
+			'ease_of_use' => $ease_of_use,
+			'meet_expect' => $meet_expect,
+			'expect_suggest' => $expect_suggest,
+			'retrain' => $retrain);
+			
+		echo Facility_Evaluation::save_facility_evaluation($mydata);
+
+}
+
+public function create_pie_chart($chart_data,$title,$option=null){
+	$chart = '<chart caption="'.$title.'" pieRadius="50" showPercentageValues="1" showPercentInToolTip="0" decimals="0"  bgColor="FFFFFF" showBorder="0" bgAlpha="100" exportEnabled="1" exportHandler="' . base_url() . 'scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php" exportAtClient="0" exportAction="download">
+'.$chart_data.'
+</chart>';
+
+
+  if($option=="xml"):
+	return $chart;  
+  else:
+	  echo $chart;  
+  endif;
+			
+}
+public function create_multistacked_bar_graph($chart_data,$title,$option=null){
+	 $chart = '<chart decimals="0" sDecimals="1" baseFontSize="10" stack100Percent="1" caption="'.$title.'" showPercentValues="0"  showLegend="1" caption=""  palette="3"numdivlines="3" useRoundEdges="1" showsum="0" bgColor="FFFFFF" showBorder="0" exportEnabled="1" exportHandler="' . base_url() . 'scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php" exportAtClient="0" exportAction="download">
+	'.$chart_data.'
+</chart>';
+
+  if($option=="xml"):
+	return $chart;  
+  else:
+	  echo $chart;  
+  endif;
+	
+}
+
+public function facility_type($county_id){
+	
+        $facility_type=historical_stock::get_facility_type($county_id);
+		$facility_type_xml='';	
+		
+		foreach($facility_type as $facility_data):
+		$facility_type_xml .="<set label='$facility_data[owner]' value='$facility_data[total]'/>";	
+		endforeach;	
+		
+		$this->create_pie_chart($facility_type_xml,'');
+}
+public function personel_trained($county_id){
+		$personel_trained=historical_stock::get_personel_trained($county_id);
+		
+		$personel_trained_xml='';
+		
+			
+		//foreach($personel_trained as $personel_trained_data):
+		
+		$personel_trained_xml .="<set label='Facility Head' value='".$personel_trained[0]['fhead']."'/>";	
+		$personel_trained_xml .="<set label='Facility Deputy Head' value='".$personel_trained[0]['fdep']."'/>";
+		$personel_trained_xml .="<set label='Nurse' value='".$personel_trained[0]['nurse']."'/>";
+		$personel_trained_xml .="<set label='Store Manager' value='".$personel_trained[0]['sman']."'/>";
+		$personel_trained_xml .="<set label='Pharmacy Technologist' value='".$personel_trained[0]['ptech']."'/>";
+		
+	
+		
+		$this->create_pie_chart($personel_trained_xml, '');
+	
+}
+
+ public function training_satisfaction($county_id){
+ 	    $training_satisfaction=historical_stock::get_training_satisfaction($county_id);
+		$training_satisfaction_xml='';
+		
+				foreach($training_satisfaction as $training_satisfaction_data):
+			
+			switch($training_satisfaction_data['satisfaction_lvl']):
+				case 1:
+					$training_satisfaction_xml .="<set label='Very satisfied' value='$training_satisfaction_data[level]'/>";	
+					break;
+					case 2:
+					$training_satisfaction_xml .="<set label='Indifferent' value='$training_satisfaction_data[level]'/>";	
+					break;
+						case 3:
+					$training_satisfaction_xml .="<set label='Unsatisfied' value='$training_satisfaction_data[level]'/>";	
+					break;
+					case 4:
+					$training_satisfaction_xml .="<set label='I did not understand' value='$training_satisfaction_data[level]'/>";
+					
+					break;
+			endswitch;
+				
+		endforeach;
+		
+		$this->create_pie_chart($training_satisfaction_xml, '');
+ 	
+ }
+ public function get_use_freq($county_id){
+ 	    $training_resource=historical_stock::get_use_freq($county_id);
+		
+		$training_satisfaction_xml='<dataset  showValues="1" color="">';
+		$training_resource_xml_balance='<dataset seriesName="Total"   showValues="1" color="">';
+		
+		$chart = "<categories>
+    <category label='Daily' />
+    <category label='Once a week' />
+    <category label='Once every 2 weeks' />
+    <category label='Never' />
+    </categories>";
+       
+               foreach($training_resource as $training_satisfaction_data):
+       			switch($training_satisfaction_data['use_freq']):
+				case 1:
+					$training_satisfaction_xml .="<set value='$training_satisfaction_data[level]'/>";	
+					break;
+					case 2:
+					$training_satisfaction_xml .="<set value='$training_satisfaction_data[level]'/>";	
+					break;
+					case 3:
+					$training_satisfaction_xml .="<set value='$training_satisfaction_data[level]'/>";	
+					break;
+					case 4:
+					$training_satisfaction_xml .="<set value='$training_satisfaction_data[level]'/>";
+					
+					break;
+			endswitch;
+			   endforeach;
+       
+
+	 $training_satisfaction_xml .="</dataset>";
+	 $bal_1=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	// $bal_2=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	// $bal_3=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	 //$bal_4=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' /></dataset>";
+	 
+	 
+    
+ 	$this->create_multistacked_bar_graph($chart.$training_satisfaction_xml.$training_resource_xml_balance, '');
+ 	
+ }
+ public function get_training_resource($county_id){
+ 	    $training_resource=historical_stock::get_training_resource($county_id);
+		$training_resource_xml='<dataset  showValues="1" color="">';
+		$training_resource_xml_balance='<dataset seriesName="Total"   showValues="1" color="">';
+		
+		$chart = "<categories>
+    <category label='Computers' />
+    <category label='Modems' />
+    <category label='Bundles' />
+    <category label='Manuals' />
+    </categories>";
+    
+     $training_resource_xml .="<set value='".$training_resource[0]['comp']."' />";
+	 $training_resource_xml .="<set value='".$training_resource[0]['modem']."' />";
+	 $training_resource_xml .="<set value='".$training_resource[0]['bundles']."' />";
+	 $training_resource_xml .="<set value='".$training_resource[0]['manual']."' /></dataset>";
+	 $bal_1=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	// $bal_2=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	// $bal_3=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	// $bal_4=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' /></dataset>";
+	 
+	 
+    
+ 	$this->create_multistacked_bar_graph($chart.$training_resource_xml.$training_resource_xml_balance, '');
+ 	
+ }
+public function get_county_evaluation_form_results(){
+	    $county_id=$this->session->userdata('county_id');
+	    $data['county_id']=$county_id;
+	    $data['content_view'] = "county/county_report/facility_evaluation_report_v";
+	    $data['banner_text'] = "Facility Training Evaluation Results";
+		$data['title'] = "Facility Training Evaluation Results";
+		
+	    $data['sheduled_training']=historical_stock::get_sheduled_training($county_id);
+		$data['feedback_training']=historical_stock::get_feedback_training($county_id);
+		$data['pharm_supervision']=historical_stock::get_pharm_supervision($county_id);
+		$data['coord_supervision']=historical_stock::get_coord_supervision($county_id);
+		
+		$data['req_id']=historical_stock::get_req_id($county_id);
+		$data['req_addr']=historical_stock::get_req_addr($county_id);
+		$data['retrain']=historical_stock::get_retrain($county_id);
+		
+		$data['improvement']=historical_stock::get_improvement($county_id);
+		$data['ease_of_use']=historical_stock::get_ease_of_use($county_id);
+		$data['meet_expect']=historical_stock::get_meet_expect($county_id);
+		$data['train_useful']=historical_stock::get_train_useful($county_id);
+		$data['coverage_data']=historical_stock::get_county_coverage_data($county_id);
+		
+		
+
+	    $this -> load -> view("template", $data);  
+	
+}
+ public function get_level_of_comfort($county_id){
+ 	    $training_resource=historical_stock::level_of_comfort($county_id);
+		$training_resource_xml='<dataset  showValues="1" color="">';
+		$training_resource_xml_balance='<dataset seriesName="Total"   showValues="1" color="">';
+		
+		$chart = "<categories>
+    <category label='Issue Commodities' />
+    <category label='Order Commodities' />
+    <category label='Update Order' />
+    <category label='Generate Reports' />
+    </categories>";
+    
+     $training_resource_xml .="<set value='".$training_resource[0]['comp']."' />";
+	 $training_resource_xml .="<set value='".$training_resource[0]['modem']."' />";
+	 $training_resource_xml .="<set value='".$training_resource[0]['bundles']."' />";
+	 $training_resource_xml .="<set value='".$training_resource[0]['manual']."' /></dataset>";
+	 $bal_1=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	// $bal_2=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	// $bal_3=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' />";
+	// $bal_4=$training_resource[0]['total'];
+	 $training_resource_xml_balance .="<set value='".$bal_1."' /></dataset>";
+	 
+	 
+    
+ 	$this->create_multistacked_bar_graph($chart.$training_resource_xml.$training_resource_xml_balance, '');
+ 	
+ }
+public function get_facility_evaluation_form_results(){
+	    
+		//$district_id=null;
+	//	$county_id=null;
+		$access_level= $this->session->userdata('user_type_id');
+		
+		$district_id= ($access_level==3)? $this->session->userdata('district') : null;
+		
+		$county_id= ($access_level==10)? $this->session->userdata('county_id') : null;
+		
+		if(isset($county_id)):
+		$this->get_county_evaluation_form_results();	
+		endif;
+		
+		
+		$facility_raw_data= Facility_Evaluation::get_facility_evaluation_form_results($district_id,$county_id);
+		
+		
+		$table_data=null;
+		
+		foreach ($facility_raw_data as $key=>$data){
+		$table_data .="<tr>
+		<td class='center'>$data[facility_code]</td>
+		<td class='center'>$data[facility_name]</td>
+		<td class='center'>$data[total_users]</td>
+		<td class='center'>$data[responses]</td>		
+		</tr>";
+		}
+	
+	    $data['facility_response']=$table_data;		
+	    $data['title'] = "Facility Training Evaluation Results";
+		$data['content_view'] = "district/district_report/facility_evaluation_report_v";
+	    $data['banner_text'] = "Facility Training Evaluation Results";
+		
+
+
+	    $this -> load -> view("template", $data);  
+	
+}
+
+  public function get_facility_evaluation_data($facility_code){
+  	
+  	$data= Facility_Evaluation::get_people_who_have_responded($facility_code);
+	
+	
+	$table_data='<table  cellspacing="0" border="0" width="100%"><tr><th>Responednt</th><th>Trainer</th><th>Date</th><th>view</th></tr>';
+	
+	foreach($data as $key=>$facility_data):
+		
+	$date=date('d M Y', strtotime($facility_data['date_created']));
+	
+	
+	$table_data .="<tr><td>$facility_data[fname] $facility_data[lname] </td><td>$facility_data[trainer] </td><td>$date</td>
+	<td><a href='".base_url()."report_management/facility_evaluation/$facility_data[facility_code]/$facility_data[assessor]' class='link'>view response</a></td></tr>";
+		
+	endforeach;
+	
+	echo $table_data."</table>";
+	
+  }
+  
+  public function get_county_district_access_list(){
+  	
+  	$first_day_of_the_month=date("Y-m-1", strtotime("this month") );
+	$last_day_of_the_month=date("Y-m-t", strtotime("this month") ) ;
+	
+    $date_1 = new DateTime($first_day_of_the_month);
+    $date_2 = new DateTime($last_day_of_the_month);
+	
+	$county_id=$this -> session -> userdata('county_id');
+	$district_data=districts::getDistrict($county_id);
+		
+	
+	$series_data=array();
+	$category_data=array();
+	
+	$interval = $date_1->diff($date_2);
+
+	for($i=0;$i<$interval->d;$i++):
+	
+	$day=1+$i;
+	
+    $new_date=date("Y")."-".date("m")."-".$day;
+	
+     
+      if(date('N', strtotime($new_date)) < 6){
+        	
+	   $date_=date('D d',strtotime($new_date));		  
+	   $category_data =array_merge($category_data, array($date_));	
+			
+       $temp_1=array();	
+       
+		foreach($district_data as $district_):
+			
+		$district_id=$district_->id;
+		$district_name=$district_->district;	
+		$county_data=Log::get_county_login_count($county_id,$district_id,$new_date);	
+
+	    (array_key_exists($district_name,$series_data)) ?
+        $series_data[$district_name]=array_merge($series_data[$district_name],array((int)$county_data[0]['total']))
+	    : $series_data=array_merge($series_data,array($district_name=>array((int) $county_data[0]['total'])));
+
+		endforeach;
+
+        } else {
+         // do nothing
+        }
+	
+	
+	
+	endfor;
+	            $string=null;
+      
+	  
+	         print_r($series_data);
+					 exit;
+                foreach($series_data as $key=>$raw_data):
+					
+				/*$string .="{
+					name: '$key',
+					data:[
+					 ";*/
+					 
+					print_r($raw_data);
+					exit;
+					 
+					/* foreach ($raw_data as $key_data):
+						
+						$string .="$key_data,";
+						 
+                     endforeach;
+					$string .="]},";*/
+				endforeach;
+                
+				
+				echo $string;
+	
+	
+  }
 
 
 }

@@ -22,6 +22,9 @@ class Ordertbl extends Doctrine_Record {
 		$this -> hasColumn('workload', 'int',11);
 		$this -> hasColumn('bedcapacity', 'int',11);
 		$this -> hasColumn('order_no', 'int',11);
+		/*compute this*/
+		$this -> hasColumn('total_delivered', 'int',11);
+		
 	}
 
 	public function setUp() {
@@ -35,7 +38,7 @@ class Ordertbl extends Doctrine_Record {
             'foreign' => 'orderNumber'
         ));
 	}
-	
+
 	// gets the orders which have been Dispatched for the user to upadte their details
 	public static function getAll1($delivery){
 		$query=Doctrine_Query::create()-> select("*")->
@@ -46,14 +49,14 @@ class Ordertbl extends Doctrine_Record {
 	}
 	//getting the order details 
 	public static function get_order($code,$id){
-		
-		
+
+
 		$myobj = Doctrine::getTable('Ordertbl')->find($code);
         $myobj->approvalDate = date('y-m-d');
 		 $myobj->orderStatus='approved';
 		 $myobj->approveby=$id;
          $myobj->save();
-		
+
 	    $query=Doctrine_Query::create()-> select("*")->
 		from("ordertbl")->where("id='$code'");
 		$order=$query->execute();
@@ -78,7 +81,7 @@ class Ordertbl extends Doctrine_Record {
 	}
 	//gets the orders that are associated with a given district
 	public static function get_district_orders($d){
-		
+
 		$query=Doctrine_Query::create()-> 
 select("orderDate, ordertbl.id, facilityCode, deliverDate, remarks, orderStatus, dispatchDate,kemsaOrderid, orderTotal, approvalDate, reciever_name, reciever_phone, reciever_pin, drawing_rights ")->
 		from("ordertbl,facilities")->where("ordertbl.facilityCode=facilities.facility_code")
@@ -111,8 +114,13 @@ select("orderDate, ordertbl.id, facilityCode, deliverDate, remarks, orderStatus,
 		return $order;
 	}
 	//get facility delivered orders
-	public static function get_received($facility_code){
-		$query=Doctrine_Query::create()->select("*")->from("ordertbl")->where("orderStatus='delivered' and facilityCode='$facility_code' ")->OrderBy("id desc");
+	public static function get_received($facility_code, $year = NULL){
+		if (isset($year)){
+			$query=Doctrine_Query::create()->select("*")->from("ordertbl")->where("orderStatus='delivered' and facilityCode='$facility_code' and YEAR(orderDate)=$year")->OrderBy("id desc");
+		} elseif (!isset($year)) {
+			$query=Doctrine_Query::create()->select("*")->from("ordertbl")->where("orderStatus='delivered' and facilityCode='$facility_code' ")->OrderBy("id desc");
+		}
+		
 		$order=$query->execute();
 		return $order;
 	}
@@ -150,7 +158,7 @@ select("orderDate, ordertbl.id, facilityCode, deliverDate, remarks, orderStatus,
 		$order =Doctrine_Query::create()-> select("*")->from("ordertbl")->where("facilityCode='$facility_c' AND orderStatus='Pending' ");
 		return $order->count();
 	}
-	
+
 	//changed, now picking from order table instead on kemsa 
 	public static function get_dispatched_count($facility_c){
 		$order =Doctrine_Query::create()-> select("*")->from("ordertbl")->where("facilityCode= '$facility_c' AND status=1");
@@ -198,7 +206,7 @@ public static function get_all_orders_moh(){
 		->andWhere("facilities.district='$d'");
 		$order=$query->count();
 		return ($order);
-		
+
 	}
 	public static function get_details($id){
 		$query=Doctrine_Query::create()-> select("*")->from("ordertbl")->where("id='$id'");
@@ -211,6 +219,32 @@ public static function get_all_orders_moh(){
 		$order=$query->execute()->toArray();
 		return $order[0];
 	}
+
+		public static function get_county_orders($county){
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT
+			(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='Pending' AND o.facilityCode=f.facility_code
+            AND f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county) as pending_count,
+		(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='approved' AND o.facilityCode=f.facility_code
+            AND f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county) as approved_count,
+		(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='delivered' AND o.facilityCode=f.facility_code
+            AND f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county) as delivered_count, o.orderDate,o.facilityCode,o.orderStatus,o.orderTotal,o.order_no
+            FROM ordertbl o, facilities f, districts d, counties c
+            WHERE o.facilityCode=f.facility_code
+            AND f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county
+			ORDER BY o.orderStatus ASC");	
+		return $query;
+	}
+
+
+	
 	public static function get_county_order_turn_around_time($county_id){
 			$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
 SELECT CEIL( AVG( DATEDIFF( o.`orderDate` , o.`approvalDate` ) ) ) AS order_approval, CEIL( AVG( DATEDIFF( o.`deliverDate` , o.`approvalDate` ) ) ) AS approval_delivery, CEIL( AVG( DATEDIFF( o.`dispatch_update_date` , o.`deliverDate` ) ) ) AS delivery_update, CEIL( AVG( DATEDIFF( o.`dispatch_update_date` , o.`orderDate` ) ) ) AS t_a_t
@@ -237,6 +271,21 @@ GROUP BY MONTH( ordertbl.`approvalDate` ) ");
 
         return $district_ordertotal ;
         }
+
+public static function get_facility_ordertotal($facility){
+     $year = date("Y");
+$facility_ordertotal = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->fetchAll("SELECT facilities.district, ordertbl.`facilityCode` , SUM( ordertbl.`orderTotal` ) AS OrderTotal, MONTH( ordertbl.`approvalDate` ) as month
+FROM ordertbl, facilities, districts
+WHERE ordertbl.facilityCode = facilities.facility_code
+AND (YEAR( ordertbl.`approvalDate` ) =$year
+OR YEAR( ordertbl.`approvalDate` ) =$year-1)
+AND facilities.facility_code =$facility
+AND facilities.district = districts.id
+GROUP BY MONTH( ordertbl.`approvalDate` ) ");
+
+        return $facility_ordertotal ;
+        }
         
         public static function get_county_fill_rate($county_id){
         	$district_ordertotal = Doctrine_Manager::getInstance()->getCurrentConnection()
@@ -251,27 +300,20 @@ AND c.id ='$county_id'");
         return $district_ordertotal ;
  
         }
-		public static function get_county_orders($county){
-		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT
-			(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='Pending' AND o.facilityCode=f.facility_code
-            AND f.district=d.id
-			AND d.county=c.id
-			AND c.id=$county) as pending_count,
-		(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='approved' AND o.facilityCode=f.facility_code
-            AND f.district=d.id
-			AND d.county=c.id
-			AND c.id=$county) as approved_count,
-		(SELECT COUNT( o.facilityCode) FROM ordertbl o WHERE o.orderStatus='delivered' AND o.facilityCode=f.facility_code
-            AND f.district=d.id
-			AND d.county=c.id
-			AND c.id=$county) as delivered_count, o.orderDate,o.facilityCode,o.orderStatus,o.orderTotal,o.order_no
-            FROM ordertbl o, facilities f, districts d, counties c
-            WHERE o.facilityCode=f.facility_code
-            AND f.district=d.id
-			AND d.county=c.id
-			AND c.id=$county
-			ORDER BY o.orderStatus ASC");	
-		return $query;
-	}
 
+        
+
+public static function get_county_ordertotal($county_id){
+     $year = date("Y");
+$county_ordertotal = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->fetchAll("SELECT districts.county, ordertbl.`facilityCode` , SUM( ordertbl.`orderTotal` ) AS OrderTotal, MONTH( ordertbl.`approvalDate` ) as month
+FROM ordertbl, facilities, districts
+WHERE ordertbl.facilityCode = facilities.facility_code
+AND (YEAR( ordertbl.`approvalDate` ) =$year
+OR YEAR( ordertbl.`approvalDate` ) =$year-1)
+AND districts.county =$county_id
+AND facilities.district = districts.id
+GROUP BY MONTH( ordertbl.`approvalDate` ) ");
+
+        return $county_ordertotal ;}
 }

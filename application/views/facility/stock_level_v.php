@@ -130,17 +130,11 @@ $( "#dialog1" ).dialog({
 });
 </script>
 <div>
-<?php if($msg=="Stock details have been updated"): ?>
-<div id="dialog1">    
-<?php echo $msg;?>
-</div>
-<?php endif;  ?>
+
 <?php if(isset($msg)): ?>
 <div id="notification">    
 <div style="float: left"><?php echo $msg." .";?></div>
-
 <div style="float: left; margin-left: 1em"><?php 
-
 $fechaa = new DateTime($max_date[0]['MAX']);
 		$today=new DateTime();
         $datea= $fechaa->format(' d  M Y h:i:s A');
@@ -217,11 +211,20 @@ echo "The Last Stock Update was as at : $datea";?></div>
                         </tbody>
                 </table>
                 <?php
-     echo form_close(); ?>   
-     	<button  class="btn btn-primary" id="Make-Order"><?php 
-if(isset($update))
-{echo $update;} 
-else { echo "Proceed To Order"; }  ?></button>     
+     echo form_close();   
+
+if(isset($update)){
+	echo '<button  class="btn btn-primary" id="Make-Order">'.$update.'</button>';
+}else{
+	if(isset($checker)){
+		
+	}else{
+	echo '<button  class="btn btn-primary" id="Make-Order">Proceed To Order</button>';		
+	}
+
+}
+
+?>     
 
        
 </div><!-- End demo -->

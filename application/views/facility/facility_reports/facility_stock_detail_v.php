@@ -1,4 +1,6 @@
-<script type="text/javascript" language="javascript" src="<?php echo base_url();  ?>Scripts/jquery.dataTables.js"></script>
+<script type="text/javascript" language="javascript" src="<?php 
+ $access_level = $this -> session -> userdata('user_type_id');
+echo base_url();  ?>Scripts/jquery.dataTables.js"></script>
 		<style type="text/css" title="currentStyle">			
 			@import "<?php echo base_url(); ?>DataTables-1.9.3 /media2/css/jquery.dataTables.css";
 		</style>
@@ -46,7 +48,7 @@ json_obj = {
         return [false, ''];
     },
 					
-					dateFormat: 'd M, yy', 
+					dateFormat: 'd M yy', 
 					changeMonth: true,
 			        changeYear: true,
 			        buttonImage: baseUrl,
@@ -140,7 +142,13 @@ $( "#dialog1" ).dialog({
                         <th ><b>Manufacturer</b></th>
                         <th><b>Expiry&nbsp;Date</b></th>
                         <th><b>Stock&nbsp;Level</b></th>
-                        <th><b>Stock&nbsp;Level(Packs)</b></th>                                     
+                        <?php
+                        
+                        if($access_level==2): 
+                        echo "<th><b>Delete</b></th>" ; endif; // ;                        
+                        
+                        ?>
+                                                      
                     </tr>
                     </thead>
                     
@@ -159,7 +167,9 @@ $( "#dialog1" ).dialog({
 				
 			}
                                 ?>
- <?php echo form_hidden('id['.$count.']', $drug->id);?>
+                           <?php echo form_hidden('id['.$count.']', $drug->id);?>
+                            <?php echo form_hidden('kemsa_code['.$count.']', $drug->kemsa_code);?>
+                            
                             <td><?php echo $cat?></td>
                             <td><?php echo $name?></td>
                             <td ><?php echo $code;?></td>
@@ -168,21 +178,32 @@ $( "#dialog1" ).dialog({
                             <td><input class="user_1" type="text"<?php echo 'name="manufacturer['.$count.']"'?>  value="<?php echo $drug->manufacture;?>" /></td>
                             <td><input class='my_date' type="text"<?php echo 'name="expiry_date['.$count.']"'?> value="<?php
                             
-                            	$fechaa = new DateTime($drug->expiry_date);
-                               $datea= $fechaa->format(' d M, Y');
-                            
-                             echo $datea;?>" /></td>
-                            <td><input class="user" readonly="readonly" type="text"<?php echo 'name="stock_level['.$count.']"'?> value="<?php echo $drug->balance;?>"  /></td>
-                            <td><input class="user" readonly="readonly" type="text"<?php echo 'name="stock_level_packs['.$count.']"'?> value="<?php echo $drug->balance;?>" /></td>                                        
+                            $fechaa = new DateTime($drug->expiry_date);
+                            $datea= $fechaa->format(' d M Y');                      
+                             echo $datea;?>" />
+                             </td>
+                            <td>
+                            	
+                            <input class="user" readonly="readonly" type="text"<?php echo 'name="stock_level['.$count.']"'?> value="<?php echo $drug->balance;?>"  /></td>
+                             <?php
+                        echo "<input type='hidden' name='delete[$count]' value='0' />";
+                        if($access_level==2): 
+                        echo "<td>
+                         
+                        <input type='checkbox' name='delete[$count]' value='1' />
+                        
+                        </td>" ; endif; // ;                        
+                        
+                        ?>
+                                                                
                         </tr>
                         
                         <?php  $count=$count+1; }?>
                         </tbody>
                 </table>
-                <input class="button" id="update"  value="Update">
-                <?php
-     echo form_close(); ?>   
-           
+             
+                <?php echo form_close(); ?>   
+           <button class="btn btn-primary" id="update"> Update</button>  
         </div>
 </div><!-- End demo -->
 <br />

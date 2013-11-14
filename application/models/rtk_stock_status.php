@@ -114,7 +114,7 @@ return $commodities;
 	}
 ////////////////////////////////////////////////////////
 
-public static function get_allocation_rate_county($county_id){
+public function get_allocation_rate_county($county_id){
 	$allocation_rate=0;
 	$total_facilities_allocated_in_county=0;
 	$total_facilities_in_county=0;	
@@ -153,7 +153,7 @@ return array('allocation_rate'=>ceil($allocation_rate),'total_facilities_in_coun
 	
 }
 
-public static function get_allocation_rate_national(){
+public function get_allocation_rate_national(){
 	$allocation_rate=0;
 	$total_facilities_allocated_in_country=0;
 	$total_facilities_in_country=0;	

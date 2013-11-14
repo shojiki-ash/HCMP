@@ -15,12 +15,26 @@ class Stock_Expiry_Management extends auto_sms {
 		$data['quick_link'] = "Emergecy";
 		$this -> load -> view("template", $data);
 	}
-	public function default_expiries(){
-		$facility_c=$this -> session -> userdata('news');
-		$data['report']=Facility_Stock::expiries($facility_c);
-	    $mycount= count(Facility_Stock::expiries($facility_c));
+	public function default_expiries($facility_code=null){
+		
+		$facility_c=isset($facility_code)? $facility_code :$this -> session -> userdata('news');
+		
+		$facility_detail=Facilities::get_facility_name_($facility_c);
+        $data['facility_data']=$facility_detail;
+		$data['title'] = "Potential expiries";;
+        $data['banner_text'] = "Potential expiries";
+		$facility_data=Facility_Stock::expiries($facility_c);
+		$data['report']=$facility_data;
+		$data['facility_code']=$facility_c;
+		
+		$data['content_view'] = "potential_expiries_v";
+		
+	    $mycount= count($facility_data);
 		if ($mycount>0) {
-			$this -> load -> view("potential_expiries_v", $data);
+			
+			isset($facility_code)? $this -> load -> view("template", $data)  :$this -> load -> view("potential_expiries_v", $data);
+		
+			
 		} else {
 			echo '<div class="norecord"></div>';
 		}
@@ -42,10 +56,13 @@ class Stock_Expiry_Management extends auto_sms {
 		}
 				
 	}
-public function get_expiries(){
+public function get_expiries($facility_code=null){
 		$checker=$_POST['id'];
 		//echo $checker;
-		$facility=$this -> session -> userdata('news');
+		$facility=isset($facility_code)? $facility_code :$this -> session -> userdata('news');
+		
+		$facility_detail=Facilities::get_facility_name_($facility_c);
+        $data['facility_data']=$facility_detail;
 		
 			switch ($checker)
 			{
@@ -248,11 +265,10 @@ public function county_expiries() {
 		$date= date('Y-m-d');
 		$county=$this -> session -> userdata('county_id');
 		$data['title'] = "Expired Products";
-		$data['content_view'] = "county/county_expiries_v";
+		$data['content_view'] = "county/county_stock_data/county_expiries_v";
 		$data['banner_text'] = "Expired Products";
 		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
-		$data['expired2']=Counties::get_county_expiries($date,$county);
-		
+		$data['expired2']=Counties::get_county_expiries($date,$county);		
 		$data['link'] = "county_expiries_v";
 		$data['quick_link'] = "county_expiries_v";
 
@@ -271,6 +287,25 @@ public function county_expiries() {
 		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
 		$data['link'] = "district_expiries_v";
 		$data['quick_link'] = "district_expiries_v";
+
+		$this -> load -> view("county/district_expiries_v", $data);
+	}
+
+	public function county_potential_expiries($facility_code=NULL){
+		if (!isset($facility_code)) {			
+			$facility_c=$this -> session -> userdata('news');
+		}else{
+			$facility_c=$facility_code;
+		}		
+		$data['title'] = "Potential Expiries";
+		$data['content_view'] = "county/county_potential_expiries_v";
+		$data['banner_text'] = "Expired Products";
+		$data['report']=Facility_Stock::expiries($facility_c);
+	    $data['mycount']= count(Facility_Stock::expiries($facility_c));
+
+		$data['expired']=Districts::get_district_expiries($date,$district);
+		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
+		
 		$data['table_body2']="";
 		if (count($data['expired'])) {
 		foreach ($data['expired'] as $item) {
@@ -285,23 +320,7 @@ public function county_expiries() {
 			else{
 			$data['table_body2']="<div id='notification'>No records found</div>";
 		}
-		$this -> load -> view("county/district_expiries_v", $data);
-	}
 
-	public function county_potential_expiries($facility_code=NULL){
-		if (!isset($facility_code)) {			
-			$facility_c=$this -> session -> userdata('news');
-		}else{
-			$facility_c=$facility_code;
-		}
-		$county=$this->session->userdata('county_id');
-		$data['title'] = "Potential Expiries";
-		$data['content_view'] = "county/county_potential_expiries_v";
-		$data['banner_text'] = "Expired Products";
-		$data['report']=Facility_Stock::expiries($facility_c);
-	    $data['mycount']= count(Facility_Stock::expiries($facility_c));
-	   	$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
-		
 		$this -> load -> view("template", $data);
 	}
 	public function county_get_potential_expiries(){
@@ -362,11 +381,10 @@ public function county_expiries() {
 		$date= date('Y-m-d');
 		$county=$this -> session -> userdata('county_id');
 		$data['title'] = "Deliveries";
-		$data['content_view'] = "county/county_deliveries_v";
+		$data['content_view'] = "county/county_stock_data/county_deliveries_v";
 		$data['banner_text'] = "Deliveries";
 		$data['delivered']=Counties::get_county_received($county);
 		$data['order_counts']=Counties::get_county_order_details($county);
-		$data['order_details']=Ordertbl::get_county_orders($county);
 		$data['link'] = "county/county_deliveries_v";
 		$data['quick_link'] = "county/county_deliveries_v";
 
@@ -397,19 +415,28 @@ public function district_deliveries($district=NULL) {
 	
 		$this -> load -> view("county/district_deliveries_v", $data);
 	}
-public function facility_report_expired() {
+public function facility_report_expired($facility_code=null,$district_id=null) {
 		$date= date('Y-m-d');
-		$facility=$this -> session -> userdata('news');
-		$district=$this -> session -> userdata('district');
+		
+		$facility=isset($facility_code)? $facility_code :$this -> session -> userdata('news');
+		$district=isset($district_id)? $facility_code :$this -> session -> userdata('district');
+		
+		$facility_detail=Facilities::get_facility_name_($facility);
+        $data['facility_data']=$facility_detail;
+
+		
 		$data['dpp_array']=User::get_dpp_details($district);
 		$data['title'] = "Expired Products";
-		$data['content_view'] = "facility_report_expired_v";
+		$data['content_view'] = "facility/facility_reports/facility_report_expired_v";
 		$data['banner_text'] = "Expired Products";
 		$data['expired']=Facility_Stock::getexp($date,$facility);
 		
 		$data['link'] = "facility_report_expired_v";
 		$data['quick_link'] = "facility_report_expired_v";
-		$this -> load -> view("facility_report_expired_v", $data);
+		
+		isset($facility_code)? $this -> load -> view("template", $data) :$this -> load -> view("facility_report_expired_v", $data);
+		
+		
 	}
 	public function get_decommission_report_pdf() {
 		$facilityCode= $this-> session-> userdata('news');
@@ -472,7 +499,7 @@ $html_data .=$html_data1;
 $this->generate_decommission_report_pdf($report_name,$title,$html_data);
 }
 public function generate_decommission_report_pdf($report_name,$title,$html_data) {
-	$current_year = date('Y');
+	    $current_year = date('Y');
 		$current_month = date('F');
 		$facility_code=$this -> session -> userdata('news');
 		$facility_name_array=Facilities::get_facility_name($facility_code)->toArray();
@@ -508,43 +535,74 @@ public function Decommission() {
 	//Change status of commodities to decommissioned
 	$date= date('Y-m-d');
 	$facility=$this -> session -> userdata('news');
-		$q = Doctrine_Query::create()
+	$facility_code=$this -> session -> userdata('news');
+	$user_id=$this -> session -> userdata('user_id');
+	
+		$facility_name_array=Facilities::get_facility_name($facility_code)->toArray();
+		$facility_name=$facility_name_array['facility_name'];
+		$districtName = $this->session->userdata('full_name');
+		
+		
+		    $myobj1 = Doctrine::getTable('Districts')->find($facility_name_array['district']);
+			$disto_name=$myobj1->district;
+			$county=$myobj1->county;
+			$myobj2 = Doctrine::getTable('Counties')->find($county);
+			$county_name=$myobj2->county;
+			$myobj3 = Doctrine::getTable('user')->find($user_id);
+			$creator_name1=$myobj3 ->fname;
+			$creator_name2=$myobj3 ->lname;
+			
+			
+			$total=0;
+		
+			
+			//Create PDF of Expired Drugs that are to be decommisioned.
+			$decom=Facility_Stock::get_facility_expired_stuff($date,$facility);
+			
+			$q = Doctrine_Query::create()
 			->update('Facility_Stock')
 				->set('status', '?', 2)
 					->where("facility_code='$facility' and expiry_date<='$date'");
 
 			$q->execute();
-			
-			//Create PDF of Expired Drugs that are to be decommisioned.
-			$decom=Facility_Stock::getexp($date,$facility);
-			
 			//create the report title
 		$html_title="<div ALIGN=CENTER><img src='".base_url()."Images/coat_of_arms.png' height='70' width='70'style='vertical-align: top;' > </img></div>
-      <div style='text-align:center; font-size: 14px;display: block;font-weight: bold;'>Expiries</div>
+    
        <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 14px;'>
-       Ministry of Public Health and Sanitation/Ministry of Medical Services</div>
-        <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold;display: block; font-size: 13px;'>Health Commodities Management Platform</div><hr />   ";
+       Ministry of Health</div>
+        <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold;display: block; font-size: 13px;'>Health Commodities Management Platform</div>
+         <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold;display: block; font-size: 13px;'>Expired Commodities Between ".date("F",
+    strtotime("-1 month"))." - ".date("F")." ".date('Y')."</div><hr />   ";;
 		
 		/*****************************setting up the report*******************************************/
-		$html_body ='';
-		
-		
-
+$html_body ='';		
 $html_body.='<style>table.data-table {border: 1px solid #DDD;margin: 10px auto;border-spacing: 0px;}
 table.data-table th {border: none;color: #036;text-align: center;background-color: #F5F5F5;border: 1px solid #DDD;border-top: none;max-width: 450px;}
 table.data-table td, table th {padding: 4px;}
 table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px solid #DDD;height: 30px;margin: 0px;border-bottom: 1px solid #DDD;}
-.col5{background:#C9C299;}</style>
+.col5{background:#C9C299;}</style>'.
+"<table class='data-table' width=100%>
+<tr>
+<td>MFL No: $facility_code</td> 
+<td>Health Facility Name: $facility_name</td>
+<td>County: $county_name</td> 
+<td>Subcounty: $disto_name</td>
+</tr>
+</table>"
+.'
+<table class="data-table" width=100%>
+<thead>
 
-<table class="data-table"><thead>
-
-			<tr > <th ><strong>KEMSA Code</strong></th>
+			<tr><th><strong>Source</strong></th>
 			<th><strong>Description</strong></th>
+			<th><strong>Unit Size</strong></th>
 			<th><strong>Batch No Affected</strong></th>
 			<th><strong>Manufacturer</strong></th>
 			<th><strong>Expiry Date</strong></th>
-			<th><strong>Unit Size</strong></th>
+			<th><strong># of Days From Expiry</strong></th>	
 			<th><strong>Stock Expired(Unit Size)</strong></th>
+			<th><strong>Unit Cost (Ksh)</strong></th>
+			<th><strong>Cost of Expired (Ksh)</strong></th>
 			
 			
 
@@ -553,36 +611,87 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 /*******************************begin adding data to the report*****************************************/
 
 	foreach($decom as $drug){
-			
-				foreach($drug->Code as $d){
-								$name=$d->Drug_Name;
-								$code=$d->Kemsa_Code;
-					            $unitS=$d->Unit_Size; 
-								$unitC=$d->Unit_Cost;
-								$calc=$drug->balance;
-								$thedate=$drug->expiry_date;
+		                        $drug_id=$drug['drug_id'];
+		                        $batch=$drug['batch_no'];
+								$mau=$drug['manufacture'];
+								$name=$drug['drug_name'];
+								$code=$drug['kemsa_code'];
+								
+								$code= isset($code) ? "KEMSA: code".$code  : '' ;
+								
+								
+								
+					            $unitS=$drug['unit_size'];
+								$unitC=$drug['unit_cost'];
+								$calc=$drug['balance'];
+								$thedate=$drug['expiry_date'];
 								$formatme = new DateTime($thedate);
-								 $myvalue= $formatme->format('d M Y');					    
-							    }
+								$cost=$calc*$unitC;
+								$myvalue= $formatme->format('d M Y');	
+								$total=$total+$cost;
+			$facility_stock=Facility_Stock::get_facility_drug_total($facility,$drug_id)->toArray();					
+								
+			$mydata3 = array('facility_code'=>$facility,
+			's11_No' => 'Expired',
+			'kemsa_code'=>$drug_id,
+			'batch_no' => $batch,
+			'expiry_date' => $thedate,
+			'receipts' => $calc,
+			'balanceAsof'=>$facility_stock[0]['balance'],
+			'date_issued' => date('y-m-d'),
+			'issued_to' => 'N/A',
+			'issued_by' => $this -> session -> userdata('identity')
+			);
+			 
+			   $now= new DateTime();
+			   $dDiff = $formatme->diff($now);
+  // echo $dDiff->format('%R'); // use for point out relation: smaller/greater
+             $date_diff= $dDiff->days;
+			
+			Facility_Issues::update_issues_table($mydata3);
+			
+			$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select   `losses` from `facility_transaction_table`
+                                          WHERE `kemsa_code`= '$drug_id' and availability='1' and facility_code=$facility; ");
+		
+			
+			$new_value=$inserttransaction_1[0]['losses']+$calc;
+			
+		   	$inserttransaction= Doctrine_Manager::getInstance()->getCurrentConnection();
+			$inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
+			
+			$inserttransaction->execute("UPDATE `facility_transaction_table` SET losses =$new_value
+                                          WHERE `kemsa_code`= '$drug_id' and availability='1' and facility_code=$facility; ");	
+                                          
+            $inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
+			 FROM facility_stock WHERE kemsa_code = '$drug_id' and status='1' and facility_code='$facility')
+                                          WHERE `kemsa_code`= '$drug_id' and availability='1' and facility_code ='$facility'; ");                               								    
+							    
 							
-		 $html_body .='<tr><td>'.$code.'</td>
+		    $html_body .='<tr><td>'.$code.'</td>
 							<td>'.$name.'</td>
-							<td>'.$drug->batch_no.'</td>
-							<td>'.$drug->manufacture.'</td>
-							<td>'.$myvalue.'</td>
 							<td >'.$unitS.'</td>
-							<td >'.$drug->quantity.'</td>
-							
-							
+							<td>'. $batch.'</td>
+							<td>'.$mau.'</td>
+							<td>'.$myvalue.'</td>
+							<td>'.$date_diff.'</td>							
+							<td >'.$calc.'</td>
+							<td >'.$unitC.'</td>
+							<td >'.number_format($cost, 2, '.', ',').'</td>	
 							</tr>';
 
 /***********************************************************************************************/
 					
 		  }
-		$html_body .='</tbody></table>'; 
-		
-		
-		
+		$html_body .='
+		<tr>
+		<td colspan="10">
+		<b style="float: right; margin-right:5.0em">TOTAL cost(Ksh) of Expiries: &nbsp; '.number_format($total, 2, '.', ',').'</b>
+		</tr>
+		</tbody>
+		</table>'; 
+	//number_format($total, 2, '.', ',')
+	//echo $html_title.$html_body;
+	
 		//now ganerate an expiry pdf from the generated report
 			$this->load->library('mpdf');
 			$this->load->helper('file');
@@ -591,60 +700,31 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
             $this->mpdf->defaultheaderline = 1;  
             $this->mpdf->simpleTables = true;
             $this->mpdf->WriteHTML($html_body);
-            $this->mpdf->AddPage();
-			$this->mpdf->WriteHTML($html_body);
-			$report_name='Facility_Expired_Commodities'.$facility;
+           // $this->mpdf->AddPage();
+			//$this->mpdf->WriteHTML($html_body);
+			$this->mpdf->SetFooter("{DATE d/m/Y }|{PAGENO}/{nb}|Prepared by: $creator_name1 $creator_name2");
+			$report_name='Facility_Expired_Commodities_'.$facility."_".$date."_".$facility_name;
 			
 			
 			
-			if( !write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S'))
-			)
+			if(!write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S')))
 			{
-    	$msg="An error occured";
-  $this->district_orders($msg);
+    	 $this->session->set_flashdata('system_error_message', 'An error occured, when creating a PDF contact system ADMIN');
+	     redirect("/");	
              }
                   else{
-                  	$config = Array(
-  'protocol' => 'smtp',
-  'smtp_host' => 'ssl://smtp.googlemail.com',
-  'smtp_port' => 465,
-  'smtp_user' => 'ashminneh.mugo@gmail.com', // change it to yours
-  'smtp_pass' => 'ashwoodnfire', // change it to yours
-  'mailtype' => 'html',
-  'charset' => 'iso-8859-1',
-  'wordwrap' => TRUE
-);
- 
- //pull required emails ready to attach and send
- $pull_emails=User::getemails($facility);
- //echo $pull_emails;
-	foreach ($pull_emails as $emails) {
-		$address= $emails['email'];
-		
-		 $this->load->library('email', $config);
-  $this->email->set_newline("\r\n");
-  $this->email->from('hcmpkenya@gmail.com'); // change it to yours
-  $this->email->to("$address"); 
-  $this->email->bcc('ashminneh.mugo@gmail.com');
-  $this->email->subject('Order Report For '.$facility);
- 
-  $this->email->attach('./pdf/'.$report_name.'.pdf'); 
-  $this->email->message($html_title.$html_body);
- 
-  if($this->email->send())
- {
- delete_files('./pdf/');
- }
- else
-{
- show_error($this->email->print_debugger());
-}
- 
-		
-	}
- 
-  
-	redirect("/");				
+       
+   if($this->send_stock_decommission_email($html_body,'Decommission Report For '.$facility,'./pdf/'.$report_name.'.pdf')){
+   	delete_files('./pdf/'.$report_name.'.pdf');
+   	$this->session->set_flashdata('system_success_message', 'Stocks Have Been Decommissioned');
+	redirect("/");
+   }
+   else{
+   	
+    $this->session->set_flashdata('system_error_message', 'An error occured, the items were decommissioned but there was a problem in sending an email file:'.$report_name.'.pdf');
+	redirect("/");	
+   }
+			
   }
 			
 			}

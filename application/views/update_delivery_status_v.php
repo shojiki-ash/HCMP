@@ -17,7 +17,7 @@ $use_id=$this -> session -> userdata('news');
 		});
 		$( "#datepicker" ).datepicker({
 			showOn: "button",
-			dateFormat: 'd M, yy', 
+			dateFormat: 'd M yy', 
 			buttonImage: baseUrl,
 			buttonImageOnly: true
 		});
@@ -28,19 +28,7 @@ $use_id=$this -> session -> userdata('news');
 				  var phone= $('input:text[name=r_phone]').val();
 				   var pin= $('input:text[name=r_pin]').val();
 				   
-				   if(name=="" || phone=="" || pin==''){
-				   	alert("Please fill in all your details your details as evidence that the delivery has been recieved");
-				   	if(name==""){
-				   			$('input:text[name=r_name]').focus();
-				   	}
-				   else	if(phone==''){
-				   		$('input:text[name=r_phone]').focus();
-				   	}
-				 else  if(pin==''){
-				   	$('input:text[name=r_pin]').focus();	
-				   	}
-				   	return;
-				   }
+				   
 				    $('#myform').submit();
 				
 });
@@ -182,6 +170,7 @@ echo form_open('stock/index',$att);?>
 		<th>KEMSA Code</th>
 		<th>Description</th>
 		<th>Batch No</th>
+		
 		<th>Expiry Date</th>
 		<th>Ordered Quantities</th>
 		<th>Quantity Dispatched</th>
@@ -201,7 +190,7 @@ echo form_open('stock/index',$att);?>
 				<td><?php 
 		$datea= $rows1->expiry_date;
 		$fechaa = new DateTime($datea);
-        $datea= $fechaa->format(' d M, Y');
+        $datea= $fechaa->format(' d M Y');
 		echo $datea;?></td>
 				<td><?php echo $rows1->quantityOrdered?></td>
 				<td><?php echo $rows1->quantity?></td>

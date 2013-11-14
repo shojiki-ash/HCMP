@@ -48,14 +48,14 @@ json_obj = {
 					
 		$( "#datepicker" ).datepicker({
 			showOn: "button",
-			dateFormat: 'd M, yy', 
+			dateFormat: 'd M yy', 
 			buttonImage: baseUrl,
 			buttonImageOnly: true
 		});
 			$( "#dialog" ).dialog();
 		$( "#expiry_date" ).datepicker({
 			showOn: "button",
-			dateFormat: 'd M, yy', 
+			dateFormat: 'd M yy', 
 			buttonImage: baseUrl,
 			buttonImageOnly: true
 		});
@@ -261,7 +261,7 @@ $('.del').live('click',function(){
 		 var batch_split=batch_array.split("|");
 		 var drug_total=0;
 
-  var new_date=$.datepicker.formatDate('d M, yy', new Date(batch_split[0]));
+  var new_date=$.datepicker.formatDate('d M yy', new Date(batch_split[0]));
 
 			var drop='<option>'+new_date+'</option>'
 			$('#Exp').html(drop);
@@ -411,7 +411,7 @@ $('.del').live('click',function(){
 						
 						<td width="130"><?php 
 					
-					$today= ( date('d M, Y')); 
+					$today= ( date('d M Y')); 
 					
 				?><input type="text" name="datepicker" class="date" readonly="readonly" value="<?php echo $today;?>" id="datepicker"/></td>
 		

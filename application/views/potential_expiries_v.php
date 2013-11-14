@@ -56,7 +56,7 @@ table.data-table1 td {
 $(document).ready(function(){
 	 //default call
     $("#3months").click(function(){
-      var url = "<?php echo base_url().'stock_expiry_management/get_expiries'?>";
+      var url = "<?php echo base_url().'stock_expiry_management/get_expiries/'.$facility_code?>";
       var id  = $(this).attr("id");
       //alert (id);
         $.ajax({
@@ -73,7 +73,7 @@ $(document).ready(function(){
          });
     });
     $("#6months").click(function(){
-      var url = "<?php echo base_url().'stock_expiry_management/get_expiries'?>";
+      var url = "<?php echo base_url().'stock_expiry_management/get_expiries/'.$facility_code?>";
       var id  = $(this).attr("id");
       //alert (id);
         $.ajax({
@@ -90,7 +90,7 @@ $(document).ready(function(){
          });
     });
     $("#12months").click(function(){
-      var url = "<?php echo base_url().'stock_expiry_management/get_expiries'?>";
+      var url = "<?php echo base_url().'stock_expiry_management/get_expiries/'.$facility_code?>";
       var id  = $(this).attr("id");
       //alert (id);
         $.ajax({
@@ -119,7 +119,7 @@ $(document).ready(function(){
 	
 	
 </fieldset>
-<div class="whole_report">
+<div class="whole_report">e]
 	<!--<div class="try">
 <button class="button">Download PDF</button>
 </div>-->
@@ -129,7 +129,7 @@ $(document).ready(function(){
        <span style="margin-left:100px;  font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 15px;">
      Ministry of Health</span><br>
        <span style=" font-size: 12px;  margin-left:100px;">Health Commodities Management Platform</span><span style="text-align:center;" >
-       	<h2 style="text-align:center; font-size: 20px;">Potential Expiries</h2>
+       	<h2 style="text-align:center; font-size: 20px;"><?php echo $facility_data['facility_name'].' MFL '.$facility_data['facility_code']?> Potential Expiries</h2>
        
        
       
@@ -165,6 +165,10 @@ $(document).ready(function(){
 					            $unitS=$d->Unit_Size; 
 								$unitC=$d->Unit_Cost;
 								$calc=$drug->balance;
+								$actual_units=$d->total_units;
+						
+								$calc=round($calc/$actual_units);
+								
 								$thedate=$drug->expiry_date;
 								$formatme = new DateTime($thedate);
 								 $myvalue= $formatme->format('d M Y');

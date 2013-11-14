@@ -155,9 +155,14 @@ user-select: none;
 <script type="text/javascript">
 	$(document).ready(function() {
 		
-			$('.errorlogin').fadeOut(5000, function() {
+			$('.errorlogin').fadeOut(10000, function() {
     // Animation complete.
   });
+  
+  
+  	$("#home").click(function(){
+		window.location="<?php echo base_url();?>";
+		});
 	});
 
 </script>
@@ -186,7 +191,7 @@ user-select: none;
 
 if (isset($popup)) {
 	
-	echo	'<p class="errorlogin">Error!!! Please Enter an Existing user.</p>';
+	echo	'<p class="errorlogin">An Error has occured, Please Enter an Existing user.</p>';
 }
 unset($popup);
  ?> 	
@@ -200,12 +205,14 @@ unset($popup);
 
 <label class="labellogin">
 Email
-<input type="text" name="username" id="username" value="" placeholder="me@domain.com">
+<input type="text" name="username" id="username" value="" placeholder="me@domain.com" required="required">
 </label>
 <label class="labellogin">
 
  <input type="submit" class="button " name="register" id="register" value="Submit" style="margin-left:100px;">
+ <input type="submit" class="button " name="home" id="home" value="home" value="Submit" style="margin-left:100px;">
  </form>
+ 
 <?php 
 		echo form_close();
 		?>

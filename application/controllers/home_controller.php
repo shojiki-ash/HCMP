@@ -12,6 +12,71 @@ class Home_Controller extends MY_Controller {
 		$this -> home();
 	}
 
+
+public function get_dash_board_stats($dash_board_indicator){
+
+	$county_id = $this -> session -> userdata('county_id');
+	$district_id = $this -> session -> userdata('district1');
+	$district_id = $this -> session -> userdata('district');
+	$indicator='';
+	switch ($dash_board_indicator) {
+		case 'county':
+	$indicator ="County";
+	$facility_data=facilities::get_no_of_facilities_hcmp($county_id);
+	$user_data=user::get_no_of_users_using_hcmp($county_id);
+	
+	
+	 break;
+	 case 'district':
+		 $indicator ='District';
+	$facility_data=facilities::get_no_of_facilities_hcmp($county_id,$district_id);
+	$user_data=user::get_no_of_users_using_hcmp($county_id,$district_id);	
+	
+	
+			break;		
+		
+		default:
+			return NULL;
+			break;
+	}
+	$stats_data='<div>
+<table class="data-table">
+    			<tr>
+      			<td>Total No of Facilities in The '.$indicator.'</td>
+            		
+    			<td>
+      				<div class="badge" >'.$facility_data['total_no_of_facilities'].'</div>
+    			</td>
+  				</tr>	
+  				<tr>
+  				<td>Total No of Facilities in The '.$indicator.'  Using HCMP</td>
+           <td>  <div class="badge" >'.$facility_data['total_no_of_facilities_using_hcmp'].'</div></td>
+    				</tr>
+  			<tr>
+  			<td>
+      			Total No of Users in The '.$indicator.' </td>
+           	<td>
+      				<div class="badge" >'.$user_data['total_no_of_users'].'</div>
+  			</td>
+  			
+  			<tr>
+    	<td>
+      			Total No of Users in The '.$indicator.'  Accessing HCMP last 7 days</td>
+            <td>
+      				<div class="badge" >'.$user_data['total_no_of_users_7_days'].'</div>
+      				</td>
+      				</tr>
+      				<tr>
+    				<td>Users online in The '.$indicator.'</td>
+            		<td><div class="badge" >'.$user_data['active_users'].'</div></td>
+    				</tr>
+    				</table>
+					
+  </div>';		
+return $stats_data;
+	
+}
+
 	public function home($pop_up=NULL) {
 
 		$data['title'] = "Home";
@@ -27,6 +92,8 @@ class Home_Controller extends MY_Controller {
 		$date2 = date("Y-m-d",time());
 			 		
 		$date1=$compare['district_dl'];	
+		
+		
 		$x1=strtotime($date1);
 		$x2=strtotime($date2);
 		
@@ -35,11 +102,12 @@ class Home_Controller extends MY_Controller {
 			$date= date('Y-m-d');
 
 		$difference=($x1-$x2)/86400;
-/*****************************************Notifications********************************************/		    
+/*****************************************Notifications********************************************/	
+            $data['percentage_complete'] = Historical_Stock::historical_stock_rate($facility_c);	
+            $data['total_drugs']=count(Drug::getAll());  
 		    $data['diff']=$difference;			
 			$data['exp']=Facility_Stock::get_exp_count($date,$facility_c);
-		    $data['historical_stock'] = Historical_Stock::count_historical_stock($facility_c);
-		    $data['percentage_complete'] = Historical_Stock::load_stock($facility_c);
+		   // $data['historical_stock'] = Historical_Stock::historical_stock_rate($facility_c);	
 			$data['exp_count']=Facility_Stock::get_exp_count($date,$facility_c);
 			$data['stock']=Facility_Stock::count_facility_stock_first($facility_c);
 		    $data['pending_orders'] = Ordertbl::get_pending_count($facility_c);
@@ -55,12 +123,33 @@ else if($access_level == "super_admin"){
 	$data['content_view'] = "super_admin/home_v";
 }
 else if($access_level == "county_facilitator"){
-	$data['content_view'] = "county/county_v";
+	
+	//$active_logs=Log::get_active_login($option,$option_id);
+	$county_id=$this -> session -> userdata('county_id');
+	$data['stats']=$this->get_dash_board_stats("county");
+	$data['content_view'] = "county/county_v_2";
 	$data['banner_text'] = "Home";
 	$data['link'] = "home";
+	$data['coverage_data']=$this->get_county_dash_board_district_coverage();
+    $data['max_date']=facility_stock::get_county_max_date($county_id);
+	
+	
+	
+	$drug_category=Drug_Category::getAll();
+    $category_name='';	
+
+		foreach ($drug_category as $category0) {
+			$id=$category0->id;
+			$category3=$category0->Category_Name;
 		
+			 $category_name .="<option value='$id'>$category3;</option>";
+		 }
+		$data['drug_category']=$category_name;
+	
 
 }
+/* go to application/controllers/home_controller.php and check for this if statement */
+
 else if($access_level == "dpp"){
 		$district=$this->session->userdata('district1');
 	    $data['facilities'] = Facilities::get_total_facilities_rtk_in_district($district);
@@ -68,41 +157,35 @@ else if($access_level == "dpp"){
 		     // $facilities=Facilities::get_facility_details(6);
 		$table_body='';
 		foreach($facilities as $facility_detail){
-			
-			$table_body .="<tr><td><a class='ajax_call_1' id='county_facility' name='".base_url()."rtk_management/get_rtk_facility_detail/$facility_detail[facility_code]' href='#'>".$facility_detail["facility_code"]."</td>";
-			$table_body .="<td>".$facility_detail['facility_name']."</td><td>".$facility_detail['facility_owner']."</td>";
-		$table_body .="<td>";
+
           
-          $lab_count=lab_commodity_orders::get_recent_lab_orders($facility_detail['facility_code']);
-          $fcdrr_count=rtk_fcdrr_order_details::get_facility_order_count($facility_detail['facility_code']);
-          if($fcdrr_count>0){
-           $table_body .="
-       FCDRR <img src='".base_url()."/Images/check_mark_resize.png'></img>
-<a href=".site_url('rtk_management/update_fcdrr_test/'.$facility_detail['facility_code'])." class='link'>Edit</a>|";
-          }
-          else{
- $table_body .="<a href=".site_url('rtk_management/fcdrr_test/'.$facility_detail['facility_code'])." class='link'>FCDRR
-        </a>|";
-          }
+            $lastmonth = date('F', strtotime("last day of previous month"));
 
-           if($lab_count>0){
-           	//".site_url('rtk_management/get_report/'.$facility_detail['facility_code'])."
-           $table_body .="Lab&nbsp;Commodities  <img src='".base_url()."/Images/check_mark_resize.png'></img><a href='#' class='link'>Edit</a></td>";
-          }
-          else{
-  $table_body .="<a href=".site_url('rtk_management/get_report/'.$facility_detail['facility_code'])." class='link'>Lab&nbsp;Commodities</a></td>";
-     
-          }
+            $table_body .="<tr><td><a class='ajax_call_1' id='county_facility' name='" . base_url() . "rtk_management/get_rtk_facility_detail/$facility_detail[facility_code]' href='#'>" . $facility_detail["facility_code"] . "</td>";
+            $table_body .="<td>" . $facility_detail['facility_name'] . "</td><td>" . $facility_detail['facility_owner'] . "</td>";
+            $table_body .="<td>";
 
-      $table_body .="</td>";
+            $lab_count = lab_commodity_orders::get_recent_lab_orders($facility_detail['facility_code']);
+            $fcdrr_count = rtk_fcdrr_order_details::get_facility_order_count($facility_detail['facility_code']);
+            if ($fcdrr_count > 0) {
+                $table_body .="<!-- FCDRR <img src='" . base_url() . "/Images/check_mark_resize.png'></img>
+                        <a href=" . site_url('rtk_management/update_fcdrr_test/' . $facility_detail['facility_code']) . " class='link'>Edit</a>|-->";
+            } else {
+                $table_body .="<!--<a href=" . site_url('rtk_management/fcdrr_test/' . $facility_detail['facility_code']) . " class='link'>FCDRR</a>|-->";
+            }
 
+            if ($lab_count > 0) {
+                //".site_url('rtk_management/get_report/'.$facility_detail['facility_code'])."
+                $table_body .="<span class='label label-success'>Submitted  for    $lastmonth </span> <!--<img src='" . base_url() . "/Images/check_mark_resize.png'></img>--><a href=" . site_url('rtk_management/rtk_orders') . " class='link'>View</a></td>";
+            } else {
+                $table_body .="<span class='label label-important'>  Pending for $lastmonth </span> <a href=" . site_url('rtk_management/get_report/' . $facility_detail['facility_code']) . " class='link'>Report</a></td>";
+            }
 
-		
-			
-		}
+            $table_body .="</td>";
+        }
 
 	$data['table_body']=$table_body;
-	$data['content_view'] = "rtk/dpp/dpp_home";
+	$data['content_view'] = "rtk/dpp/dpp_home_with_table";
 	$data['banner_text'] = "Home";
 	$data['link'] = "home";
 		
@@ -134,13 +217,14 @@ $counties=Counties::getAll();
 
 	  $total_facilities=$total_facilities+$total_facilities_in_county;
 	  $total_allocated= $total_allocated+ $total_facilities_allocated_in_county;
-	   
-	   $table_data .="<tr><td><a href=".site_url()."rtk_management/allocation_county_detail_zoom/$countyid> $countyname</a></td>  <td> $total_facilities_in_county | $total_facilities_allocated_in_county</td></tr>";
+ 
+	   $table_data .="<tr><td><a href=".site_url()."rtk_management/allocation_county_detail_zoom/$countyid> $countyname</a> </td><td>$total_facilities_in_county | $total_facilities_allocated_in_county</td></tr>";
 	   
 	   }
-    $table_data_="<tr><td>TOTAL </td>  <td> $total_facilities | $total_allocated</td><tr>";
+    $table_data .="<tr><td>TOTAL </td><td> $total_facilities | $total_allocated</td><tr>";
+ 
    
-	$data['table_data']=$table_data_.$table_data;
+	$data['table_data']=$table_data;
 	$data['pop_up']=$pop_up;
 	$data['counties']= $counties=Counties::getAll();
 	$data['content_view'] = "allocation_committee/home_v";
@@ -411,7 +495,7 @@ $data['strXML_e1']=$strXML_e1;
 		$x1=strtotime($date1);
 		$x2=strtotime($date2);
 		
-		//expired products
+		//expired products////
 			$date= date('Y-m-d');
 
 		$difference=($x1-$x2)/86400;
@@ -431,6 +515,7 @@ $data['strXML_e1']=$strXML_e1;
 			$data['content_view'] = "moh/moh_user_v";
 		}
 		else if($access_level == "district"){
+			$data['stats']=$this->get_dash_board_stats("district");
 			$district =$this -> session -> userdata('district1');
 			
 	
@@ -485,6 +570,45 @@ $data['strXML_e1']=$strXML_e1;
 		$data['link'] = "home";
 		$this -> load -> view("template", $data);
 		
+     }
+     public function get_county_dash_board_district_coverage(){
+     	$county_id=$this -> session -> userdata('county_id');
+		$district_data=districts::getDistrict($county_id);
+		
+	$total_facilities=0;	
+	$rolled_out_facilities=0;
+		
+			
+     		$table="<table class='data-table'><thead><tr>
+     		<th>District</th><th># of Facilities</th><th># using tool</th><th>% coverage</th>
+     		</tr></thead><tbody>";
+     		
+     		  foreach($district_data as $district_detail):
+	    
+		      $district_id=$district_detail->id;
+		      $more_data=districts::get_district_coverage($district_id);
+			  $table .="<tr>";
+			  foreach($more_data as $data):
+				  $coverage=0;	
+			
+		@$coverage =round((($data['total_2']/$data['total']))*100,1);	
+		      $total_facilities=$total_facilities+$data['total'];
+	          $rolled_out_facilities=$rolled_out_facilities+$data['total_2'];
+			  
+				  
+			  $table .="<td>$data[district]</td>
+			  <td>$data[total]</td>
+			  <td>$data[total_2]</td>
+			  <td> $coverage %</td>";
+			  endforeach;
+			   $table .="</tr>";
+				  endforeach;
+			
+     	return $table."<tr>
+     	<td>TOTAL</td><td>$total_facilities</td>
+     	<td>$rolled_out_facilities</td>
+     	<td>
+     	".round((($rolled_out_facilities/$total_facilities))*100,1)." %</td></tr></tbody></table>";
      }
  
 

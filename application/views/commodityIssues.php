@@ -1,10 +1,13 @@
 <?php
 
-$from=$this -> session -> userdata('from');
-$to=$this -> session -> userdata('to');
+$fromm=new DateTime($this -> session -> userdata('from'));
+$too=new DateTime($this -> session -> userdata('to'));
+$from=$fromm->format('d M Y');
+$to=$too->format('d M Y');
 $desc=$this -> session -> userdata('desc');
 $drugname=$this -> session -> userdata('drugname');
 $facilityName=$this -> session -> userdata('full_name');
+$facilityCode=$this -> session -> userdata('news');
 
 
 ?>
@@ -66,25 +69,19 @@ box-shadow: 0 0 5px 5px #888;
 	}
 	
 </style>
-<?php
 
-echo form_open('Raw_data/get_commodityIpdf');
- 
-?>
 <div class="whole_report">
-	<div class="try">
-<button class="button">Download PDF</button>
-</div>
+
 <div>
 	<img src="<?php echo base_url().'Images/coat_of_arms.png'?>" style="position:absolute;  width:90px; width:90px; top:0px; left:0px; margin-bottom:-100px;margin-right:-100px;"></img>
        
        <span style="margin-left:100px;  font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 15px;">
-     Ministry of Public Health and Sanitation/Ministry of Medical Services</span><br>
+     Ministry of Health</span><br>
        <span style=" font-size: 12px;  margin-left:100px;">Health Commodities Management Platform</span><span style="text-align:center;" >
        	<h2 style="text-align:center; font-size: 20px;">Commodity Issues Summary</h2>
       
        <h2 style="text-align:center;"><?php echo $facilityName ?></h2>
-       <h2 style="text-align:center;">Between <?php echo $from ?> & <?php echo $to ?> </h2>
+       <h2 style="text-align:center;">Between <?php echo $from ?> and <?php echo $to ?> </h2>
        
        	<hr/> 
         
@@ -94,7 +91,6 @@ echo form_open('Raw_data/get_commodityIpdf');
 <table class="data-table1">
 		
 	<tr>
-		<th>Kemsa Code</th>
 		<th>Description</th>
 		<th>Date</th>
 		<th>Reference/S11 No</th>
@@ -124,12 +120,16 @@ echo form_open('Raw_data/get_commodityIpdf');
 								$formatme = new DateTime($thedate);
 								$formatme1 = new DateTime($thedate1);
        							 $myvalue= $formatme->format('d M Y');
-       							 $myvalue1= $formatme1->format('d M Y');
+       						
+								if ($thedate1 == '0000-00-00') {
+									$myvalue1 = 'N/A';
+								} else{
+								$formatme1 = new DateTime($thedate1);       							 
+       							$myvalue1= $formatme1->format('d M Y');
+       							}
 								?>
 				
 						<tr>
-							<td> <?php echo $code;?> </td>
-													
 							<td> <?php echo $drugname ;?> </td>
 							<td><?php echo $myvalue;?> </td>
 							<td><?php echo $user->s11_No;?></td>
@@ -138,8 +138,6 @@ echo form_open('Raw_data/get_commodityIpdf');
 							<td class="figures"><?php echo $user->balanceAsof+$user->qty_issued;?> </td>
 							<td class="figures"><?php echo $user->qty_issued;?></td>
 							<td class="figures"><?php echo $user->balanceAsof;?></td>
-							
-								
 							<td><?php echo $lname.' '.$fname;?></td>
 							<td> <?php echo $user->issued_to;?> </td>
 							
@@ -157,6 +155,7 @@ echo form_open('Raw_data/get_commodityIpdf');
 <input type="hidden" value="<?php echo $from ?>" id="datefromB" name="datefromB" />
 <input type="hidden"  value="<?php echo $to ?>" id="datetoB" name="datetoB" />
 <input type="hidden" value="<?php echo $facilityName ?>" id="facilitycode1" name="facilitycode1" />
+<input type="hidden" value="<?php echo $facilityCode ?>" id="facility_code" name="facility_code" />
 
 <?php form_close();
 ?>
