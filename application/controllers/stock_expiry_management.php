@@ -434,7 +434,7 @@ public function facility_report_expired($facility_code=null,$district_id=null) {
 		$data['link'] = "facility_report_expired_v";
 		$data['quick_link'] = "facility_report_expired_v";
 		
-		isset($facility_code)? $this -> load -> view("template", $data) :$this -> load -> view("facility_report_expired_v", $data);
+		isset($facility_code)? $this -> load -> view("template", $data) :$this -> load -> view("facility/facility_reports/facility_report_expired_v", $data);
 		
 		
 	}

@@ -104,6 +104,12 @@ GROUP BY fs.kemsa_code*/
 		$stocks= $query -> execute();
 		return $stocks;
 	}
+	public static function expired($facility_c){
+		$query = Doctrine_Query::create() -> select("*") -> from("Facility_Stock") -> where("facility_code='$facility_c' and expiry_date BETWEEN CURDATE()AND DATE_SUB(CURDATE(), INTERVAL 12 MONTH)");
+		
+		$stocks= $query -> execute();
+		return $stocks;
+	}
 	public static function expiries_count($facility_c){
 		$query = Doctrine_Query::create() -> select("sum(balance) as balance") -> from("Facility_Stock") -> where("facility_code='$facility_c' and expiry_date BETWEEN CURDATE()AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)");	
 		$stocks= $query -> execute();
@@ -122,7 +128,7 @@ GROUP BY fs.kemsa_code*/
 	}
 	
 	public static function get_facility_drug_total($facility_code,$drug_code){
-	$query = Doctrine_Query::create() -> select("sum(balance) as balance") -> from("Facility_Stock") -> where("facility_code='$facility_code' and kemsa_code=$drug_code")->andwhere("STATUS ='1'");	
+	$query = Doctrine_Query::create() -> select("sum(balance) as balance") -> from("Facility_Stock") -> where("facility_code=$facility_code and kemsa_code=$drug_code")->andwhere("STATUS ='1'");	
 		$stocks= $query -> execute();
 		return $stocks;	
 	}

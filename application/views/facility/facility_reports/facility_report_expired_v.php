@@ -70,6 +70,16 @@ padding: 5px;
 
 	
 </style>
+
+<script type="text/javascript">
+		var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "Chart1", "85%", "80%", "0", "0");
+		var url = '<?php echo base_url()."report_management/generate_facilitycostofexpired_chart"?>'; 
+		chart.setDataURL(url);
+		chart.render("expiredchart");
+
+		</script>
+
+<div id = "expiredchart" name = "expiredchart" style="float:center"></div>
 	<div class="whole_report">
 <div>
 	<img src="<?php echo base_url().'Images/coat_of_arms.png'?>" style="position:absolute;  width:90px; width:90px; top:0px; left:0px; margin-bottom:-100px;margin-right:-100px;"></img>

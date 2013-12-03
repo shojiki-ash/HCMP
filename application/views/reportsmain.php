@@ -131,13 +131,19 @@ background:url('<?php echo base_url()?>
 <div class="container">
     <div class="content">
       
-    <h3> <a href="#"  id="expired">View Expiries</a></h3> 
-    </n>
-     <h3> <a href="#" id="potentialexpiries">View Potential Expiries</a></h3> 
-     <?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
-	 echo form_open('raw_data/gen_pdf',$attributes); ?>	
+    <h3> <a href="#" id="potentialexpiries">View Potential Expiries</a></h3> 
+    <?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
+	 echo form_open('raw_data/gen_pdf/pe',$attributes); ?>	
 <button id="downloader" class="btn" >Download PDF<i class="icon-circle-arrow-down" style="margin-left: 3px"></i></button>
 <input type="hidden" id="timer" name="timer" value="3" readonly="readonly"/>
+<?php  echo form_close();
+		?>
+    </n>    
+     <h3> <a href="#"  id="expired">View Expiries</a></h3>
+     <?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
+	 echo form_open('raw_data/gen_pdf/e',$attributes); ?>	
+<button id="downloader" class="btn" >Download PDF<i class="icon-circle-arrow-down" style="margin-left: 3px"></i></button>
+<input type="hidden" id="timer2" name="timer2" value="3" readonly="readonly"/>
 <?php  echo form_close();
 		?>
       

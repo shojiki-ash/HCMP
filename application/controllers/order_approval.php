@@ -48,7 +48,7 @@ include_once('auto_sms.php');
 	public function update_order(){
 		 ini_set('memory_limit','32M'); 
 		$this->load->library('mpdf');
-exit;
+
 		$this->load->helper('file');
 		$this->load->helper('url');
 		
@@ -277,7 +277,7 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
   
   $attach_file='./pdf/'.$report_name.'.pdf';
   
-  $bcc_email='kariukijackson@gmail.com';
+  $bcc_email='ashminneh.mugo@gmail.com';
   
   $message=$html_title.$html_body;
   
@@ -289,7 +289,7 @@ else if( $in[$i]['category_name']!=$in[$i-1]['category_name']){
 					
   }
 
-   $this->send_order_approval_sms();
+   // $this->send_order_approval_sms();
    $this->session->set_flashdata('system_success_message', "Order No $code has been approved");	
    redirect("order_approval/district_orders");
  

@@ -1609,7 +1609,55 @@ $strXML .= "<styles>
 	
 }
 
-
+public function generate_facilitycostofexpiries_chart(){
+	$facility = $this -> session -> userdata('news');
+	$expiries = Facility_Stock::expired($facility);
+	$year = date("Y");
+	
+	$rowcountname=count($expiries);
+	$arrayQ1 = array();
+	$arrayQ2 = array();
+	$arrayQ3 = array();
+	$arrayQ4 = array();
+	for ($i=0; $i < $rowcountname ; $i++) { 
+	
+	if ($expiries[$i]["month"] >= 1 && $expiries[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$expiries[$i]["OrderTotal"];
+			
+		}elseif($expiries[$i]["month"] >= 4 && $expiries[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$expiries[$i]["OrderTotal"];
+			
+		}elseif($expiries[$i]["month"] >= 7 && $expiries[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$expiries[$i]["OrderTotal"];
+		}else
+		$arrayQ1[] = (int)$expiries[$i]["OrderTotal"];
+	}
+	$Q1=array_sum($arrayQ1);
+	$Q2=array_sum($arrayQ2);
+	$Q3=array_sum($arrayQ3);
+	$Q4=array_sum($arrayQ4);
+	//exit;
+	
+$strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' xAxisName='Months' yAxisName='Cost of Expiries (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
+<set label='Jan-Mar (".$year.")' value='".$Q2."'/>
+<set label='Apr-Jun (".$year.")' value='".$Q3."'/>
+<set label='Jul-Sep (".$year.")' value='".$Q4."'/>
+<set label='Oct-Dec (".($year).")' value='".$Q1."'/>
+<styles>
+<definition>
+<style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>
+<style name='Anim2' type='animation' param='_alpha' start='0' duration='0.6'/>
+<style name='DataShadow' type='Shadow' alpha='40'/>
+</definition>
+<application>
+<apply toObject='DIVLINES' styles='Anim1'/>
+<apply toObject='HGRID' styles='Anim2'/>
+<apply toObject='DATALABELS' styles='Anim2'/>
+</application>
+</styles>
+</chart>";
+echo $strXML;
+}
 public function generate_facilitycostoforders_chart(){
 	$facility = $this -> session -> userdata('news');
 	$orders = Ordertbl::get_facility_ordertotal($facility);

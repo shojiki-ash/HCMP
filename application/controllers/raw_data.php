@@ -189,8 +189,8 @@ public function generatescc_pdf($report_name,$title,$data,$to,$from,$drugname)
 		/********************************************setting the report title*********************/
 	$fromm = new DateTime($from);
 	$too = new DateTime($to);
-	$from = $fromm->format('d M, Y');
-	$to = $too->format('d M, Y');
+	$from = $fromm->format('d M Y');
+	$to = $too->format('d M Y');
 		$html_title="<img src='".base_url()."Images/coat_of_arms.png' style='position:absolute;  width:130px; width:130px; top:0px; left:0px; margin-bottom:-100px;margin-right:-100px;'></img></br>
 		<span style=' margin-left:100px; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 15px;'></br>
      Ministry of Health</span></br>
@@ -221,6 +221,10 @@ public function get_commodityIpdf(){
 	
 		$from=$this -> session -> userdata('from');
 		$to=$this -> session -> userdata('to');
+		$fromm = new DateTime($from);
+		$too = new DateTime($to);
+		$from = $fromm->format('d M Y');
+		$to = $too->format('d M Y');
 		$facility_Name=$this -> session -> userdata('full_name');
 		$facility_code=$this -> session -> userdata('news');
 		$report_name='Commodity Issues Summary Between '.$from.' & '.$to;
@@ -339,12 +343,21 @@ public function generatecommodityI_pdf($report_name,$title,$data,$to,$from,$faci
 		
 }
 
-public function gen_pdf(){
-	$timeinterval=$_POST['timer'];
+public function gen_pdf($types){
+	$type = $types;
 	$facility_c=$this -> session -> userdata('news');
-	$report=Facility_Stock::expiries($facility_c,$timeinterval);
+
+	if ($type == 'pe') {
+		$timeinterval=$_POST['timer'];
+		$report=Facility_Stock::expiries($facility_c,$timeinterval);
+		$report_name='Potential Expiries '.$facility_c.' Next '.$timeinterval.'Months';
+	}
+	else if ($type == 'e') {		
+		$timeinterval=$_POST['timer2'];
+		$report=Facility_Stock::expired($facility_c,$timeinterval);
+		$report_name='Expiries in '.$facility_c.' in the past year';
+	}
 	
-	$report_name='Potential Expiries '.$facility_c.' Next '.$timeinterval.'Months';
 	$title='test';
 										/**************************************set the style for the table****************************************/
 
@@ -419,23 +432,30 @@ $html_data1 .='<table class="data-table"><thead>
 		$formateddate= $date->format('M-d-Y') . "\n";
 
 				
-	  	$this->generatePE_pdf($report_name,$title,$html_data,$facility_c,$timeinterval,$formateddate);
+	  	$this->generatePE_pdf($report_name,$title,$html_data,$facility_c,$timeinterval,$formateddate, $type);
 		
 	
 }
 
-public function generatePE_pdf($report_name,$title,$html_data,$facility_c,$timeinterval,$formateddate)
+public function generatePE_pdf($report_name,$title,$html_data,$facility_c,$timeinterval,$formateddate, $type)
 {
 		/********************************************setting the report title*********************/
-		
 		$date = new DateTime();	
 		$date=$date->format('M-d-Y');
+		if ($type == 'pe') {
+			$heading = 'Potential Expiries Summary';
+			$heading2 = "In The Next ".$timeinterval." Months (".$date." to ".$formateddate.")";
+		}else if ($type == 'e') {
+			$heading = 'Expired Commodities';
+			$heading2 = "In The Past Year";
+		}
+		
 		$html_title="<img src='".base_url()."Images/coat_of_arms.png' style='position:absolute;  width:130px; width:130px; top:0px; left:0px; margin-bottom:-100px;margin-right:-100px;'></img></br>
 		<span style=' margin-left:100px; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 15px;'></br>
      Ministry of Health </span></br>
        <span style='display: block; font-size: 12px; margin-left:100px;'>Health Commodities Management Platform</span><span style='text-align:center;' >
-       <h2 style='text-align:center; font-size: 20px;'>Potential Expiries Summary</h2>
-       <h2 style='text-align:center; font-size: 12px;'>In The Next ".$timeinterval." Months (".$date." to ".$formateddate.")</h2>
+       <h2 style='text-align:center; font-size: 20px;'>".$heading."</h2>
+       <h2 style='text-align:center; font-size: 12px;'>".$heading2."</h2>
        <hr /> ";
 		
 		///**********************************initializing the report **********************/

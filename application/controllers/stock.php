@@ -157,7 +157,7 @@ public function submit(){
 	$pass->save();
 	
 	
-	       $facility_stock=Facility_Stock::get_facility_drug_total($facility,$code)->toArray();	
+	       $facility_stock=Facility_Stock::get_facility_drug_total($facility,$kemsaCode[$i])->toArray();	
 			
 			$mydata=array('facility_code'=>$facility,
 			's11_No' => 'Delivery From KEMSA',
